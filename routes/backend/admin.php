@@ -109,6 +109,12 @@ Route::group([
     // Add Store Route Here
     Route::post('clients/store', [ClientController::class, 'store'])
         ->name('our-client.store-client');
+
+    // Edit and update client routes
+    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('our-client.edit-client');
+    Route::put('clients/{id}', [ClientController::class, 'update'])->name('our-client.update-client');
+
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('our-client.destroy-client');
 });
 
 Route::group([

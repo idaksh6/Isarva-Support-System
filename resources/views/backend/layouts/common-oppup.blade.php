@@ -780,279 +780,95 @@ $date = \Carbon\Carbon::now();
     </div>
 @endif
 
-<div class="modal fade" id="editclient" tabindex="-1"  aria-hidden="true">
+<div class="modal fade" id="editclient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title  fw-bold" id="createprojectlLabelone"> Edit Client</h5>
+                <h5 class="modal-title fw-bold" id="createprojectlLabelone">Edit Client</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput8777" class="form-label">Client Name</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput8777" value="Ryan Ogden">
-                </div>
-                <div class="mb-3">
-                    <label  class="form-label">Company Name</label>
-                    <input type="text" class="form-control"  value="AgilSoft Tech">
-                </div>
-                <div class="deadline-form">
-                    <form>
+                <form id="edit-client-form" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Client Name</label>
+                        <input type="text" class="form-control" id="client_name" name="client_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Client Designation in Company</label>
+                        <input type="text" class="form-control" id="client_pos_in_comp" name="client_pos_in_comp" placeholder="Enter the client's designation in the company (e.g., CEO, Manager)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="company_name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name">
+                    </div>
+                    <div class="deadline-form">
                         <div class="row g-3 mb-3">
-                        <div class="col">
-                            <label for="exampleFormControlInput1777" class="form-label">User Name</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1777" value="User123">
-                        </div>
-                        <div class="col">
-                            <label for="exampleFormControlInput2777" class="form-label">Password</label>
-                            <input type="Password" class="form-control" id="exampleFormControlInput2777" value="********">
-                        </div>
+                            <div class="col">
+                                <label for="username" class="form-label">User Name</label>
+                                <input type="text" class="form-control" id="username" name="username">
+                            </div>
+                            <div class="col">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+                            </div>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col">
-                                <label  class="form-label">Email ID</label>
-                                <input type="email" class="form-control"  placeholder="ryanogden@gmail.com">
+                                <label for="email" class="form-label">Email ID</label>
+                                <input type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="col">
-                                <label  class="form-label">Phone</label>
-                                <input type="text" class="form-control"  value="202-555-0174">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone">
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="mb-3">          
-                    <label for="exampleFormControlTextarea787" class="form-label">Description (optional)</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea787" rows="3" >Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</textarea>
-                </div> 
-                <div class="table-responsive">
-                    <table class="table table-striped custom-table">
-                        <thead>
-                            <tr>
-                                <th>Project Permission</th>
-                                <th class="text-center">Read</th>
-                                <th class="text-center">Write</th>
-                                <th class="text-center">Create</th>
-                                <th class="text-center">Delete</th>
-                                <th class="text-center">Import</th>
-                                <th class="text-center">Export</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="fw-bold">Projects</td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault117" checked>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault127" checked>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault37" checked>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault47" checked>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault57" checked>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault67" checked>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td  class="fw-bold">Tasks</td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault77" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault87" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault97" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault107" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1179" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1279" checked>
-                
-                                </td>
-                            </tr>
-                            <tr>
-                                <td  class="fw-bold">Chat</td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault137" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault147" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault157" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault167" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault177" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault187" checked>
-                
-                                </td>
-                            </tr>
-                            <tr>
-                                <td  class="fw-bold">Estimates</td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault197" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault207" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault217" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault227" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault237" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault247" checked>
-                
-                                </td>
-                            </tr>
-                            <tr>
-                                <td  class="fw-bold">Invoices</td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault257" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault267">
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault277" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault287">
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault297" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault307" checked>
-                
-                                </td>
-                            </tr>
-                            <tr>
-                                <td  class="fw-bold">Timing Sheets</td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault317" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault327" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault337" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault347" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault357" checked>
-                
-                                </td>
-                                <td class="text-center">
-                
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault367" checked>
-                
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profile_image" class="form-label">Profile Image</label>
+                        <input type="file" class="form-control" id="profile_image" name="profile_image">
+                        <!-- Display existing profile image -->
+                        <div id="current-profile-image" class="mt-2">
+                            <img src="" alt="Profile Image" class="img-thumbnail" width="100" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-                <button type="button" class="btn btn-primary">Create</button>
-            </div> 
-        </div> 
+        </div>
     </div>
 </div>
 
-<!-- Modal  Delete Folder/ File-->
-<div class="modal fade" id="deleteclient" tabindex="-1"  aria-hidden="true">
+<!-- Modal for Delete Confirmation -->
+<div class="modal fade" id="deleteclient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title  fw-bold" id="deleteprojectLabel"> Delete item Permanently?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="deleteprojectLabel">Delete Item Permanently?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body justify-content-center flex-column d-flex">
+                <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                <p class="mt-4 fs-5 text-center">You can only delete this item permanently.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <!-- Add a form for the delete action -->
+                <form id="delete-client-form" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger color-fff">Delete</button>
+                </form>
+            </div>
         </div>
-        <div class="modal-body justify-content-center flex-column d-flex">
-            <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
-            <p class="mt-4 fs-5 text-center">You can only delete this item Permanently</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger color-fff">Delete</button>
-        </div>
-    </div>
     </div>
 </div>
 
@@ -1860,3 +1676,5 @@ $date = \Carbon\Carbon::now();
         </div>  
     </div>
 </div>
+
+

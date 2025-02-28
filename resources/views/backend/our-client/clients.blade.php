@@ -45,10 +45,10 @@
                                     <div class="about-info d-flex align-items-center mt-1 justify-content-center flex-column">
                                         <h6 class="mb-0 fw-bold d-block fs-6 mt-2">{{ $client->client_pos_in_comp}}</h6>
                                         <div class="btn-group mt-2" role="group" aria-label="Basic outlined example">
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editclient">
+                                            <button type="button" class="btn btn-outline-secondary edit-client-btn" data-id="{{ $client->id }}" data-bs-toggle="modal" data-bs-target="#editclient">
                                                 <i class="icofont-edit text-success"></i>
                                             </button>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteclient">
+                                            <button type="button" class="btn btn-outline-secondary delete-client-btn" data-id="{{ $client->id }}" data-bs-toggle="modal" data-bs-target="#deleteclient">
                                                 <i class="icofont-ui-delete text-danger"></i>
                                             </button>
                                         </div>  
@@ -81,4 +81,98 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
+
+    <script>
+        var editClientRoute = "{{ route('admin.our-client.edit-client', ':id') }}";
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            
+            // When the edit button is clicked
+            $('.edit-client-btn').on('click', function () {
+                
+                var clientId = $(this).data('id'); // Get the client ID from the data attribute
+
+                // Generate the URL using the route name and client ID
+                var url = editClientRoute.replace(':id', clientId);
+
+
+                // Fetch client data via AJAX
+                $.ajax({
+                    url: url, // Use the dynamically generated URL
+                    method: 'GET',
+                    success: function (response) {
+                        console.log(response);
+                        // Populate the modal form with the fetched data
+                        $('#client_name').val(response.client_name);
+                        $('#client_pos_in_comp').val(response.client_pos_in_comp);
+                        $('#company_name').val(response.company_name);
+                        $('#username').val(response.user_name);
+                        $('#email').val(response.email_id);
+                        $('#phone').val(response.phone);
+                        $('#description').val(response.description);
+
+                        // Set the form action URL for updating
+                        $('#edit-client-form').attr('action', "{{ route('admin.our-client.update-client', ':id') }}".replace(':id', clientId));
+
+                        // Display the existing profile image
+                        if (response.profile_image) {
+                            $('#current-profile-image img')
+                                .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
+                                .show(); // Show the image
+                        } else {
+                            $('#current-profile-image img').hide(); // Hide the image if no profile image exists
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching client data:', xhr.responseText);
+                    }
+                });
+            });
+
+        });
+
+
+        // When the delete button is clicked
+    $('.delete-client-btn').on('click', function () {
+        var clientId = $(this).data('id'); // Get the client ID from the data attribute
+
+        // Set the form action dynamically
+        var deleteUrl = "{{ route('admin.our-client.destroy-client', ':id') }}"; // Route with placeholder
+        deleteUrl = deleteUrl.replace(':id', clientId); // Replace placeholder with actual ID
+
+        // Update the form action
+        $('#delete-client-form').attr('action', deleteUrl);
+    });
+
+    // Handle form submission
+    $('#delete-client-form').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        // Send the delete request via AJAX
+        $.ajax({
+            url: url,
+            method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
+            data: form.serialize(), // Serialize the form data
+            success: function (response) {
+                if (response.success) {
+                    // Show a success message
+                    alert(response.message);
+
+                    // Optionally, reload the page or remove the deleted client from the list
+                    location.reload(); // Reload the page to reflect the changes
+                }
+            },
+            error: function (xhr) {
+                console.error('Error deleting client:', xhr.responseText);
+                alert('An error occurred while deleting the client.');
+            }
+        });
+    });
+    </script>
+
 @endsection

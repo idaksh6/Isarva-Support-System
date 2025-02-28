@@ -64,5 +64,65 @@ class ClientController
 
     }
 
+    // EDIT SINGLE CLIENT INFORMATION - AUTH - SK - 28-02-2025
+    public function edit($id)
+    {
+        $client = Client::findOrFail($id); // Fetch the client by ID
+        return response()->json($client); // Return client data as JSON
+    }
+
+
+    // UPDATE SINGLE CLIENT INFORMATION - AUTH - SK - 28-02-2025
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'client_name' => 'required|string|max:255',
+            'client_pos_in_comp' => 'nullable|string|max:255',
+            'company_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'password' => 'nullable|string|min:6',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+    
+        $client = Client::findOrFail($id);
+        $client->client_name = $request->client_name;
+        $client->client_pos_in_comp = $request->client_pos_in_comp;
+        $client->company_name = $request->company_name;
+        $client->user_name = $request->username;
+        if ($request->password) {
+            $client->password = bcrypt($request->password);
+        }
+        $client->email_id = $request->email;
+        $client->phone = $request->phone;
+        $client->description = $request->description;
+        $client->updated_by = Auth::id();
+    
+        if ($request->hasFile('profile_image')) {
+            $fileName = time() . '.' . $request->profile_image->extension();
+            $filePath = public_path('images/client_or_comp_images/');
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0777, true);
+            }
+            $request->profile_image->move($filePath, $fileName);
+            $client->profile_image = 'images/client_or_comp_images/' . $fileName;
+        }
+    
+        $client->save();
+    
+        return redirect()->back()->withFlashSuccess(__('The client was successfully updated.'));
+    }
+
+
+    // DELETE SINGLE CLIENT INFORMATION - AUTH - SK - 28-02-2025
+    public function destroy($id)
+    {
+        $client = Client::findOrFail($id); // Find the client by ID
+        $client->delete(); // Delete the client
+
+        return response()->json(['success' => true, 'message' => 'Client deleted successfully.']);
+    }
+
 
 }
