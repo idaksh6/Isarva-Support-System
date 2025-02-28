@@ -1,0 +1,40 @@
+.timeline-item {
+  border-left: 2px solid var(--border-color);
+  display: flex;
+  position: relative;
+  padding: 1em;
+  &:hover {
+    &::after {
+      transform: scale(3.5);
+    }
+  }
+
+  &::after {
+    @include transition(ease 0.1s);
+    border: 2px solid var(--border-color);
+    background: var(--color-900);
+    display: block;
+    position: absolute;
+    content: "";
+    width: 8px;
+    height: 8px;
+    top: 1.3em;
+    left: -5px;
+    border-radius: 30px;
+  }
+  &.ti-primary:after {
+    background: var(--primary-color);
+  }
+  &.ti-info:after {
+    background: $info;
+  }
+  &.ti-success:after {
+    background: map-get($greens, "green-500"); // Adjust key as per your map
+  }
+  &.ti-warning:after {
+    background: map-get($oranges, "orange-500"); // Adjust key as per your map
+  }
+  &.ti-danger:after {
+    background: map-get($reds, "red-500"); // Adjust key as per your map
+  }
+}
