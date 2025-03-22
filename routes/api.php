@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\DailyReportController;
 use Illuminate\Http\Request;
 
 /*
@@ -16,3 +17,9 @@ use Illuminate\Http\Request;
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/get_project_list', [DailyReportController::class, 'getProjectList'])->name('api.project');
+    Route::get('/get_project_task_list', [DailyReportController::class, 'getProjectTaskList'])->name('api.task');
+});

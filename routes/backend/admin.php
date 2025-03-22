@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\ProjectController;
+use App\Http\Controllers\Backend\TaskController;
 use App\Http\Controllers\Backend\UielementController;
 use App\Http\Controllers\Backend\AuthenticationController;
 use App\Http\Controllers\Backend\TicketController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\Backend\EmployeeController;
 use App\Http\Controllers\Backend\AccountsController;
 use App\Http\Controllers\Backend\AppsController;
 use App\Http\Controllers\Backend\OtherpagesController;
+use App\Http\Controllers\Backend\DailyReportController;
+use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
 
 use Tabuna\Breadcrumbs\Trail;
 
@@ -47,6 +50,8 @@ Route::get('payroll/employee-salary', [EmployeeController::class, 'payroll'])
     $trail->push(__('Home'), route('admin.employee-salary'));
 });
 
+
+// Project Route
 Route::group([
     'prefix' => 'project'
 ], function () {
@@ -56,11 +61,90 @@ Route::group([
         $trail->push(__('Home'), route('admin.project.index'));
     });
 
-    Route::get('tasks', [ProjectController::class, 'tasks'])
+    Route::get('/adminreports/billable_non_billable_reports', [BillableNonBillableController::class, 'index'])->name('billable_nonbillable_report');
+
+    // Route::get('/admin/projects/search', [DailyReportController::class, 'search'])->name('projects.search');
+    // Route to bring project name under daily report field
+    Route::get('/admin/projects/search/{term?}', [DailyReportController::class, 'search'])->name('projects.search');
+
+    // Route to bring Task name under daily report field
+    Route::get('/admin/tasks/search', [DailyReportController::class, 'searchTasks'])->name('tasks.search');
+
+    // Daily Report Route
+    Route::get('/add/daily-reports', [DailyReportController::class, 'index'])->name('add_dailyreport');
+    Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
+
+    //  Daily Report Store route
+    Route::post('dailyreport/store', [DailyReportController::class, 'store'])->name('dailyreport_store');
+
+
+     // Define the route for the ProjectController index method
+    Route::get('/projects/manage', [ProjectController::class, 'manage'])->name('project.manage');
+
+
+    // Project Store route
+    Route::post('project/store', [ProjectController::class, 'store'])->name('project.store-project');
+
+     // Edit and update Project routes
+     Route::get('/project/{id}/edit', [ProjectController::class, 'edit'])->name('project.edit-project');
+     Route::put('/project/{id}', [ProjectController::class, 'update'])->name('project.update-project');
+     Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('project.destroy-project');
+     
+     // Route to search project 
+     Route::get('/projects/search-assigned', [ProjectController::class, 'searchByAssignedTo'])
+     ->name('projects.searchByAssignedTo');
+
+
+    Route::get('tasks', [TaskController::class, 'tasks'])
     ->name('project.tasks')
     ->breadcrumbs(function (Trail $trail) {
         $trail->push(__('Home'), route('admin.project.tasks'));
     });
+
+    // Route for task
+     Route::get('/tasks/{id}', [TaskController::class, 'tasksByProject'])->name('tasks.byProject');
+
+      // Task Store route
+      Route::post('task/store', [TaskController::class, 'store'])->name('project_task.store-task');
+
+      // Route to store internal docs
+      Route::post('/internal-docs/store', [TaskController::class, 'storeInternalDoc'])->name('internal-docs.store');
+
+    
+      Route::get('/task-assets/{projectId}', [TaskController::class, 'showAssets'])->name('task-assets.show');
+
+    //   Route::post('/update-task-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
+
+
+
+
+   // Define the route for updating task status
+//    Route::post('/admin/task/updateStatus', [TaskController::class, 'updateTaskStatus'])->name('task.updateStatus');
+
+    // Route for storing asset
+    Route::post('/task-asset/store', [TaskController::class, 'storeasset'])->name('task-asset.store');
+
+    // TASK EDIT ROUTE AND UPDATE ROUTE
+    Route::get('task/{id}/edit', [TaskController::class, 'edit'])->name('task.edit');
+    Route::put('task/{id}/update', [TaskController::class, 'update'])->name('task.update');
+
+    // Route::put('task/{id}', [TaskController::class, 'update'])->name('task.update');
+
+    
+
+// Route to fetch uploaded files for a project (AJAX)
+Route::get('/admin/task-asset/fetch/{project_id}', [TaskController::class, 'fetchUploadedFiles'])
+    ->name('task-asset.fetch');
+
+    
+    
+
+
+    Route::post('/task/update-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
+
+
+
+
 
     Route::get('timesheet', [ProjectController::class, 'timesheet'])
     ->name('project.timesheet')
@@ -109,14 +193,21 @@ Route::group([
     // Add Store Route Here
     Route::post('clients/store', [ClientController::class, 'store'])
         ->name('our-client.store-client');
+        
+
 
     // Edit and update client routes
     Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('our-client.edit-client');
     Route::put('clients/{id}', [ClientController::class, 'update'])->name('our-client.update-client');
 
+    Route::get('clients/search', [ClientController::class, 'search'])->name('our-client.search-client');
+
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('our-client.destroy-client');
 });
 
+
+
+// Employee routes
 Route::group([
     'prefix' => 'our-employee'
 ], function () {
@@ -126,11 +217,25 @@ Route::group([
         $trail->push(__('Home'), route('admin.our-employee.members'));
     });
 
+ 
     Route::get('members-profile', [EmployeeController::class, 'membersProfile'])
     ->name('our-employee.members-profile')
     ->breadcrumbs(function (Trail $trail) {
         $trail->push(__('Home'), route('admin.our-employee.members-profile'));
     });
+
+    // Add Store route here 
+    Route::post('members/store', [EmployeeController::class, 'store'])
+    ->name('our-employee.store-employee');
+
+    // Edit and update employee routes
+    Route::get('/members/{id}/edit', [EmployeeController::class, 'edit'])->name('our-employee.edit-employee');
+    Route::put('/members/{id}', [EmployeeController::class, 'update'])->name('our-employee.update-employee');
+    Route::get('/members/search', [EmployeeController::class, 'search'])->name('our-employee.search');
+    
+    // Delete Employee Route 
+    Route::delete('/members/{id}', [EmployeeController::class, 'destroy'])->name('our-employee.destroy-employee');
+   
 
     Route::get('holidays', [EmployeeController::class, 'holidays'])
     ->name('our-employee.holidays')

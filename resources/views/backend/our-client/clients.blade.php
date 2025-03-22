@@ -1,18 +1,191 @@
 @extends('backend.layouts.app')
 
-@section('title', __('Dashboard'))
+@section('title', 'Manage Clients | Isarva Support')
+
 
 @section('content')
+
+
+
+<!-- Create Client POP UP FORM-->
+<div class="modal fade" id="createclient" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Add Client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createclientform" action="{{ route('admin.our-client.store-client') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Client Name<span class="required">*</span></label>
+                        <input type="text" class="form-control" name="client_name" placeholder="Enter the Client Name" >
+                        <div class="text-danger" id="clientadd_error-client_name"></div> 
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Company Name<span class="required">*</span></label>
+                        <input type="text" class="form-control" name="company_name" placeholder="Enter Client Company" >
+                        <div class="text-danger" id="clientadd_error-company_name"></div> 
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Client Designation in Company</label>
+                        <input type="text" class="form-control" name="client_pos_in_comp" placeholder="Enter the client's designation in the company (e.g., CEO, Manager)">
+                        <div class="text-danger" id="clientadd_error-client_pos_in_comp"></div> 
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profile Image</label>
+                        <input class="form-control" type="file" name="profile_image">
+                        <div class="text-danger" id="clientadd_error-profile_image"></div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label class="form-label">User Name</label>
+                            <input type="text" class="form-control" name="username" placeholder="User Name" >
+                            <div class="text-danger" id="clientadd_error-username"></div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Password" >
+                            <div class="text-danger" id="clientadd_error-password"></div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label class="form-label">Email ID</label>
+                            <input type="email" class="form-control" name="email" placeholder="Email ID" >
+                            <div class="text-danger" id="clientadd_error-email"></div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Phone<span class="required">*</span></label>
+                            <input type="text" class="form-control" name="phone" placeholder="Phone Number" >
+                            <div class="text-danger" id="clientadd_error-phone"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description (optional)</label>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Add any extra details about the client"></textarea>
+                        
+                    </div> 
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Save Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Client-->
+@if (session()->has('flash_success'))
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+        <span>{{ session('flash_success') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+<div class="modal fade" id="editclient" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="createprojectlLabelone">Edit Client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-client-form" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Client Name</label>
+                        <input type="text" class="form-control" id="client_name" name="client_name">
+                        <div class="text-danger" id="client-edit-error-client_name"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Client Designation in Company</label>
+                        <input type="text" class="form-control" id="client_pos_in_comp" name="client_pos_in_comp" placeholder="Enter the client's designation in the company (e.g., CEO, Manager)">
+                        <div class="text-danger" id="client-edit-error-client_pos_in_comp"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="company_name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name">
+                        <div class="text-danger" id="client-edit-error-company_name"></div>
+                    </div>
+                    <div class="deadline-form">
+                        <div class="row g-3 mb-3">
+                            <div class="col">
+                                <label for="username" class="form-label">User Name</label>
+                                <input type="text" class="form-control" id="username" name="username">
+                                <div class="text-danger" id="client-edit-error-username"></div>
+                            </div>
+                            <div class="col">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+                            
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col">
+                                <label for="email" class="form-label">Email ID</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                                <div class="text-danger" id="client-edit-error-email"></div>
+                            </div>
+                            <div class="col">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone">
+                                <div class="text-danger" id="client-edit-error-phone"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profile_image" class="form-label">Profile Image</label>
+                        <input type="file" class="form-control" id="profile_image" name="profile_image">
+                        <!-- Display existing profile image -->
+                        <div id="current-profile-image" class="mt-2">
+                            <img src="" alt="Profile Image" class="img-thumbnail" width="100" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Body: Body -->
     <div class="body d-flex py-lg-3 py-md-2">
         <div class="container-xxl">
             <div class="row clearfix">
                 <div class="col-md-12">
+
+                    <!-- Search Bar -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <form method="GET" action="{{ route('admin.our-client.search-client') }}">
+                                <div class="input-group">
+                                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control client_search" placeholder="Search .. " aria-label="Search">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>  
+
+
                     <div class="card border-0 mb-4 no-bg">
                         <div class="card-header py-3 px-0 d-flex align-items-center justify-content-between border-bottom">
                             <h3 class="fw-bold flex-fill mb-0">Clients</h3>
                             <div class="col-auto d-flex">
-                                <div class="dropdown">
+                                {{-- <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                         Status
                                     </button>
@@ -25,7 +198,7 @@
                                         <li><a class="dropdown-item" href="#">Deltasoft Tech</a></li>
                                         <li><a class="dropdown-item" href="#">Design Tech</a></li>
                                     </ul>
-                                </div>
+                                </div> --}}
                                 <button type="button" class="btn btn-dark ms-1" data-bs-toggle="modal" data-bs-target="#createclient">
                                     <i class="icofont-plus-circle me-2 fs-6"></i>Add Client
                                 </button>
@@ -35,13 +208,14 @@
                 </div>
             </div><!-- Row End -->
 
-            <div class="row g-3 row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 row-deck py-1 pb-4">
+            <div class="row g-3 row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 row-deck py-1 pb-4 gobackprj_btn">
+                @if($clients->count() > 0)
                 @foreach ($clients as $client)
                     <div class="col">
                         <div class="card teacher-card">
                             <div class="card-body d-flex">
                                 <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                <img src="{{ url($client->profile_image) }}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
+                                <img src="{{ asset($client->profile_image) }}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
                                     <div class="about-info d-flex align-items-center mt-1 justify-content-center flex-column">
                                         <h6 class="mb-0 fw-bold d-block fs-6 mt-2">{{ $client->client_pos_in_comp}}</h6>
                                         <div class="btn-group mt-2" role="group" aria-label="Basic outlined example">
@@ -73,6 +247,17 @@
                         </div>
                     </div>
                 @endforeach
+                @else
+                
+                   <div class="col-12 text-center py-5 mx-auto">
+                     <div class="no-info-card ">
+                       <i class="fa fa-info-circle fa-3x text-info mb-3"></i>
+                       <h4 class="mb-2">No information found</h4>
+                       <p class="text-muted">Sorry, we couldn't find any Client data at this time.</p>
+                       <a href="{{ route('admin.our-client.clients') }}" class="btn btn-primary mt-3">Go Back</a>
+                    </div>
+                 </div>
+               @endif
             </div><!-- End row -->
 
         </div><!-- End container-xxl -->
@@ -93,7 +278,7 @@
             $('.edit-client-btn').on('click', function () {
                 
                 var clientId = $(this).data('id'); // Get the client ID from the data attribute
-
+              
                 // Generate the URL using the route name and client ID
                 var url = editClientRoute.replace(':id', clientId);
 
@@ -134,7 +319,7 @@
         });
 
 
-        // When the delete button is clicked
+    // When the delete button is clicked
     $('.delete-client-btn').on('click', function () {
         var clientId = $(this).data('id'); // Get the client ID from the data attribute
 
@@ -173,6 +358,98 @@
             }
         });
     });
+
+
+
+
+
+
+
+
+
+
+    
+            // Client ADD form validation code
+            $(document).ready(function () {
+                // Handle form submission
+                $('#createclientform').on('submit', function (e) {
+                    e.preventDefault(); // Prevent the default form submission
+
+                    var form = $(this);
+                    var url = form.attr('action');
+                    var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+
+                    // Clear previous errors
+                    $('.text-danger').html('');
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
+                        contentType: false, // for the proper handling of file uploads, 
+                        success: function (response) {
+                            // If the form is successfully submitted, close the modal and redirect
+                            // alert('Employee added successfully!'); // Show success message
+                            $('#createemp').modal('hide');
+                            window.location.href = "{{ route('admin.our-employee.members') }}";
+                        },
+                        error: function (xhr) {
+                            // If there are validation errors, display them below each field
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function (key, value) {
+                                $('#clientadd_error-' + key).html(value[0]); // Display the first error message
+                            });
+                        }
+                    });
+                });
+            });
+
+
+
+            
+                //----- AJAX for Client-edit form Modal validation -----
+
+                $(document).ready(function () {
+                    // Handle edit form submission
+                    $('#edit-client-form').on('submit', function (e) {
+                        e.preventDefault(); // Prevent the default form submission
+
+                        var form = $(this);
+                        var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
+                        var formData = new FormData(form[0]); // Include file uploads
+
+                        // Clear previous errors
+                        $('.text-danger').html('');
+
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                // If the form is successfully submitted, show a success message and close the modal
+                                alert('Client updated successfully!'); // Show success message
+                                $('#editclient').modal('hide'); // Close the modal
+                                window.location.reload(); // Reload the page to reflect changes
+                            },
+                            error: function (xhr) {
+                                // Log the error response to the console
+                                console.log(xhr.responseJSON);
+
+                                // If there are validation errors, display them below each field
+                                var errors = xhr.responseJSON.errors;
+                                if (errors) {
+                                    $.each(errors, function (key, value) {
+                                        $('#client-edit-error-' + key).html(value[0]); // Display the first error message
+                                    });
+                                }
+                            } 
+                        });
+                    });
+                });
+
     </script>
 
 @endsection

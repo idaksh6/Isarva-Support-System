@@ -25,6 +25,7 @@
         "livewire/livewire": "^2.0",
         "rappasoft/laravel-livewire-tables": "^0.3",
         "rappasoft/lockout": "^3.0",
+        "sendgrid/sendgrid": "^8.1",
         "spatie/laravel-activitylog": "^3.14",
         "spatie/laravel-permission": "^3.11",
         "tabuna/breadcrumbs": "^2.2"
@@ -56,12 +57,17 @@
         }
     },
     "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
+    "psr-4": {
+        "App\\": "app/",
+        "Database\\Factories\\": "database/factories/",
+        "Database\\Seeders\\": "database/seeders/"
     },
+    "files": [
+        "app/Helpers/ClientHelper.php",
+        "app/Helpers/EmployeeHelper.php"
+    ]
+},
+
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"

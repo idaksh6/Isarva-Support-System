@@ -4,19 +4,60 @@
 
 <head>
     <meta charset="utf-8">
+    {{-- for TASk Drag and drop status  --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Responsive Bootstrap 5 admin template and web Application ui kit.">
-    <title>:: My-Task::</title>
-    <link rel="icon" href="{{ asset('/favicon.ico')}}" type="image/x-icon"> <!-- Favicon-->
+    {{-- <title>:: My-Task::</title>
+    <link rel="icon" href="{{ asset('/favicon.ico')}}" type="image/x-icon"> <!-- Favicon--> --}}
+
+    <title>@yield('title')</title>
+    <link rel="icon" href="{{ asset('isarvafavicon.png') }}">
     <!-- project css file  -->
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/responsive.dataTables.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/nestable/jquery-nestable.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar/main.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/prism/prism.css') }}" />
+
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+
+    <!-- Style for project.index.blade field -->
+    <link rel="stylesheet" href=" {{ asset('css/project-index.css') }}">
+
+    <!-- Style for members manage page -->
+    <link rel="stylesheet" href=" {{ asset('css/member.css') }}">
+
+    <!-- Style for client section -->
+    <link rel="stylesheet" href="{{ asset('css/client_index.css') }}">
+
+    <!-- Style for Task Manage Page -->
+    <link rel="stylesheet" href="{{ asset('css/task_manage.css') }}">
     
     <link rel="stylesheet" href="{{ asset('assets/my-task.style.min.css') }}">
+
+    <!-- Css for project Manage section -->
+    <link rel="stylesheet" href="{{ asset('css/manage.css')}}">
+
+      <!-- Css for Daily Report section -->
+    <link rel="stylesheet" href="{{ asset('css/add_dailyreport.css')}}">
+
+    <!-- Sweet Alert library -->
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+
+    <script src="{{ asset('sweetalaertcdn/sweetalert2@11.js') }}"></script>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery UI CSS -->
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
+    <!-- Include jQuery UI JS -->
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
+    
+
 </head>
 <body>
 

@@ -12,11 +12,26 @@ class ClientController
     /** Manage page to view all the clients - Author SK - 29-02-2025 */
     public function clients()
     {
+        
         $clients = Client::all(); // Fetch all clients from the database
+        
         return view('backend.our-client.clients', compact('clients'));
     }
     public function clientsProfile(){
         return view('backend.our-client.client-profile');
+    }
+
+    public function search(Request $request)
+    {
+        $q = $request->input('q');
+
+        $clients = Client::where('client_name', 'like', '%' . $q . '%')
+            ->orWhere('company_name', 'like', '%' . $q . '%')
+            ->orWhere('email_id', 'like', '%' . $q . '%')
+            ->orWhere('phone', 'like', '%' . $q . '%')
+            ->get();
+
+        return view('backend.our-client.clients', compact('clients', 'q'));
     }
 
     /** Store the Client Information - Author SK - 29-02-2025 */
@@ -24,26 +39,53 @@ class ClientController
     {
         $request->validate([
             'client_name' => 'required|string|max:255',
-            'client_pos_in_comp'=> 'nullable|string|max:255',
+            'client_pos_in_comp' => 'nullable|string|max:255',
             'company_name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
-            'password' => 'required|string|min:6',
+            'password' => 'nullable|string|min:6',
             'email' => 'required|email',
             'phone' => 'required',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'client_name.required' => 'The client name is required.',
+            'client_name.string' => 'The client name must be a string.',
+            'client_name.max' => 'The client name may not be greater than 255 characters.',
+            
+            'client_pos_in_comp.string' => 'The position in company must be a string.',
+            'client_pos_in_comp.max' => 'The position in company may not be greater than 255 characters.',
+            
+            'company_name.required' => 'The company name is required.',
+            'company_name.string' => 'The company name must be a string.',
+            'company_name.max' => 'The company name may not be greater than 255 characters.',
+            
+            'username.required' => 'The username is required.',
+            'username.string' => 'The username must be a string.',
+            'username.max' => 'The username may not be greater than 255 characters.',
+            
+            'password.string' => 'The password must be a string.',
+            'password.min' => 'The password must be at least 6 characters.',
+            
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email must be a valid email address.',
+            
+            'phone.required' => 'The phone number is required.',
+            
+            'profile_image.image' => 'The profile image must be an image.',
+            'profile_image.mimes' => 'The profile image must be a file of type: jpeg, png, jpg.',
+            'profile_image.max' => 'The profile image may not be greater than 2MB.',
         ]);
-
+        
         $client = new Client();
-        $client->client_name = $request->client_name;
+        $client->client_name        = $request->client_name;
         $client->client_pos_in_comp = $request->client_pos_in_comp;
-        $client->company_name = $request->company_name;
-        $client->user_name = $request->username;
-        $client->password = bcrypt($request->password);
-        $client->email_id = $request->email;
-        $client->phone = $request->phone;
-        $client->description = $request->description;
-        $client->created_by = Auth::id();
-        $client->updated_by = Auth::id();
+        $client->company_name       = $request->company_name;
+        $client->user_name          = $request->username;
+        $client->password           = bcrypt($request->password);
+        $client->email_id           = $request->email;
+        $client->phone              = $request->phone;
+        $client->description        = $request->description;
+        $client->created_by         = Auth::id();
+        $client->updated_by         = Auth::id();
 
         if ($request->hasFile('profile_image')) {
             $fileName = time() . '.' . $request->profile_image->extension();
@@ -84,8 +126,35 @@ class ClientController
             'email' => 'required|email',
             'phone' => 'required',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'client_name.required' => 'The client name is required.',
+            'client_name.string' => 'The client name must be a string.',
+            'client_name.max' => 'The client name may not be greater than 255 characters.',
+            
+            'client_pos_in_comp.string' => 'The position in company must be a string.',
+            'client_pos_in_comp.max' => 'The position in company may not be greater than 255 characters.',
+            
+            'company_name.required' => 'The company name is required.',
+            'company_name.string' => 'The company name must be a string.',
+            'company_name.max' => 'The company name may not be greater than 255 characters.',
+            
+            'username.required' => 'The username is required.',
+            'username.string' => 'The username must be a string.',
+            'username.max' => 'The username may not be greater than 255 characters.',
+            
+            'password.string' => 'The password must be a string.',
+            'password.min' => 'The password must be at least 6 characters.',
+            
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email must be a valid email address.',
+            
+            'phone.required' => 'The phone number is required.',
+            
+            'profile_image.image' => 'The profile image must be an image.',
+            'profile_image.mimes' => 'The profile image must be a file of type: jpeg, png, jpg.',
+            'profile_image.max' => 'The profile image may not be greater than 2MB.',
         ]);
-    
+        
         $client = Client::findOrFail($id);
         $client->client_name = $request->client_name;
         $client->client_pos_in_comp = $request->client_pos_in_comp;

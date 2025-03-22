@@ -1,0 +1,123 @@
+
+
+.custom-outline-btn:hover {
+    background-color: #f8c8dc; /* Light pink hover effect */
+    color: #fff; /* Change text color on hover */
+}
+
+/* .notask_drag{
+
+    position:fixed;
+} */
+
+
+.task-placeholder {
+    color: #999;
+    font-style: italic;
+    pointer-events: none; /* Prevent dragging */
+}
+
+
+.ui-sortable-placeholder {
+    background: #f0f0f0;
+    border: 1px dashed #ccc;
+    visibility: visible !important;
+}
+
+.dd-handle.edit-task-btn{
+
+   
+    border-bottom: 2px solid #ffc107 !important;
+}
+
+.required{
+
+    color: red;
+}
+  
+
+ /* Style for the selected files container */
+ #selectedFiles {
+    margin-top: 1rem;
+}
+
+/* Style for the file list */
+.file-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Style for each file item */
+.file-item {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: calc(33.333% - 1rem); /* 3 items per row */
+    box-sizing: border-box;
+}
+
+/* Style for the file icon */
+.file-icon {
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+/* Style for the file name */
+.file-name {
+    font-size: 0.9rem;
+    color: #333;
+    word-break: break-all;
+}
+
+/* Style for the remove button */
+.remove-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .file-item {
+        width: calc(50% - 1rem); /* 2 items per row */
+    }
+}
+
+@media (max-width: 480px) {
+    .file-item {
+        width: 100%; /* 1 item per row */
+    }
+}
+
+
+.editaddbtn {
+
+    width: 50%;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+
+.empty-state {
+    pointer-events: none; /* Prevent the empty state from being draggable */
+    opacity: 0.7; /* Optional: Make it visually distinct */
+}
+
+
+/* Debud codes */
+
+/* Style for the placeholder (dotted line) */
+.ui-sortable-placeholder {
+    border: 2px dashed #ccc; /* Dotted border */
+    background: #f9f9f9; /* Light background */
+    visibility: visible !important; /* Ensure it's always visible */
+    height: 50px; /* Adjust height as needed */
+    margin: 5px 0; /* Add some spacing */
+}

@@ -5,7 +5,7 @@
 
             <!-- header rightbar icon -->
             <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
-                <div class="d-flex">
+                {{-- <div class="d-flex">
                     <a class="nav-link text-primary collapsed" href="{{ route('admin.help') }}" title="Get Help">
                         <i class="icofont-info-square fs-5"></i>
                     </a>
@@ -18,12 +18,12 @@
                         <img class="avatar rounded-circle" src="{{ url('/').'/images/xs/avatar8.jpg' }}" alt="">
                         <span class="avatar rounded-circle text-center pointer" data-bs-toggle="modal" data-bs-target="#addUser"><i class="icofont-ui-add"></i></span>
                     </div>
-                </div>
+                </div> --}}
                 <div class="dropdown notifications zindex-popover">
-                    <a class="nav-link dropdown-toggle pulse" href="#" role="button" data-bs-toggle="dropdown">
+                    {{-- <a class="nav-link dropdown-toggle pulse" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="icofont-alarm fs-5"></i>
                         <span class="pulse-ring"></span>
-                    </a>
+                    </a> --}}
                     <div id="NotificationsDiv" class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-sm-end p-0 m-0">
                         <div class="card border-0 w380">
                             <div class="card-header border-0 p-3">
@@ -98,7 +98,7 @@
                 </div>
                 <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
                     <div class="u-info me-2">
-                        <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">Dylan Hunter</span></p>
+                        <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">  {{Auth::user()->name}}</span></p>
                         <small>Admin Profile</small>
                     </div>
                     <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
@@ -110,19 +110,20 @@
                                 <div class="d-flex py-1">
                                     <img class="avatar rounded-circle" src="{{ url('/').'/images/profile_av.png' }}" alt="profile">
                                     <div class="flex-fill ms-3">
-                                        <p class="mb-0"><span class="font-weight-bold">Dylan Hunter</span></p>
-                                        <small class="">Dylan.hunter@gmail.com</small>
+                                        <p class="mb-0"><span class="font-weight-bold">ADMIN</span></p>
+                                        <small class="">admin123@gmail.com</small>
                                     </div>
                                 </div>
                                 
                                 <div><hr class="dropdown-divider border-dark"></div>
                             </div>
                             <div class="list-group m-2 ">
-                                <a href="{{ route('admin.project.tasks') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-tasks fs-5 me-3"></i>My Task</a>
-                                <a href="{{ route('admin.our-employee.members') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user-group fs-6 me-3"></i>members</a>
-                                <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a>
+                                {{-- <a href="{{ route('admin.project.tasks') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-tasks fs-5 me-3"></i>My Task</a> --}}
+                                <a href="{{ route('admin.our-employee.members') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user-group fs-6 me-3"></i>Members</a>
+                                {{-- <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a> --}}
                                 <div><hr class="dropdown-divider border-dark"></div>
-                                <a href="{{route('admin.authentication.signup')}}" class="list-group-item list-group-item-action border-0 "><i class="icofont-contact-add fs-5 me-3"></i>Add personal account</a>
+                                {{-- <a href="{{route('admin.authentication.signup')}}" class="list-group-item list-group-item-action border-0 "><i class="icofont-contact-add fs-5 me-3"></i>Add personal account</a> --}}
+                                <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a>
                             </div>
                         </div>
                     </div>
@@ -137,13 +138,15 @@
             <!-- main menu Search-->
             <div class="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
                 <div class="input-group flex-nowrap input-group-lg">
-                    <button type="button" class="input-group-text" id="addon-wrapping"><i class="fa fa-search"></i></button>
+                    {{-- <button type="button" class="input-group-text" id="addon-wrapping"><i class="fa fa-search"></i></button>
                     <input type="search" class="form-control" placeholder="Search" aria-label="search" aria-describedby="addon-wrapping">
-                    <button type="button" class="input-group-text add-member-top" id="addon-wrappingone" data-bs-toggle="modal" data-bs-target="#addUser"><i class="fa fa-plus"></i></button>
+                    <button type="button" class="input-group-text add-member-top" id="addon-wrappingone" data-bs-toggle="modal" data-bs-target="#addUser"><i class="fa fa-plus"></i></button> --}}
                 </div>
             </div>
 
         </div>
     </nav>
 </div>
-@include('backend.layouts.common-oppup')
+{{-- @include('backend.layouts.common-oppup') --}}
+
+{{-- @include('backend.layouts.common-oppup', ['clients' => $clients]) --}}

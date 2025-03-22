@@ -1,0 +1,21 @@
+/* .gobackprj_btn{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */
+
+/* .gobackprj_btn {
+    justify-content: center;
+} */
+
+
+.required{
+
+    color: red;
+}
+
+.client_search{
+
+    margin: 0;
+}
