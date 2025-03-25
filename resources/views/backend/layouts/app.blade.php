@@ -217,6 +217,7 @@
 
 <script src="{{ asset('assets/plugins/fullcalendar/main.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/prism/prism.js') }}"></script>
+{{-- <script src="{{ asset('assets/plugins/bootstrap/bootstrap.bundle.min.js')}}"></script> --}}
 @stack('before-scripts')
 
 <script>

@@ -11,6 +11,470 @@
 @endphp
 
 
+
+<!-- Create Project-->
+<div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title  fw-bold" id="createprojectlLabel"> Create Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createProjectForm" action="{{ route('admin.project.store-project') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <!-- Client Name Dropdown -->
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
+                        <select class="form-control"  name="client" placeholder="Select Client Name" >
+                          <option value="">Select Client</option>
+                            @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
+                              <option value="{{ $id }}" {{ old('client') == $id ? 'selected' : '' }}>{{ $clientName }}</option>
+                            @endforeach
+                        </select>
+                        <div class="text-danger" id="proj-add-error-client"></div>
+                    </div>
+                
+                    <div class="mb-3">
+                         <label for="project_name" class="form-label">Project Name<span class="required">*</span></label>
+                         <input type="text" class="form-control" name="project_name"  value="{{ old('create_project_name') }}" placeholder="Enter the Project Name">
+                         <div class="text-danger" id="proj-add-error-project_name"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Project Category</label>
+                        <select class="form-select" name="category" aria-label="Default select Project Category">
+                            <option selected>none</option>
+                            <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Website Design</option>
+                            <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>App Development</option>
+                            <option value="3" {{ old('category') == '3' ? 'selected' : '' }}>Quality Assurance</option>
+                            <option value="4" {{ old('category') == '4' ? 'selected' : '' }}>Development</option>
+                            <option value="5" {{ old('category') == '5' ? 'selected' : '' }}>Backend Development</option>
+                            <option value="6" {{ old('category') == '6' ? 'selected' : '' }}>Software Testing</option>
+                            <option value="8" {{ old('category') == '8' ? 'selected' : '' }}>Marketing</option>
+                            <option value="9" {{ old('category') == '9' ? 'selected' : '' }}>UI/UX Design</option>
+                            <option value="10"{{ old('category') == '10' ? 'selected' : ''}}>Other</option>
+                        </select>
+                        <div class="text-danger" id="proj-add-error-category"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="project_img" class="form-label">Project Image</label>
+                        <input class="form-control" type="file" name="project_image" multiple>
+                        <div class="text-danger" id="proj-add-error-project_image"></div>
+                    </div>
+
+                   <!-- Manager Dropdown -->
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                           <label for="manager_id" class="form-label">Manager<span class="required">*</span></label>
+                            <select class="form-control"  name="manager" >
+                                <option value="">Select Manager</option>
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger" id="proj-add-error-manager"></div>
+                        </div>
+                        <div class="col">
+                            <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
+                            <select class="form-select" name="team_leader" aria-label="Default select Priority">
+                                <option value="">Select Team Leader</option>
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger" id="proj-add-error-team_leader"></div>
+                        </div>
+                    </div>
+                   
+                    <div class="mb-3">
+                        <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
+                        <div class="dropdown">
+                            <button class="form-select text-start dropdown-toggle" type="button" id="teamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                               Select Team Members
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="teamMembersDropdown">
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                   <li>
+                                      <a class="dropdown-item" href="#" onclick="selectTeamMember({{ $id }}, '{{ $employeeName }}')">
+                                        {{ $employeeName }}
+                                      </a>
+                                    </li>
+                               @endforeach
+                            </ul>
+                        </div>
+                         <div id="selectedTeamMembers" class="mt-2 d-flex flex-wrap"></div>
+                         <input type="hidden" name="team_members" id="teamMembersInput">
+                         <div class="text-danger" id="proj-add-error-team_members"></div>
+                     </div>
+
+
+                    <div class="deadline-form">
+                        <div class="row g-3 mb-3">
+                            <div class="col">
+                               <label  class="form-label">Project Start Date<span class="required">*</span></label>
+                               <input type="date" name="start_date" class="form-control" value="{{ old('start_date') }}">
+                               <div class="text-danger" id="error-start_date"></div>
+                            </div>
+                            <div class="col">
+                               <label  class="form-label">Project End Date<span class="required">*</span></label>
+                               <input type="date" name="end_date" class="form-control" value="{{ old('end_date') }}">
+                               <div class="text-danger" id="proj-add-error-end_date"></div>
+                               
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm">
+                                <label for="formFileMultipleone" class="form-label">Department<span class="required">*</span></label>
+                                <select class="form-select" name="department" aria-label="Default select Priority">
+                                   <option selected>None</option>
+                                   <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Web Application</option>
+                                   <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>Website</option>
+                                   <option value="3" {{ old('category') == '3' ? 'selected' : '' }}>Graphics</option>
+                                </select>
+                                <div class="text-danger" id="proj-add-error-department"></div>
+                            </div>
+                            <div class="col-sm">
+                               <label for="formFileMultipleone" class="form-label">Status<span class="required">*</span></label>
+                               <select class="form-select" name="status" aria-label="Default select Priority">
+                                    <option selected>None</option>
+                                    <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Onboard</option>
+                                    <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Open</option>
+                                    <option value="3" {{ old('status') == '3' ? 'selected' : '' }}>Progress</option>
+                                    <option value="4" {{ old('status') == '4' ? 'selected' : '' }}>Monitor</option>
+                                    <option value="5" {{ old('status') == '5' ? 'selected' : '' }}>Billing</option>
+                                    <option value="6" {{ old('status') == '6' ? 'selected' : '' }}>Closed</option>
+                                    <option value="7" {{ old('status') == '7' ? 'selected' : '' }}>On Hold</option>
+                                    <option value="8" {{ old('status') == '8' ? 'selected' : '' }}>Warranty</option>
+                                </select>
+                                <div class="text-danger" id="proj-add-error-status"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm">
+                           <label for="formFileMultipleone" class="form-label">Budget</label>
+                           <input type="number" name="budget" class="form-control" value="{{ old('budget') }}">
+                           <div class="text-danger" id="proj-add-error-budget"></div>
+                        </div>
+                        <div class="col-sm">
+                            <label for="formFileMultipleone" class="form-label">Priority<span class="required">*</span></label>
+                            <select class="form-select" name="priority"  aria-label="Default select Priority">
+                              <option selected>None</option>
+                              <option value="1" {{ old('priority') == '1' ? 'selected' : '' }}>Low</option>
+                              <option value="2" {{ old('priority') == '2' ? 'selected' : '' }}>Medium</option>
+                              <option value="3" {{ old('priority') == '2' ? 'selected' : '' }}>High</option>
+                            </select>
+                            <div class="text-danger" id="proj-add-error-priority"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                       <label class="form-label">Type<span class="required">*</span></label>
+                        <select class="form-select" name="type" aria-label="Default select Project Category">
+                          <option selected>None</option>
+                          <option value="1" {{ old('type') == '1' ? 'selected' : '' }}>External</option>
+                          <option value="2" {{ old('type') == '2' ? 'selected' : '' }}>Internal</option>
+                        </select>
+                        <div class="text-danger" id="proj-add-error-type"></div>
+                    </div>
+
+                    <div class="mb-3">
+                       <label for="estimation" class="form-label">Estimation<span class="required">*</span></label>
+                       <input type="number" class="form-control" name="estimation"  value="{{ old('estimation') }}" placeholder="Enter the Project Estimation">
+                       <div class="text-danger" id="proj-add-error-estimation"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Billing Company</label>
+                        <select class="form-select" name="biiling_company" >
+                           <option value="0">None</option>
+                           <option value="1" {{ old('biiling_company') == '1' ? 'selected' : '' }}>Isarva</option>
+                           <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option>
+                        </select>
+                        <div class="text-danger" id="proj-add-error-billing_company"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea78" class="form-label">Description <span class="required">*</span></label>
+                        <textarea class="form-control" name="description"  placeholder="Enter the details about project" rows="3">{{ old('description') }}</textarea>
+                        <div class="text-danger" id="proj-add-error-description"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Project -->
+<div class="modal fade" id="editproject" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="editprojectLabel">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editprojectform" action="{{ route('admin.project.update-project', '') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT') <!-- Use PUT method for updates -->
+
+                    <!-- Hidden field for project ID -->
+                    <input type="hidden" name="project_id" id="project_id">
+
+                    <!-- Client Name Dropdown -->
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
+                        <select class="form-control" name="client" id="proj_client">
+                            <option value="">Select Client</option>
+                            @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
+                                <option value="{{ $id }}">{{ $clientName }}</option>
+                            @endforeach
+                        </select>
+                        <div class="text-danger" id="proj-edit-error-client"></div>
+                    </div>
+
+                    <!-- Project Name -->
+                    <div class="mb-3">
+                        <label for="project_name" class="form-label">Project Name<span class="required">*</span></label>
+                        <input type="text" class="form-control" name="project_name" id="proj_name" placeholder="Enter the Project Name">
+                        <div class="text-danger" id="proj-edit-error-project_name"></div>
+                    </div>
+
+                    <!-- Project Category -->
+                    <div class="mb-3">
+                        <label class="form-label">Project Category</label>
+                        <select class="form-select" name="category" id="proj_category">
+                            <option value="">None</option>
+                            <option value="1">Website Design</option>
+                            <option value="2">App Development</option>
+                            <option value="3">Quality Assurance</option>
+                            <option value="4">Development</option>
+                            <option value="5">Backend Development</option>
+                            <option value="6">Software Testing</option>
+                            <option value="7">Marketing</option>
+                            <option value="8">UI/UX Design</option>
+                            <option value="9">Other</option>
+                        </select>
+                        <div class="text-danger" id="proj-edit-error-category"></div>
+                    </div>
+
+                    <!-- Project Image -->
+                    {{-- <div class="mb-3">
+                        <label for="project_image" class="form-label">Project Image</label>
+                        <input class="form-control" type="file" name="project_image" id="project_image">
+                        <div class="text-danger" id="proj-edit-error-project_image"></div>
+                    </div> --}}
+
+                    <!-- Manager and Team Leader Dropdowns -->
+
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label for="manager" class="form-label">Manager<span class="required">*</span></label>
+                            <select class="form-control" name="manager" id="proj_manager">
+                                <option value="">Select Manager</option>
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                    <option value="{{ $id }}">{{ $employeeName }}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger" id="proj-edit-error-manager"></div>
+                        </div>
+                        <div class="col">
+                            <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
+                            <select class="form-select" name="team_leader" id="proj_team_leader">
+                                <option value="">Select Team Leader</option>
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                    <option value="{{ $id }}">{{ $employeeName }}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger" id="proj-edit-error-team_leader"></div>
+                        </div>
+                    </div>
+
+                    
+                    <!-- Team Members -->
+                    <div class="mb-3">
+                        <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
+                        <div class="dropdown">
+                            <button class="form-select text-start dropdown-toggle" type="button" id="editTeamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Team Members
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="editTeamMembersDropdown">
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="selectEditTeamMember({{ $id }}, '{{ $employeeName }}')">
+                                            {{ $employeeName }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <div id="editSelectedTeamMembers" class="mt-2 d-flex flex-wrap"></div>
+                        <input type="hidden" name="team_members" id="editTeamMembersInput">
+                        <div class="text-danger" id="proj-edit-error-team_members"></div>
+                    </div>
+
+                    <!-- Project Start and End Date -->
+                    <div class="row g-3 mb-3">
+                        <div class="col">
+                            <label class="form-label">Project Start Date<span class="required">*</span></label>
+                            <input type="date" name="start_date" class="form-control" id="proj_start_date">
+                            <div class="text-danger" id="proj-edit-error-start_date"></div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Project End Date<span class="required">*</span></label>
+                            <input type="date" name="end_date" class="form-control" id="proj_end_date">
+                            <div class="text-danger" id="proj-edit-error-end_date"></div>
+                        </div>
+                    </div>
+
+                    <!-- Department and Status -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm">
+                            <label class="form-label">Department<span class="required">*</span></label>
+                            <select class="form-select" name="department" id="proj_department">
+                                <option value="">None</option>
+                                <option value="1">Web Application</option>
+                                <option value="2">Website</option>
+                                <option value="3">Graphics</option>
+                            </select>
+                            <div class="text-danger" id="proj-edit-error-department"></div>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">Status<span class="required">*</span></label>
+                            <select class="form-select" name="status" id="proj_status">
+                                <option value="">None</option>
+                                <option value="1">Onboard</option>
+                                <option value="2">Open</option>
+                                <option value="3">Progress</option>
+                                <option value="4">Monitor</option>
+                                <option value="5">Billing</option>
+                                <option value="6">Closed</option>
+                                <option value="7">On Hold</option>
+                                <option value="8">Warranty</option>
+                            </select>
+                            <div class="text-danger" id="proj-edit-error-status"></div>
+                        </div>
+                    </div>
+
+                    <!-- Budget and Priority -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm">
+                            <label class="form-label">Budget</label>
+                            <input type="number" name="budget" class="form-control" id="proj_budget">
+                            <div class="text-danger" id="proj-edit-error-budget"></div>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">Priority<span class="required">*</span></label>
+                            <select class="form-select" name="priority" id="proj_priority">
+                                <option value="">None</option>
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                            <div class="text-danger" id="proj-edit-error-priority"></div>
+                        </div>
+                    </div>
+
+                    <!-- Type and Estimation -->
+                    <div class="mb-3">
+                        <label class="form-label">Type<span class="required">*</span></label>
+                        <select class="form-select" name="type" id="proj_type">
+                            <option value="">None</option>
+                            <option value="1">External</option>
+                            <option value="2">Internal</option>
+                        </select>
+                        <div class="text-danger" id="proj-edit-error-type"></div>
+                    </div>
+
+                   <!-- Estimation Field -->
+                    <div class="mb-3">
+                        <label class="form-label">Estimation<span class="required">*</span></label>
+                        <input type="number" class="form-control" name="estimation" id="proj_estimation" placeholder="Enter the Project Estimation" readonly>
+                        <div class="text-danger" id="proj-edit-error-estimation"></div>
+                    </div>
+
+                    <!-- Change Estimation Section -->
+                    <div class="mb-3">
+                        <label class="form-label">Change Estimation</label>
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-outline-success me-2" id="changeEstimationYes">Yes</button>
+                            <button type="button" class="btn btn-outline-danger" id="changeEstimationNo">No</button>
+                        </div>
+                    </div>
+
+                    <!-- Change Estimation Reason Field (Initially Hidden) -->
+                    <div class="mb-3" id="changeEstimationReasonField" style="display: none;">
+                        <label class="form-label">Change Estimation Reason<span class="required">*</span></label>
+                        <textarea class="form-control" name="change_estimation_reason" id="proj_change_estimation_reason" rows="3" placeholder="Enter the reason for changing the estimation"></textarea>
+                        <div class="text-danger" id="proj-edit-error-change_estimation_reason"></div>
+                    </div>
+
+                    <!-- Billing Company and Description -->
+                    <div class="mb-3">
+                        <label class="form-label">Billing Company</label>
+                        <select class="form-select" name="biiling_company" id="proj_biiling_company">
+                            <option value="0">None</option>
+                            <option value="1">Isarva</option>
+                            <option value="2">Blue Flemingo</option>
+                        </select>
+                        <div class="text-danger" id="proj-edit-error-billing_company"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description<span class="required">*</span></label>
+                        <textarea class="form-control" name="description" id="proj_description" rows="3" placeholder="Enter the details about project"></textarea>
+                        <div class="text-danger" id="proj-edit-error-description"></div>
+                    </div>
+
+                      <!-- Profile Image -->
+                    <div class="mb-3">
+                        <label for="project_image" class="form-label">Project Image</label>
+                        <input type="file" class="form-control" id="proj_image" name="project_image">
+                        <div class="text-danger" id="proj-add-error-project_image"></div> <!-- Error container for "profile_image" -->
+                        <!-- Display existing profile image -->
+                        <div id="proj_current-profile-image" class="mt-2">
+                            <img src="" alt="Project Image" class="img-thumbnail" width="100" style="display: none;">
+                        </div>
+                    </div>
+
+                  <!-- Estimation Change Log Table -->
+                    <div class="mb-3">
+                        <h5>Estimation Change Log</h5>
+                        <table class="table table-bordered" id="estimationChangeLogTable">
+                            <thead>
+                                <tr>
+                                    <th>Changed By</th>
+                                    <th>Changed From</th>
+                                    <th>Changed To</th>
+                                    <th>Diff</th>
+                                    <th>Reason</th>
+                                    <th>Changed At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows will be populated dynamically via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Create task-->
 <div class="modal fade" id="createtask" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
@@ -1558,8 +2022,8 @@
 
 
     console.log("jQuery Version:", jQuery.fn.jquery);
-console.log("jQuery UI Version:", $.ui);
-console.log("Sortable Available:", !!$.fn.sortable);
+    console.log("jQuery UI Version:", $.ui);
+    console.log("Sortable Available:", !!$.fn.sortable);
 </script>
 
 
@@ -1836,59 +2300,6 @@ console.log("Sortable Available:", !!$.fn.sortable);
                 });
             });
             
-                    //     $(document).ready(function () {
-        //     $('.edit-task-btn').on('click', function () {
-        //         var taskId = $(this).data('id');
-        //         var url = editTaskRoute.replace(':id', taskId);
-
-        //         $.ajax({
-        //             url: url,
-        //             method: 'GET',
-        //             success: function (response) {
-        //                 console.log(response); // Debugging
-
-        //                 // Access the nested 'task' object in the response
-        //                 var task = response.task;
-
-        //                 console.log('Assigned For:', task.task_assigned_for); // Debugging
-        //                 console.log('Dropdown Options:', $('#edit_task_assigned_for').html()); // Debugging
-
-
-        //                 // Populate the form fields
-        //                 $('#edit_task_name').val(task.task_name ?? '');
-        //                 $('#edit_task_category').val(task.task_category ?? '').trigger('change');
-
-        //                 // Format the date to 'yyyy-MM-dd'
-        //                 var end_date = new Date(task.end_date).toISOString().split('T')[0];
-        //                 $('#edit_task_end_date').val(end_date); // Corrected variable name
-
-        //                 // Set the assigned_for dropdown value
-        //                 setTimeout(function() {
-        //                 var assignedFor = String(task.task_assigned_for); // Ensure it's a string
-        //                 var dropdown = $('#edit_task_assigned_for');
-
-        //                 if (dropdown.find('option[value="' + assignedFor + '"]').length) {
-        //                     dropdown.val(assignedFor).trigger('change');
-        //                 } else {
-        //                     console.warn('Assigned user ID not found in dropdown:', assignedFor);
-        //                 }
-        //             }, 500);
-
-
-        //                 $('#edit_task_estimation').val(task.estimation_hrs ?? '');
-
-        //                 // Set the form action URL for updating
-        //                 $('#editTaskForm').attr('action', "{{ route('admin.task.update', ':id') }}".replace(':id', taskId));
-
-        //                 // Ensure modal is shown after data is set
-        //                 $('#edittask').modal('show');
-        //             },
-        //             error: function (xhr) {
-        //                 console.error('Error fetching task data:', xhr.responseText);
-        //             }
-        //         });
-        //     });
-        // });
 
 </script>
 
@@ -2344,69 +2755,8 @@ console.log("Sortable Available:", !!$.fn.sortable);
 
 
          
-
-            // JS  to preview files before uploading.
-        //     document.getElementById('fileInput').addEventListener('change', function(event) {
-        //     let files = event.target.files;
-        //     let previewContainer = document.getElementById('uploadedFiles');
-        //     previewContainer.innerHTML = ''; // Clear previous previews
-
-        //     for (let file of files) {
-        //         let fileDiv = document.createElement('div');
-        //         fileDiv.className = 'file-preview d-flex flex-column align-items-center p-3 shadow-sm rounded bg-light position-relative';
-                
-        //         let icon = document.createElement('i');
-        //         icon.className = 'icofont-file-alt display-6 text-muted';
-                
-        //         let fileName = document.createElement('p');
-        //         fileName.className = 'small text-truncate w-100 text-center mt-2';
-        //         fileName.innerText = file.name;
-                
-        //         fileDiv.appendChild(icon);
-        //         fileDiv.appendChild(fileName);
-        //         previewContainer.appendChild(fileDiv);
-        //     }
-        // });
  
-                   // Drag and Drop JS
-                //    $(document).ready(function () {
-                //     $(".dd").nestable({
-                //         group: "tasks"
-                //     }).on("change", function (event) {
-                //         let draggedItem = $(event.target).find(".dd-item").last(); // Get the last dragged item
-                //         let taskId = draggedItem.data("id");
-                //         let newStatus = $(this).closest("[data-status]").attr("data-status");
-
-                //         if (taskId && newStatus) {
-                //             updateTaskStatus(taskId, newStatus, draggedItem);
-                //         }
-                //     });
-
-                //     function updateTaskStatus(taskId, newStatus, draggedItem) {
-                //         $.ajax({
-                //             url: "/update-task-status",
-                    
-                //             type: "POST",
-                //             data: {
-                //                 task_id: taskId,
-                //                 status: newStatus,
-                //                 _token: $('meta[name="csrf-token"]').attr("content")
-                //             },
-                //             success: function (response) {
-                //                 console.log("Task status updated successfully");
-
-                //                 // Move the task visually to the new section
-                //                 let targetList = $('.col-xxl-4[data-status="' + newStatus + '"] .dd-list');
-                //                 if (targetList.length) {
-                //                     targetList.append(draggedItem);
-                //                 }
-                //             },
-                //             error: function (xhr) {
-                //                 console.error("Error updating task status:", xhr.responseText);
-                //             }
-                //         });
-                //     }
-                // });
+                 
 
 
 
@@ -2430,79 +2780,8 @@ console.log("Sortable Available:", !!$.fn.sortable);
                 });
             });
 
-                     
-            // Old drag and drop works fine  
-            // $(document).ready(function() {
-            //     $('.dd-list').sortable({
-            //         connectWith: '.dd-list',
-            //         update: function(event, ui) {
-            //             var taskId = ui.item.data('id');
-            //             var newStatus = ui.item.closest('.col-xxl-4').data('status');
+          
 
-            //             console.log('Task ID:', taskId);
-            //             console.log('New Status:', newStatus);
-
-            //             $.ajax({
-            //                 url: "{{ route('admin.task.updateStatus') }}",
-            //                 method: 'POST',
-            //                 data: {
-            //                     task_id: taskId,
-            //                     status: newStatus,
-            //                     _token: '{{ csrf_token() }}'
-            //                 },
-            //                 success: function(response) {
-            //                     console.log('Task status updated successfully');
-            //                     console.log(response);
-            //                 },
-            //                 error: function(xhr) {
-            //                     console.log('Error updating task status');
-            //                     console.log(xhr.responseText);
-            //                 }
-            //             });
-            //         }
-            //     });
-            // });
-
-
-                    //             $(document).ready(function() {
-                    //     $('.dd-list').sortable({
-                    //         connectWith: '.dd-list',
-                    //         items: '> .task-item',
-                    //         update: function(event, ui) {
-                    //             var taskId = ui.item.data('id');
-                    //             var newStatus = ui.item.closest('.col-xxl-4').data('status');
-
-                    //             console.log('Task ID:', taskId);
-                    //             console.log('New Status:', newStatus);
-
-                    //             $.ajax({
-                    //                 url: "{{ route('admin.task.updateStatus') }}",
-                    //                 method: 'POST',
-                    //                 data: {
-                    //                     task_id: taskId,
-                    //                     status: newStatus,
-                    //                     _token: '{{ csrf_token() }}'
-                    //                 },
-                    //                 success: function(response) {
-                    //                     console.log('Task status updated successfully');
-                    //                     console.log(response);
-
-                    //                     // Hide/show empty state message
-                    //                     var list = ui.item.closest('.dd-list');
-                    //                     if (list.find('.task-item').length > 0) {
-                    //                         list.find('.empty-state').hide();
-                    //                     } else {
-                    //                         list.find('.empty-state').show();
-                    //                     }
-                    //                 },
-                    //                 error: function(xhr) {
-                    //                     console.log('Error updating task status');
-                    //                     console.log(xhr.responseText);
-                    //                 }
-                    //             });
-                    //         }
-                    //     });
-                    // });
 
                     //  Test Case Drag and DROP JS
                     $(document).ready(function() {
@@ -2663,9 +2942,210 @@ console.log("Number of task items:", $(".dd-item").length);
                 });
 
 
-    </script>
+
+                 // JS/AJAX FOR PROJECT ADD/EDIT -- 
+   
+   
+        
+        $(document).ready(function () {
+
+            // When edit button is clicked
+             $('.edit-project-btn').on('click', function () {
+               
+                var projectId = $(this).data('id'); 
+                console.log(projectId);
+
+                 // Generate the URL using the route name and Project ID
+                 var url = editProjectRoute.replace(':id', projectId);
+                //  console.log(url);
+             
+                // Fetch Employee data via AJAX
+                $.ajax({
+
+                    url: url, // Use the dynamically generated URL
+                    method: 'GET',
+                    success: function (response) {    // callback function that runs only if the request is successful.
+                        console.log(response);
+                        // Populate the modal form with the fetched data from db column
+                        $('#proj_client').val(response.client);
+                        $('#proj_name').val(response.project_name);
+                        $('#proj_category').val(response.category);
+                        $('#project_image').val(response.project_image);
+                        $('#proj_manager').val(response.manager);
+                        $('#proj_team_leader').val(response.team_leader);
+                        // $('#teamMembersInput').val(response.team_members);
+                        $('#proj_start_date').val(response.start_date);
+                        $('#proj_end_date').val(response.end_date);
+                        $('#proj_department').val(response.department);
+                        $('#proj_status').val(response.status);
+                        $('#proj_budget').val(response.budget);
+                        $('#proj_priority').val(response.priority);
+                        $('#proj_type').val(response.type);
+                        $('#proj_estimation').val(response.estimation);
+                        $('#proj_biiling_company').val(response.biiling_company);
+                        $('#proj_description').val(response.description);
+                        
+                        console.log("Team Members from Response:", response.team_members);
+                        prefillEditTeamMembers(response.team_members);
+
+                         // Set the form action URL for updating
+                         $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
+                        
+                          // Display the existing profile image
+                        if (response.profile_image) {
+                            $('#proj_current-profile-image img')
+                                .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
+                                .show(); // Show the image
+                        } else {
+                            $('#proj_current-profile-image img').hide(); // Hide the image if no profile image exists
+                        }
+
+                        // Dynamically populate the Estimation Change Log table
+                         populateEstimationChangeLogTable(response.estimation_change_logs);
+
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching Project data:', xhr.responseText);
+                    }
+
+                });
+            });
+        });
+
+        
+        // Function to populate the Estimation Change Log table
+        function populateEstimationChangeLogTable(logs) {
+        var tbody = $('#estimationChangeLogTable tbody');
+        tbody.empty(); // Clear the existing rows
+
+                if (logs && logs.length > 0) {
+                    logs.forEach(function (log) {
+                        var changedByName = log.changed_by ? log.changed_by.name : 'N/A'; // Access the changedBy user's name
+                        var row = `
+                            <tr>
+                                <td>${changedByName}</td>
+                                <td>${log.changed_from}</td>
+                                <td>${log.changed_to}</td>
+                                <td>${log.diff}</td>
+                                <td>${log.reason || 'N/A'}</td>
+                                <td>${log.created_at}</td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                    });
+                } else {
+                    // If no logs are found, display a message
+                    tbody.append(`
+                        <tr>
+                            <td colspan="6" class="text-center">No estimation change logs found.</td>
+                        </tr>
+                    `);
+                }
+        }
+
+  
+
+  
+</script>
+              
+
+                <script>
+                    // JS for Project team_member section
+                    let selectedTeamMembers = {}; // Store selected members
+
+                    function selectTeamMember(id, name) {
+                        if (!selectedTeamMembers[id]) {     // If the member is not already selected, the code inside the block runs.
+                            selectedTeamMembers[id] = name;  // Adds the Selected Member to the Object
+
+                            let tag = document.createElement("div"); // Creates a New HTML <div> Element:This <div> will be used to display the selected team member in the UI as a badge.
+                            tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
+
+                            // Displays the selected member's name.
+                            tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeTeamMember(${id}, this)">❌</span>`;
+                            tag.setAttribute("data-id", id);
+
+                            document.getElementById("selectedTeamMembers").appendChild(tag);
+                            updateTeamMembersInput();   // Calls a Function to Update the Hidden Input Field
+                        }
+                    }
+
+                    function removeTeamMember(id, element) {
+                        delete selectedTeamMembers[id]; // Remove from object
+                        element.parentElement.remove(); // Remove badge
+                        updateTeamMembersInput();
+                    }
+
+                    function updateTeamMembersInput() {
+                        document.getElementById("teamMembersInput").value = Object.keys(selectedTeamMembers).join(",");
+                    }
+
+
+
+                    // JS for Edit Project team_member section
+                    let editSelectedTeamMembers = {}; // Store selected members for edit form
+
+                    // Function to select a team member in the edit form
+                    function selectEditTeamMember(id, name) {
+                    console.log(`Selecting team member: ID=${id}, Name=${name}`);
+                    if (!editSelectedTeamMembers[id]) {
+                        editSelectedTeamMembers[id] = name;
+                        let tag = document.createElement("div");
+                        tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
+                        tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeEditTeamMember(${id}, this)">❌</span>`;
+                        tag.setAttribute("data-id", id);
+                        document.getElementById("editSelectedTeamMembers").appendChild(tag);
+                        updateEditTeamMembersInput();
+                    } else {
+                        console.log(`Team member ${id} already selected.`);
+                    }
+                } 
+
+
+
+                    // Function to remove a team member in the edit form
+                    function removeEditTeamMember(id, element) {
+                        delete editSelectedTeamMembers[id]; // Remove from object
+                        element.parentElement.remove(); // Remove badge
+                        updateEditTeamMembersInput();
+                    }
+
+                        // Function to update the hidden input field in the edit form
+                        function updateEditTeamMembersInput() {
+                            document.getElementById("editTeamMembersInput").value = Object.keys(editSelectedTeamMembers).join(",");
+                        }
+
+                        // Function to pre-fill team members in the edit form
+                        function prefillEditTeamMembers(teamMembers) {
+                            $("#editSelectedTeamMembers").empty(); // Clear previous selections
+                            editSelectedTeamMembers = {}; // Reset object
+
+                            if (Array.isArray(teamMembers)) {
+                                teamMembers.forEach(member => {
+                                    selectEditTeamMember(member.id, member.name);
+                                });
+                            } else {
+                                console.warn("Invalid team members data:", teamMembers);
+                            }
+                        }
 
 
 
 
+                // JS To handle the Yes/No button logic and make the estimation field editable when Yes is clicked.
+                    $(document).ready(function () {
+                        // Handle "Yes" button click
+                        $('#changeEstimationYes').on('click', function () {
+                            $('#proj_estimation').prop('readonly', false); // Make estimation field editable
+                            $('#changeEstimationReasonField').show(); // Show the change estimation reason field
+                        });
+
+                        // Handle "No" button click
+                        $('#changeEstimationNo').on('click', function () {
+                            $('#proj_estimation').prop('readonly', true); // Make estimation field read-only
+                            $('#changeEstimationReasonField').hide(); // Hide the change estimation reason field
+                        });
+                    });
+
+
+                </script>
 @endsection

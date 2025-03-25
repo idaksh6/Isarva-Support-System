@@ -44,9 +44,16 @@
                                     <a class="btn btn-lg btn-outline-secondary btn-block" href="#">
                                         <span class="d-flex justify-content-center align-items-center">
                                             <img class="avatar xs me-2" src="{{ url('/').'/images/google.svg' }}" alt="Image Description">
-                                            Sign in with Google
+                                            Signss in with Google
                                         </span>
                                     </a>
+                                    {{-- <a class="btn btn-lg btn-outline-secondary btn-block" href="{{ route('admin.auth.google') }}">
+                                        <span class="d-flex justify-content-center align-items-center">
+                                            <img class="avatar xs me-2" src="{{ url('/').'/images/google.svg' }}" alt="Google Logo">
+                                            Sign in with Google
+                                        </span>
+                                    </a> --}}
+                                    
                                     <span class="dividers text-muted mt-4">OR</span>
                                 </div>
                                 <div class="col-12">

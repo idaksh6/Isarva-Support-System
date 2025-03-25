@@ -59,12 +59,15 @@ return [
         'redirect' => env('GITHUB_REDIRECT'),
     ],
 
+   
+
     'google' => [
         'active' => env('GOOGLE_ACTIVE', false),
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT'),
     ],
+
 
     'linkedin' => [
         'active' => env('LINKEDIN_ACTIVE', false),

@@ -13,11 +13,16 @@ use App\Http\Controllers\Backend\AppsController;
 use App\Http\Controllers\Backend\OtherpagesController;
 use App\Http\Controllers\Backend\DailyReportController;
 use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
+use App\Http\Controllers\Backend\GoogleController;
 
 use Tabuna\Breadcrumbs\Trail;
 
+
 // All route names are prefixed with 'admin.'.
 Route::redirect('/', '/admin/hr-dashboard', 301);
+
+   
+   
 
 
 Route::post('form/basic', [DashboardController::class, 'formBasic'])
@@ -61,7 +66,12 @@ Route::group([
         $trail->push(__('Home'), route('admin.project.index'));
     });
 
+
+
     Route::get('/adminreports/billable_non_billable_reports', [BillableNonBillableController::class, 'index'])->name('billable_nonbillable_report');
+    
+    //PDF ROUTE
+    Route::get('/export-billable-report-pdf', [BillableNonBillableController::class, 'exportPdf'])->name('export.billable.pdf');
 
     // Route::get('/admin/projects/search', [DailyReportController::class, 'search'])->name('projects.search');
     // Route to bring project name under daily report field
@@ -168,11 +178,28 @@ Route::group([
         $trail->push(__('Home'), route('admin.ticket.ticket-view'));
     });
 
-    Route::get('ticket-detail', [TicketController::class, 'ticketDetail'])
+    Route::get('ticket-detail/{id}', [TicketController::class, 'ticketDetail'])
     ->name('ticket.ticket-detail')
-    ->breadcrumbs(function (Trail $trail) {
-        $trail->push(__('Home'), route('admin.ticket.ticket-detail'));
+    ->breadcrumbs(function (Trail $trail, $id) {
+        $trail->push(__('Home'), route('ticket.ticket-detail', ['id' => $id]));
     });
+
+    // Add Store Route Here
+    Route::post('tickets/store', [TicketController::class, 'store'])
+        ->name('ticket.ticket-store');
+
+    // Edit and update ticket routes
+    Route::get('/{id}/edit', [TicketController::class, 'edit'])->name('ticket.edit-ticket');
+    Route::put('{id}', [TicketController::class, 'update'])->name('ticket.update-ticket');
+
+    
+    // Delete Client
+    Route::delete('{id}', [TicketController::class, 'destroy'])->name('ticket.destroy-ticket');
+
+    // Store Ticket Discussion
+    Route::post('tickets/comments/store', [TicketController::class, 'storeTicketDiscussion'])
+    ->name('ticket.comment-store');
+
 });
 
 Route::group([
@@ -470,11 +497,16 @@ Route::group([
 Route::group([
     'prefix' => 'authentication'
 ], function () {
+   
     Route::get('signin', [AuthenticationController::class, 'signin'])
         ->name('authentication.signin')
         ->breadcrumbs(function (Trail $trail) {
             $trail->push(__('Home'), route('admin.authentication.signin'));
         });
+       
+       
+        // Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
     Route::get('signup', [AuthenticationController::class, 'signup'])
         ->name('authentication.signup')
         ->breadcrumbs(function (Trail $trail) {

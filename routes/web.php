@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\Backend\GoogleController;
+
+
+
+// Google ROUTE
+Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
 
 /*
  * Global Routes
@@ -26,3 +32,8 @@ Route::group(['as' => 'frontend.'], function () {
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
     includeRouteFiles(__DIR__.'/backend/');
 });
+
+
+// GOOGLE ROUTE 
+Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);

@@ -8,6 +8,13 @@
 
 
 <!-- Create Client POP UP FORM-->
+@if (session()->has('flash_success'))
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+        <span>{{ session('flash_success') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <div class="modal fade" id="createclient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
@@ -159,6 +166,30 @@
         </div>
     </div>
 </div>
+<!-- Modal for Delete Confirmation -->
+<div class="modal fade" id="deleteclient" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="deleteprojectLabel">Delete Item Permanently?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body justify-content-center flex-column d-flex">
+                <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                <p class="mt-4 fs-5 text-center">You can only delete this item permanently.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <!-- Add a form for the delete action -->
+                <form id="delete-client-form" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger color-fff">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
 
     <!-- Body: Body -->
     <div class="body d-flex py-lg-3 py-md-2">
@@ -266,12 +297,15 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
+    <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
 
     <script>
         var editClientRoute = "{{ route('admin.our-client.edit-client', ':id') }}";
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
+        // Edit values populating code
         $(document).ready(function () {
             
             // When the edit button is clicked
@@ -361,23 +395,49 @@
 
 
 
-
-
-
-
-
-
-
     
             // Client ADD form validation code
+            // $(document).ready(function () {
+            //     // Handle form submission
+            //     $('#createclientform').on('submit', function (e) {
+            //         e.preventDefault(); // Prevent the default form submission
+
+            //         var form = $(this);
+            //         var url = form.attr('action');
+            //         var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+
+            //         // Clear previous errors
+            //         $('.text-danger').html('');
+
+            //         $.ajax({
+            //             url: url,
+            //             type: 'POST',
+            //             data: formData,
+            //             processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
+            //             contentType: false, // for the proper handling of file uploads, 
+            //             success: function (response) {
+            //                 // If the form is successfully submitted, close the modal and redirect
+            //                 // alert('Employee added successfully!'); // Show success message
+            //                 $('#createemp').modal('hide');
+            //                 window.location.href = "{{ route('admin.our-client.clients') }}";
+            //             },
+            //             error: function (xhr) {
+            //                 // If there are validation errors, display them below each field
+            //                 var errors = xhr.responseJSON.errors;
+            //                 $.each(errors, function (key, value) {
+            //                     $('#clientadd_error-' + key).html(value[0]); // Display the first error message
+            //                 });
+            //             }
+            //         });
+            //     });
+            // });
             $(document).ready(function () {
-                // Handle form submission
                 $('#createclientform').on('submit', function (e) {
-                    e.preventDefault(); // Prevent the default form submission
+                    e.preventDefault(); // Prevent default form submission
 
                     var form = $(this);
                     var url = form.attr('action');
-                    var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+                    var formData = new FormData(form[0]);
 
                     // Clear previous errors
                     $('.text-danger').html('');
@@ -386,24 +446,31 @@
                         url: url,
                         type: 'POST',
                         data: formData,
-                        processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
-                        contentType: false, // for the proper handling of file uploads, 
+                        processData: false, 
+                        contentType: false, 
                         success: function (response) {
-                            // If the form is successfully submitted, close the modal and redirect
-                            // alert('Employee added successfully!'); // Show success message
-                            $('#createemp').modal('hide');
-                            window.location.href = "{{ route('admin.our-employee.members') }}";
+                            // Show success message using SweetAlert
+                            Swal.fire({
+                                title: "Success!",
+                                text: "Client added successfully!",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                // Close modal and redirect
+                                $('#createemp').modal('hide');
+                                window.location.href = "{{ route('admin.our-client.clients') }}";
+                            });
                         },
                         error: function (xhr) {
-                            // If there are validation errors, display them below each field
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function (key, value) {
-                                $('#clientadd_error-' + key).html(value[0]); // Display the first error message
+                                $('#clientadd_error-' + key).html(value[0]);
                             });
                         }
                     });
                 });
             });
+
 
 
 

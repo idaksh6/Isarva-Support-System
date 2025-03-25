@@ -12,7 +12,7 @@ use App\Domains\Auth\Http\Controllers\Frontend\Auth\TwoFactorAuthenticationContr
 use App\Domains\Auth\Http\Controllers\Frontend\Auth\UpdatePasswordController;
 use App\Domains\Auth\Http\Controllers\Frontend\Auth\VerificationController;
 use Tabuna\Breadcrumbs\Trail;
-
+use App\Http\Controllers\Auth\GoogleController;
 /*
  * Frontend Access Controllers
  * All route names are prefixed with 'frontend.auth'.
@@ -84,6 +84,9 @@ Route::group(['as' => 'auth.'], function () {
         // Authentication
         Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('login', [LoginController::class, 'login']);
+
+        
+    
 
         // Registration
         Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');

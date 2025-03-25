@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Helpers\EmployeeHelper;
 use App\Models\Backend\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Backend\ProjectEstimationChangeLog;
 use App\Models\Backend\Task;
-
+use App\Helpers\ClientHelper;
 
 class ProjectController
 {
@@ -199,12 +200,33 @@ class ProjectController
         return redirect()->back()->with('success', 'Project created successfully!');
     }
     
+    // public function edit($id)
+    // {
+    //     // Fetch the project with its estimation change logs and the user who made the changes
+    //     $project = Project::with(['estimationChangeLogs.changedBy'])->findOrFail($id);
+    //     $project->team_members = explode(',', $project->team_members); // Convert string back to array
+    //     return response()->json($project); // Return project data as JSON
+    // }
+   
     public function edit($id)
     {
-        // Fetch the project with its estimation change logs and the user who made the changes
         $project = Project::with(['estimationChangeLogs.changedBy'])->findOrFail($id);
-        $project->team_members = explode(',', $project->team_members); // Convert string back to array
-        return response()->json($project); // Return project data as JSON
+
+        // Convert stored team member IDs string into an array
+        $teamMemberIds = explode(',', $project->team_members);
+
+        // Fetch employee names using helper
+        $employees = EmployeeHelper::getEmployeeNames();
+
+        // Map IDs to names, if exists
+        $project->team_members = array_map(function ($id) use ($employees) {
+            return [
+                'id' => $id,
+                'name' => $employees[$id] ?? "Unknown" // Replace ID with name or "Unknown" if not found
+            ];
+        }, $teamMemberIds);
+
+        return response()->json($project);
     }
 
     public function update(Request $request, $id){

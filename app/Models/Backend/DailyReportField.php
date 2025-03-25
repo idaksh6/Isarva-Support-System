@@ -58,4 +58,88 @@ class DailyReportField extends Model
      public function dailyReport() {
         return $this->belongsTo(DailyReport::class, 'daily_report_id');
     }
+
+    public function getBillableTypeTextAttribute()
+    {
+        switch ($this->billable_type) {
+            case 0:
+                return 'Non-Billable';
+            case 1:
+                return 'Billable';
+            case 2:
+                return 'Internal Billable';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    // public static function getTotalHours($filters)
+    //     {
+    //         $query = self::query();
+
+    //         // Apply date filter if provided
+    //         if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+    //             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+    //         }
+
+    //         // Apply employee filter
+    //         if (!empty($filters['employee'])) {
+    //             $query->where('user_id', $filters['employee']);
+    //         }
+
+    //         // Apply project/ticket filter
+    //         if (!empty($filters['project_ticket']) && !empty($filters['select_project'])) {
+    //             if ($filters['project_ticket'] === 'project') {
+    //                 $query->where('type', 1)->where('project_name', $filters['select_project']);
+    //             } elseif ($filters['project_ticket'] === 'ticket') {
+    //                 $query->where('type', 2)->where('project_name', $filters['select_project']);
+    //             }
+    //         }
+
+    //         // Get totals
+    //         return [
+    //             'billable' => $query->clone()->where('billable_type', 1)->sum('hrs'),
+    //             'non_billable' => $query->clone()->where('billable_type', 0)->sum('hrs'),
+    //             'internal_billable' => $query->clone()->where('billable_type', 2)->sum('hrs'),
+    //         ];
+    //     }
+
+    public static function getTotalHours($filters, $billingType = null)
+{
+    $query = self::query();
+
+    // Apply date filter if provided
+    if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+        $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+    }
+
+    // Apply employee filter
+    if (!empty($filters['employee'])) {
+        $query->where('user_id', $filters['employee']);
+    }
+
+    // Apply project/ticket filter
+    if (!empty($filters['project_ticket']) && !empty($filters['select_project'])) {
+        if ($filters['project_ticket'] === 'project') {
+            $query->where('type', 1)->where('project_name', $filters['select_project']);
+        } elseif ($filters['project_ticket'] === 'ticket') {
+            $query->where('type', 2)->where('project_name', $filters['select_project']);
+        }
+    }
+
+    // Apply billing type filter if specific type is requested
+    if ($billingType !== null) {
+        $query->where('billable_type', $billingType);
+        return $query->sum('hrs');
+    }
+
+    // Get totals for all types when no specific billing type is requested
+    return [
+        'billable' => $query->clone()->where('billable_type', 1)->sum('hrs'),
+        'non_billable' => $query->clone()->where('billable_type', 0)->sum('hrs'),
+        'internal_billable' => $query->clone()->where('billable_type', 2)->sum('hrs'),
+    ];
+}
+
+   
 }

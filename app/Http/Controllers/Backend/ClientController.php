@@ -102,7 +102,9 @@ class ClientController
 
         $client->save();
 
-        return redirect()->back()->withFlashSuccess(__('The client was successfully created.'));
+        // return redirect()->back()->withFlashSuccess(__('The client was successfully created.'));
+        
+       return redirect()->route('admin.our-client.clients')->withFlashSuccess(_('The client was successfully created.'));
 
     }
 
@@ -181,6 +183,11 @@ class ClientController
         $client->save();
     
         return redirect()->back()->withFlashSuccess(__('The client was successfully updated.'));
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'The client was successfully created.'
+        // ]);
     }
 
 

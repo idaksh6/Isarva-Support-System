@@ -275,7 +275,7 @@ $date = \Carbon\Carbon::now();
 </div>
 
 <!-- Create Project-->
-<div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
+{{-- <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -473,8 +473,8 @@ $date = \Carbon\Carbon::now();
             </div>
         </div>
     </div>
-</div>
-
+</div> --}}
+{{-- 
 <!-- Edit Project -->
 <div class="modal fade" id="editproject" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -526,7 +526,7 @@ $date = \Carbon\Carbon::now();
                             <option value="9">Other</option>
                         </select>
                         <div class="text-danger" id="proj-edit-error-category"></div>
-                    </div>
+                    </div> --}}
 
                     <!-- Project Image -->
                     {{-- <div class="mb-3">
@@ -537,7 +537,7 @@ $date = \Carbon\Carbon::now();
 
                     <!-- Manager and Team Leader Dropdowns -->
 
-                    <div class="row g-3 mb-3">
+                    {{-- <div class="row g-3 mb-3">
                         <div class="col">
                             <label for="manager" class="form-label">Manager<span class="required">*</span></label>
                             <select class="form-control" name="manager" id="proj_manager">
@@ -735,7 +735,7 @@ $date = \Carbon\Carbon::now();
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Modal  Delete Folder/ File-->
 <div class="modal fade" id="deleteproject" tabindex="-1" aria-hidden="true">
@@ -984,7 +984,7 @@ $date = \Carbon\Carbon::now();
 </div>
 
 <!-- Add Tickit-->
-<div class="modal fade" id="tickadd" tabindex="-1"  aria-hidden="true">
+{{-- <div class="modal fade" id="tickadd" tabindex="-1"  aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
     <div class="modal-content">
         <div class="modal-header">
@@ -1071,7 +1071,7 @@ $date = \Carbon\Carbon::now();
         </div>
     </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Create Client-->
 <div class="modal fade" id="createclient" tabindex="-1" aria-hidden="true">

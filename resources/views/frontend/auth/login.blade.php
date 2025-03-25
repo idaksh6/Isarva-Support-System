@@ -41,9 +41,15 @@
                                 <span class="d-flex justify-content-center text-secondary">Password : secret</span>
                             </div>
                             <div class="col-12 text-center mb-4">
-                                <a class="btn btn-lg btn-outline-secondary btn-block" href="#">
+                                {{-- <a class="btn btn-lg btn-outline-secondary btn-block" href="#">
                                     <span class="d-flex justify-content-center align-items-center">
                                         <img class="avatar xs me-2" src="{{ url('/').'/images/google.svg' }}" alt="Image Description">
+                                        Sign in with Google
+                                    </span>
+                                </a> --}}
+                                <a class="btn btn-lg btn-outline-secondary btn-block" href="{{ route('auth.google') }}">
+                                    <span class="d-flex justify-content-center align-items-center">
+                                        <img class="avatar xs me-2" src="{{ url('/').'/images/google.svg' }}" alt="Google Logo">
                                         Sign in with Google
                                     </span>
                                 </a>

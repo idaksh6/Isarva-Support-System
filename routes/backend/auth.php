@@ -10,6 +10,7 @@ use App\Domains\Auth\Models\Role;
 use App\Domains\Auth\Models\User;
 use Tabuna\Breadcrumbs\Trail;
 
+
 // All route names are prefixed with 'admin.auth'.
 Route::group([
     'prefix' => 'auth',
@@ -29,6 +30,10 @@ Route::group([
                     $trail->parent('admin.auth.user.index')
                         ->push(__('Deleted Users'), route('admin.auth.user.deleted'));
                 });
+
+           
+
+
 
             Route::get('create', [UserController::class, 'create'])
                 ->name('create')

@@ -1546,7 +1546,7 @@
         });
 
 
-        // JS for adding departement section tabs
+        // JS for adding departement section tabs 
         document.addEventListener("DOMContentLoaded", function () {
 
         let departmentTab = document.getElementById("departmentTab");
@@ -1621,7 +1621,7 @@
             });
         });
 
-        // dRAG AND DROP 
+        // DRAG AND DROP 
         const dropContainer = document.querySelector('.upload-container');
         const fileInput = document.querySelector('#fileInput');
 

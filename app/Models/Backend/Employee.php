@@ -2,12 +2,14 @@
 
 namespace App\Models\Backend;
 
+use Illuminate\Foundation\Auth\User as Authenticatable; // <-- Change this
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = 'si_users';
 
@@ -65,9 +67,19 @@ class Employee extends Model
         'password',
     ];
 
-    public function getIsSuperAdminAttribute() {
-        return $this->role === 'super_admin'; // Replace 'role' with the actual column name
-        // return $this->type === 'admin';
+    // public function getIsSuperAdminAttribute() {
+    //     return $this->role === 'super_admin'; // Replace 'role' with the actual column name
+    //     // return $this->type === 'admin';
+    // }
+    public function getAuthIdentifierName()
+    {
+        return 'email_id';  // Change from 'email' to 'email_id'
     }
+
+    public function getAuthIdentifier()
+    {
+        return $this->email_id; 
+    }
+    
 }
 
