@@ -22,7 +22,7 @@
                     <i class="icofont-home fs-5"></i> <span>Dashboard</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <!-- Menu: Sub menu ul -->
                 <ul class="sub-menu collapse {{ Request::segment(2) == 'hr-dashboard' || Request::segment(2) == 'project-dashboard' ? 'show' : '' }}" id="dashboard-Components">
-                    <li><a class="ms-link {{ Request::segment(2) == 'hr-dashboard' ? 'active' : '' }}" href="{{ route('admin.dashboard') }}"> <span>Hr Dashboard</span></a></li>
+                    {{-- <li><a class="ms-link {{ Request::segment(2) == 'hr-dashboard' ? 'active' : '' }}" href="{{ route('admin.dashboard') }}"> <span>Hr Dashboard</span></a></li> --}}
                     <li><a class="ms-link {{ Request::segment(2) == 'project-dashboard' ? 'active' : '' }}" href="{{ route('admin.project') }}"> <span>Project Dashboard</span></a></li>
                 </ul>
             </li>
@@ -67,11 +67,11 @@
 
             
             <li class="collapsed">
-                <a class="m-link {{ Request::segment(2)=='ticket' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#tikit-Components" href="#"><i
-                        class="icofont-ticket"></i> <span>Tickets</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+                <a class="m-link {{ Request::segment(2)=='tikit' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#tikit-Components" href="">
+                    <i class="icofont-ticket"></i> <span>Tickets</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <!-- Menu: Sub menu ul -->
-                <ul class="sub-menu {{ Request::segment(2)=='ticket' ? 'collapsed show' : 'collapse' }}" id="tikit-Components">
-                    <li><a class="ms-link {{  Request::segment(3) == 'ticket-view' ? 'active' : '' }}" href="{{ route('admin.ticket.ticket-view') }}"> <span>Tickets View</span></a></li>
+                <ul class="sub-menu {{ Request::segment(2)=='tikit' ? 'collapsed show' : 'collapse' }}" id="tikit-Components">
+                    <li><a class="ms-link {{  Request::segment(3) =='ticket-view' ? 'active' : '' }}" href="{{ route('admin.ticket.ticket-view') }}"> <span>Tickets View</span></a></li>
                     
                 </ul>
             </li>

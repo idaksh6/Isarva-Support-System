@@ -2,12 +2,14 @@
 
 namespace App\Models\Backend;
 
-use Illuminate\Foundation\Auth\User as Authenticatable; // <-- Change this
+// use Illuminate\Foundation\Auth\User as Authenticatable; // <-- Change this
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
-class Employee extends Authenticatable
+// class Employee extends Authenticatable
+
+ class Employee extends Model
 {
     use HasFactory, Notifiable;
 

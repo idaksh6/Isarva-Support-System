@@ -193,12 +193,19 @@
           <input type="text" id="project-name-{{ $index }}" name="project_name[{{ $index }}]" placeholder="Project Name" oninput="searchProjects(this)" autocomplete="off" value="{{ old('project_name.' . $index, '') }}">
           <div id="project-results-{{ $index }}" class="project-results"></div>
           <input type="hidden" id="project-id-{{ $index }}" name="project_id[{{ $index }}]" value="{{ old('project_id.' . $index, '') }}">
-          @if ($errors->has('project_id.' . $index))
+          {{-- @if ($errors->has('project_id.' . $index))
               <p class="error-message">{{ $errors->first('project_id.' . $index) }}</p>
-          @endif
+          @endif --}}
+          <!-- In project fields section -->
+          @error('project_name.'.$index)
+             <p class="error-message project-error">{{ $message }}</p>
+          @enderror
+          @error('project_id.'.$index)
+              <p class="error-message project-error">{{ $message }}</p>
+          @enderror
 
           <!-- Task Name Field -->
-       <!-- Task Name Field -->
+      
           <input type="text" id="task-name-{{ $index }}" name="task_name[{{ $index }}]" placeholder="Task Name" oninput="searchTasks(this)" autocomplete="off" value="{{ old('task_name.' . $index, '') }}">
           <div id="task-results-{{ $index }}" class="task-results"></div>
           <input type="hidden" id="task-id-{{ $index }}" name="task_id[{{ $index }}]" value="{{ old('task_id.' . $index, '') }}">
@@ -207,10 +214,53 @@
           @endif
         </div>
 
-        <!-- Ticket Field (Hidden by Default) -->
+        {{-- <!-- Ticket Field (Hidden by Default) -->
         <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
           <input type="text" class="ticket-name" name="ticket-name[{{ $index }}]" placeholder="Ticket Name" value="{{ old('ticket-name.' . $index, '') }}">
-        </div>
+        </div> --}}
+
+        {{-- <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
+          <div class="ticket-search-container">
+              <input 
+                  type="text" 
+                  class="ticket-name" 
+                  name="ticket-name[{{ $index }}]" 
+                  placeholder="Search Ticket..." 
+                  oninput="searchTickets(this)" 
+                  autocomplete="off" 
+                  value="{{ old('ticket-name.' . $index, '') }}"
+              >
+              <input type="hidden" id="ticket-id-{{ $index }}" name="ticket_id[{{ $index }}]" value="{{ old('ticket_id.' . $index, '') }}">
+              <!-- Dropdown will appear below -->
+              <div class="ticket-dropdown" style="display: none;"></div>
+          </div>
+        </div> --}}
+
+        <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
+          <div class="ticket-search-container">
+              <input 
+                  type="text" 
+                  class="ticket-name @error('ticket-name.'.$index) is-invalid @enderror" 
+                  name="ticket-name[{{ $index }}]" 
+                  placeholder="Search Ticket..." 
+                  oninput="searchTickets(this)" 
+                  autocomplete="off" 
+                  value="{{ old('ticket-name.' . $index, '') }}"
+              >
+              <input type="hidden" id="ticket-id-{{ $index }}" name="ticket_id[{{ $index }}]" value="{{ old('ticket_id.' . $index, '') }}">
+              <!-- Dropdown will appear below -->
+              <div class="ticket-dropdown" style="display: none;"></div>
+              
+           <!-- In ticket fields section -->
+            @error('ticket-name.'.$index)
+                <p class="error-message ticket-error">{{ $message }}</p>
+            @enderror
+            @error('ticket_id.'.$index)
+                  <p class="error-message ticket-error">{{ $message }}</p>
+            @enderror
+
+          </div>
+      </div>
 
         <!-- Common Fields -->
         <div class="common-fields">
@@ -291,119 +341,112 @@
 
 
          // script.js
+           // Working fine other than ticket
+        // function handleReportTypeChange(selectElement) {
+        //   const container = selectElement.closest('.report-container');
+        //   const projectFields = container.querySelector('.project-fields');
+        //   const ticketField = container.querySelector('.ticket-field');
+
+        //   if (selectElement.value === '1') {
+        //     projectFields.style.display = 'block';
+        //     ticketField.style.display = 'none';
+        //   } else if (selectElement.value === '2') {
+        //     projectFields.style.display = 'none';
+        //     ticketField.style.display = 'block';
+        //   } else {
+        //     projectFields.style.display = 'none';
+        //     ticketField.style.display = 'none';
+        //   }
+        // }
 
         function handleReportTypeChange(selectElement) {
-          const container = selectElement.closest('.report-container');
-          const projectFields = container.querySelector('.project-fields');
-          const ticketField = container.querySelector('.ticket-field');
+        const container = selectElement.closest('.report-container');
+        const projectFields = container.querySelector('.project-fields');
+        const ticketField = container.querySelector('.ticket-field');
 
-          if (selectElement.value === '1') {
+        if (selectElement.value === '1') {
             projectFields.style.display = 'block';
             ticketField.style.display = 'none';
-          } else if (selectElement.value === '2') {
+            // Clear ticket fields
+            ticketField.querySelector('.ticket-name').value = '';
+            ticketField.querySelector('[name^="ticket_id"]').value = '';
+        } else if (selectElement.value === '2') {
             projectFields.style.display = 'none';
             ticketField.style.display = 'block';
-          } else {
+            // Clear project fields
+            projectFields.querySelector('[name^="project_name"]').value = '';
+            projectFields.querySelector('[name^="project_id"]').value = '';
+            projectFields.querySelector('[name^="task_name"]').value = '';
+            projectFields.querySelector('[name^="task_id"]').value = '';
+        } else {
             projectFields.style.display = 'none';
             ticketField.style.display = 'none';
-          }
         }
+    }
+                
 
-                // // Function to add a new container
-                // function addContainer() {
-                //   const dynamicContainers = document.getElementById('dynamic-containers');
-                //   const newContainer = dynamicContainers.firstElementChild.cloneNode(true);
 
-                //   // Generate a unique ID for the new container
-                //   const uniqueId = Date.now(); // Use a timestamp to ensure uniqueness
+          // Works fine
+          // function addContainer() {
+          //     const dynamicContainers = document.getElementById('dynamic-containers');
+          //     const newContainer = dynamicContainers.firstElementChild.cloneNode(true);
 
-                //   // Update IDs for the new container's elements
-                //   newContainer.querySelectorAll('[id]').forEach(field => {
-                //     const id = field.getAttribute('id');
-                //     field.setAttribute('id', `${id}-${uniqueId}`);
-                //   });
+          //     // Generate a unique ID for the new container
+          //     const uniqueId = Date.now(); // Use a timestamp to ensure uniqueness
 
-                //   // Clear fields in the new container
-                //   newContainer.querySelectorAll('input, textarea').forEach(field => field.value = '');
+          //     // Update IDs and names for the new container's elements
+          //     newContainer.querySelectorAll('[id], [name]').forEach(field => {
+          //       // Update IDs
+          //       if (field.id) {
+          //         field.id = `${field.id}-${uniqueId}`;
+          //       }
 
-                //   // Make name attributes unique for server-side processing
-                //   newContainer.querySelectorAll('[name]').forEach(field => {
-                //     const name = field.getAttribute('name');
-                //     field.setAttribute('name', `${name}[${uniqueId}]`);
-                //   });
+          //       // Update names 
+          //       if (field.name) {
+          //         const fieldName = field.name.split('[')[0]; // Extract base name (e.g., "project_name")
+          //       // Update names This uniqueId is then used to update the name and id attributes of the fields in the new container:
+          //         field.name = `${fieldName}[${uniqueId}]`; // Update to use unique ID 
+          //       }
+          //     });
 
-                //   // Append the new container to the dynamic-containers div
-                //   dynamicContainers.appendChild(newContainer);
+          //     // Clear input and textarea fields in the new container
+          //     newContainer.querySelectorAll('input, textarea').forEach(field => {
+          //       if (field.type !== 'hidden') { // Skip hidden fields
+          //         field.value = '';
+          //       }
+          //     });
 
-                //   // Update the total hours
-                //   updateTotalHrs();
-                // }
+          //     // Append the new container to the dynamic-containers div
+          //     dynamicContainers.appendChild(newContainer);
 
-            // 20/03/2025
-          //       function addContainer() {
-          //   const dynamicContainers = document.getElementById('dynamic-containers');
-          //   const newContainer = dynamicContainers.firstElementChild.cloneNode(true);
+          //     // Update the total hours
+          //     updateTotalHrs();
+          //   }
 
-          //   // Generate a unique ID for the new container
-          //   const uniqueId = Date.now(); // Use a timestamp to ensure uniqueness
-
-          //   // Update IDs and names for the new container's elements
-          //   newContainer.querySelectorAll('[id]').forEach(field => {
-          //     const id = field.getAttribute('id');
-          //     field.setAttribute('id', `${id}-${uniqueId}`);
-          //   });
-
-          //   // Update name attributes for the new container's elements
-          //   newContainer.querySelectorAll('[name]').forEach(field => {
-          //     const name = field.getAttribute('name');
-          //     field.setAttribute('name', `${name}[${uniqueId}]`);
-          //   });
-
-          //   // Clear fields in the new container
-          //   newContainer.querySelectorAll('input, textarea').forEach(field => field.value = '');
-
-          //   // Append the new container to the dynamic-containers div
-          //   dynamicContainers.appendChild(newContainer);
-
-          //   // Update the total hours
-          //   updateTotalHrs();
-          // }
 
           function addContainer() {
-              const dynamicContainers = document.getElementById('dynamic-containers');
-              const newContainer = dynamicContainers.firstElementChild.cloneNode(true);
+          const dynamicContainers = document.getElementById('dynamic-containers');
+          const newContainer = dynamicContainers.firstElementChild.cloneNode(true);
+          const uniqueId = Date.now();   // Use a timestamp to ensure uniqueness
 
-              // Generate a unique ID for the new container
-              const uniqueId = Date.now(); // Use a timestamp to ensure uniqueness
+           // Update IDs and names for the new container's elements
+          newContainer.querySelectorAll('[id], [name]').forEach(field => {
+              if (field.id) field.id = field.id.replace(/\d+$/, '') + uniqueId;
+              if (field.name) {
+                  const fieldName = field.name.split('[')[0];
+                  field.name = `${fieldName}[${uniqueId}]`;
+              }
+          });
 
-              // Update IDs and names for the new container's elements
-              newContainer.querySelectorAll('[id], [name]').forEach(field => {
-                // Update IDs
-                if (field.id) {
-                  field.id = `${field.id}-${uniqueId}`;
-                }
+          // Clear values , Clear input and textarea fields in the new container
+          newContainer.querySelectorAll('input, textarea').forEach(field => {
+              if (field.type !== 'hidden') field.value = '';
+          });
 
-                // Update names 
-                if (field.name) {
-                  const fieldName = field.name.split('[')[0]; // Extract base name (e.g., "project_name")
-                // Update names This uniqueId is then used to update the name and id attributes of the fields in the new container:
-                  field.name = `${fieldName}[${uniqueId}]`; // Update to use unique ID 
-                }
-              });
-
-              // Clear input and textarea fields in the new container
-              newContainer.querySelectorAll('input, textarea').forEach(field => {
-                if (field.type !== 'hidden') { // Skip hidden fields
-                  field.value = '';
-                }
-              });
-
-              // Append the new container to the dynamic-containers div
-              dynamicContainers.appendChild(newContainer);
-
-              // Update the total hours
-              updateTotalHrs();
-            }
+           // Append the new container to the dynamic-containers div
+          dynamicContainers.appendChild(newContainer);
+          updateTotalHrs();
+      }
 
 // function submitReport() {
 //   const reportContainers = document.querySelectorAll('.report-container');
@@ -603,6 +646,7 @@
 
                 var searchProjectsRoute = "{{ route('admin.projects.search', ':term') }}";
                 var searchTasksRoute = "{{ route('admin.tasks.search') }}"; // No placeholder needed for task search
+                var searchTicketsRoute = "{{ route('admin.tickets.search') }}";
                 
                 // function searchProjects(input) {
                 //   const container = input.closest('.report-container'); // Get the closest container
@@ -763,6 +807,103 @@
                 resultsDiv.innerHTML = '';
               }
             }
+
+             // Function to search tickets (scoped to the container)
+            // function searchTickets(input) {
+            //     const container = input.closest('.report-container'); // Get the closest container
+            //     const term = input.value.trim();
+            //     const resultsDiv = container.querySelector('.ticket-results'); // We'll need to add this div
+                
+            //     if (term.length > 0) {
+            //         $.ajax({
+            //             url: searchTicketsRoute,
+            //             method: 'GET',
+            //             data: {
+            //                 term: term
+            //             },
+            //             success: function(response) {
+            //                 resultsDiv.innerHTML = '';
+            //                 response.forEach(ticket => {
+            //                     const ticketDiv = document.createElement('div');
+            //                     ticketDiv.textContent = ticket.label;
+            //                     ticketDiv.classList.add('dropdown_lists'); // Add the same class for consistent styling
+                                
+            //                     ticketDiv.onclick = function() {
+            //                         input.value = ticket.label;
+            //                         // If you need to store the ticket ID, you can add a hidden field
+            //                         container.querySelector('[id^="ticket-id"]').value = ticket.id;
+            //                         resultsDiv.innerHTML = '';
+            //                     };
+            //                     resultsDiv.appendChild(ticketDiv);
+            //                 });
+            //             },
+            //             error: function(xhr, status, error) {
+            //                 console.error('AJAX Error:', error);
+            //             }
+            //         });
+            //     } else {
+            //         resultsDiv.innerHTML = '';
+            //     }
+            // }
+
+
+                          // Function to search tickets and populate select dropdown
+                          function searchTickets(input) {
+                          const container = input.closest('.ticket-search-container');
+                          const dropdown = container.querySelector('.ticket-dropdown');
+                          const hiddenIdField = container.querySelector('[id^="ticket-id"]');
+                          const term = input.value.trim();
+
+                          if (term.length > 0) {
+                              $.ajax({
+                                  url: searchTicketsRoute,
+                                  method: 'GET',
+                                  data: { term: term },
+                                  success: function(response) {
+                                      dropdown.innerHTML = '';
+                                      
+                                      if (response.length > 0) {
+                                          // Create a <select>-like dropdown using <div> elements
+                                          const dropdownList = document.createElement('div');
+                                          dropdownList.className = 'ticket-dropdown-list';
+                                          
+                                          response.forEach(ticket => {
+                                              const option = document.createElement('div');
+                                              option.className = 'ticket-dropdown-option';
+                                              option.textContent = ticket.label;
+                                              
+                                              option.onclick = function() {
+                                                  input.value = ticket.label;
+                                                  hiddenIdField.value = ticket.id;
+                                                  dropdown.style.display = 'none';
+                                              };
+                                              
+                                              dropdownList.appendChild(option);
+                                          });
+                                          
+                                          dropdown.appendChild(dropdownList);
+                                          dropdown.style.display = 'block';
+                                      } else {
+                                          dropdown.style.display = 'none';
+                                      }
+                                  },
+                                  error: function(xhr, status, error) {
+                                      console.error('AJAX Error:', error);
+                                  }
+                              });
+                          } else {
+                              dropdown.style.display = 'none';
+                          }
+                      }
+
+                      // Close dropdown when clicking outside
+                      document.addEventListener('click', function(e) {
+                          if (!e.target.closest('.ticket-search-container')) {
+                              document.querySelectorAll('.ticket-dropdown').forEach(dropdown => {
+                                  dropdown.style.display = 'none';
+                              });
+                          }
+                      });
 
 
         //     function validateForm() {

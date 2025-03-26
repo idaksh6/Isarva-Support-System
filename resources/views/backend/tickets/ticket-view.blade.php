@@ -373,6 +373,13 @@
     <script src="{{ asset('assets/plugins/bootstrap/bootstrap.bundle.min.js')}}"></script>
 
 
+        <!-- Jquery Page Js -->
+        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+    
+        {{-- <script src="{{ asset('js/template.js') }}"></script> --}}
+
+
+
 
     <script>
         var editTicketRoute = "{{ route('admin.ticket.edit-ticket', ':id') }}";

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DailyReportEmail;
 use App\Mail\DailyReportMail;
+use App\Models\Backend\Ticket;
 
 class DailyReportController extends Controller
 {
@@ -60,111 +61,170 @@ class DailyReportController extends Controller
     }
 
 
-    
-    public function store(Request $request)
+    // public function searchTickets(Request $request)
+    // {
+    //     $term = $request->input('term');
+        
+    //     if ($term) {
+    //         $tickets = Ticket::where('title', 'like', '%' . $term . '%')
+    //                         ->select('id', 'title as label')
+    //                         ->get();
+    //     } else {
+    //         $tickets = [];
+    //     }
+
+    //     return response()->json($tickets);
+    // }
+
+
+    public function searchTickets(Request $request)
     {
-        // Validate request
-        $request->validate([
-            'project_name'   => 'required|array|min:1',
-            'project_name.*' => 'required|string|max:255',
-            'task_name'      => 'required|array|min:1',
-            'task_name.*'    => 'required|string|max:255',
-            'type'           => 'required|array|min:1',
-            'type.*'         => 'required|integer|in:0,1,2',
-            'comments'       => 'required|array',
-            'comments.*'     => 'required|string',
-            'hrs'            => 'required|array|min:1',
-            'hrs.*'          => 'required|numeric',
-            'link'           => 'nullable|array',
-            'link.*'         => 'nullable|url',
-            'billable'       => 'required|array|min:1',
-            'billable.*'     => 'required|integer|in:0,1,2',
-            'total_hrs'      => 'required|numeric',
-            'overall_status' => 'required|string',
-        ], [
-            'project_id.*.exists'      => 'Invalid project selected.', // Custom error message
-            'task_id.*.exists'         => 'Invalid task selected.', // Custom error message
-            'project_name.required'    => 'The project name is required.',
-            'project_name.*.required'  => 'The project name is required.',
-            'task_name.required'       => 'The task name is required.',
-            'task_name.*.required'     => 'The task name is required.',
-            'comments.required'        => 'The comments are required.',
-            'comments.*.required'      => 'The comments are required.',
-            'hrs.required'             => 'The hours are required.',
-            'hrs.*.required'           => 'The hours are required.',
-            'type.required'            => 'The report type is required.',
-            'type.*.required'          => 'The report type is required for all containers.',
-            'type.*.in'                => 'The selected report type is invalid.',
-        ]);
-    
-        // Extract all container data
-        $containerData = [];
-        foreach ($request->get('project_name') as $uniqueId => $projectName) {
-            $containerData[] = [
-                'project_id'     => $request->get('project_id')[$uniqueId],
-                'task_id'        => $request->get('task_id')[$uniqueId],
-                'user_id'        => Auth::id(),
-                'project_name'   => $projectName,
-                'task_name'      => $request->get('task_name')[$uniqueId],
-                'type'           => $request->get('type')[$uniqueId],
-                'comments'       => $request->get('comments')[$uniqueId],
-                'hrs'            => $request->get('hrs')[$uniqueId],
-                'link'           => $request->get('link')[$uniqueId],
-                'billable'       => $request->get('billable')[$uniqueId],
-            ];
+        $term = $request->input('term');
+        
+        if ($term) {
+            $tickets = Ticket::where('title', 'like', '%' . $term . '%')
+                               ->select('id', 'title as label')
+                               ->get()
+                               ->toArray();
+        } else {
+            $tickets = [];
         }
     
-        DB::beginTransaction(); // Start DB transaction
+        return response()->json($tickets);
+    }
     
-        // Insert into `si_daily_report`
+ 
+      
+    public function store(Request $request)
+    {
+        // Base validation rules
+        $request->validate([
+            'type' => 'required|array|min:1',
+            'type.*' => 'required|integer|in:0,1,2',
+            'comments' => 'required|array',
+            'comments.*' => 'required|string',
+            'hrs' => 'required|array|min:1',
+            'hrs.*' => 'required|numeric',
+            'link' => 'nullable|array',
+            'link.*' => 'nullable|url',
+            'billable' => 'required|array|min:1',
+            'billable.*' => 'required|integer|in:0,1,2',
+            'total_hrs' => 'required|numeric',
+            'overall_status' => 'required|string',
+            
+            // Make all fields nullable by default
+            'project_name.*' => 'nullable|string|max:255',
+            'project_id.*' => 'nullable|integer',
+            'task_name.*' => 'nullable|string|max:255',
+            'task_id.*' => 'nullable|integer',
+            'ticket-name.*' => 'nullable|string|max:255',
+            'ticket_id.*' => 'nullable|integer'
+        ], [
+            // Your existing error messages
+        ]);
+    
+        // Manual conditional validation
+        foreach ($request->get('type', []) as $index => $type) {
+            if ($type == 1) { // Project
+                Validator::make($request->all(), [
+                    "project_name.$index" => 'required|string|max:255',
+                    "project_id.$index" => 'required|integer|exists:si_projects,id',
+                    "task_name.$index" => 'required|string|max:255',
+                    "task_id.$index" => 'required|integer|exists:si_tasks,id',
+                ], [
+                    "project_name.$index.required" => 'The project name is required.',
+                    "project_id.$index.required" => 'The project selection is required.',
+                    "project_id.$index.exists" => 'Invalid project selected.',
+                    "task_name.$index.required" => 'The task name is required.',
+                    "task_id.$index.required" => 'The task selection is required.',
+                    "task_id.$index.exists" => 'Invalid task selected.',
+                ])->validate();
+            } 
+            elseif ($type == 2) { // Ticket
+                Validator::make($request->all(), [
+                    "ticket-name.$index" => 'required|string|max:255',
+                    "ticket_id.$index" => 'required|integer|exists:isar_tickets,id',
+                ], [
+                    "ticket-name.$index.required" => 'The ticket name is required.',
+                    "ticket_id.$index.required" => 'The ticket selection is required.',
+                    "ticket_id.$index.exists" => 'Invalid ticket selected.',
+                ])->validate();
+            }
+        }
+    
+        // Process container data
+        $containerData = [];
+        foreach ($request->get('type') as $uniqueId => $type) {
+            $data = [
+                'user_id' => Auth::id(),
+                'type' => $type,
+                'comments' => $request->get('comments')[$uniqueId],
+                'hrs' => $request->get('hrs')[$uniqueId],
+                'link' => $request->get('link')[$uniqueId] ?? null,
+                'billable' => $request->get('billable')[$uniqueId],
+            ];
+    
+            if ($type == 1) { // Project
+                $data['project_name'] = $request->get('project_name')[$uniqueId];
+                $data['task_name'] = $request->get('task_name')[$uniqueId];
+                $data['project_id'] = $request->get('project_id')[$uniqueId];
+                $data['task_id'] = $request->get('task_id')[$uniqueId];
+            } 
+            elseif ($type == 2) { // Ticket
+                $data['project_name'] = $request->get('ticket-name')[$uniqueId];
+                $data['task_name'] = 'Other';
+                $data['project_id'] = $request->get('ticket_id')[$uniqueId]; // Store ticket ID in project_id
+                $data['task_id'] = $request->get('task_id')[$uniqueId] ?? 0; // Fallback to 0 if null
+            }
+    
+            $containerData[] = $data;
+        }
+    
+        DB::beginTransaction();
+    
         $dailyReport = new DailyReport();
-        $dailyReport->user_id        = Auth::id();
-        $dailyReport->total_time     = array_sum(array_column($containerData, 'hrs')); // Sum of all hours
+        $dailyReport->user_id = Auth::id();
+        $dailyReport->total_time = array_sum(array_column($containerData, 'hrs'));
         $dailyReport->overall_status = $request->get('overall_status');
-        $dailyReport->created_by     = Auth::id();
-        $dailyReport->updated_by     = Auth::id();
+        $dailyReport->created_by = Auth::id();
+        $dailyReport->updated_by = Auth::id();
         $dailyReport->save();
     
-        $dailyReportId = $dailyReport->id; // Get inserted `daily_report_id`
+        $dailyReportId = $dailyReport->id;
     
-        // Insert into `si_daily_report_fields` for each container
         foreach ($containerData as $data) {
             $dailyReportField = new DailyReportField();
             $dailyReportField->daily_report_id = $dailyReportId;
-            $dailyReportField->user_id         = Auth::id();
-            $dailyReportField->type            = $data['type'];
-            $dailyReportField->project_name    = $data['project_name'];
-            $dailyReportField->task_name       = $data['task_name'];
-            $dailyReportField->comments        = $data['comments'];
-            $dailyReportField->hrs             = $data['hrs'];
-            $dailyReportField->link            = $data['link'];
-            $dailyReportField->billable_type   = $data['billable'];
-            $dailyReportField->project_id      = $data['project_id'];
-            $dailyReportField->task_id         = $data['task_id'];
-            $dailyReportField->created_by      = Auth::id();
-            $dailyReportField->updated_by      = Auth::id();
+            $dailyReportField->user_id = Auth::id();
+            $dailyReportField->type = $data['type'];
+            $dailyReportField->project_name = $data['project_name'];
+            $dailyReportField->task_name = $data['task_name'];
+            $dailyReportField->comments = $data['comments'];
+            $dailyReportField->hrs = $data['hrs'];
+            $dailyReportField->link = $data['link'];
+            $dailyReportField->billable_type = $data['billable'];
+            $dailyReportField->project_id = $data['project_id'];
+            
+            // Handle task_id for tickets - set to 0 if null
+            $dailyReportField->task_id = ($data['type'] == 2 && empty($data['task_id'])) ? 0 : $data['task_id'];
+            
+            $dailyReportField->created_by = Auth::id();
+            $dailyReportField->updated_by = Auth::id();
             $dailyReportField->save();
         }
     
-        DB::commit(); // Commit transaction
+        DB::commit();
     
-      // Fetch data for email
+        // Email and redirect logic
         $reportData = DailyReportField::where('daily_report_id', $dailyReportId)->get();
-        $overallStatus = $dailyReport->overall_status; // Fetch overall status
-        $totalTime = $dailyReport->total_time;
-
-        // Prepare data for email
         $emailData = [
             'reportData' => $reportData,
-            'overallStatus' => $overallStatus, // Pass overall status to the email
-            'totalTime' => $totalTime
+            'overallStatus' => $dailyReport->overall_status,
+            'totalTime' => $dailyReport->total_time
         ];
-
-        // Send email
-        Mail::to('saikiran@idaksh.in')->send(new DailyReportMail($emailData));
+    
+        Mail::to('web.b4@isarva.in')->send(new DailyReportMail($emailData));
     
         return redirect()->back()->with('flash_success_dailyreport', 'Daily Report added successfully.');
     }
-      
-
 }
