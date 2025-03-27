@@ -67,4 +67,26 @@ class Ticket extends Model
     {
         return $this->hasMany(TicketComment::class, 'ticket_id');
     }
+
+   
+    public static function countOpenTickets()
+    {
+        return self::where('status', 1)->count();
+    }
+
+    public static function countOnHoldTickets()
+    {
+        return self::where('status', 3)->count();
+    }
+
+    public static function countFlaggedTickets()
+    {
+        return self::whereNotNull('flag_to')->where('flag_to', '!=', '')->count();
+    }
+
+    public static function getActiveTicketCount()
+    {
+        return self::where('status', '!=', 7)->count();
+    }
+    
 }

@@ -54,6 +54,10 @@
                                     <span class="badge bg-danger text-white px-3 py-2 rounded-pill">
                                         Status: Awaiting for Client Response
                                     </span>
+                                @elseif ($ticket->status==7)
+                                    <span class="badge bg-danger text-white px-3 py-2 rounded-pill">
+                                        Status: Closed
+                                    </span>
                                 @else
                                     <span class="badge bg-warning text-white px-3 py-2 rounded-pill">
                                         Status: Open

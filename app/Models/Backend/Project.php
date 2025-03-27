@@ -140,10 +140,11 @@ public function getDepartmentNameAttribute()
     }
     
     
-
+    
+    // Used under Project manage page 
     public function getManagerNameAttribute()
     {
-        return $this->belongsTo(Employee::class, 'manager')->value('name') ?? 'N/A';
+        return $this->belongsTo(User::class, 'manager')->value('name') ?? 'N/A';
     }
 
     public function getFormattedStartDateAttribute()
@@ -180,7 +181,7 @@ public function getDepartmentNameAttribute()
      // Relationship to fetch the user who updated the project
      public function updatedBy()
      {
-         return $this->belongsTo(Employee::class, 'updated_by');
+         return $this->belongsTo(User::class, 'updated_by');
      }
 
       // Relationship to fetch estimation change logs
@@ -260,6 +261,25 @@ public function getDepartmentNameAttribute()
     {
         return self::count();  
     }
+
+    public static function getOpenProjectCount()
+    {
+        return self::where('status', 2)->count();
+    }
+
+    public static function getClosedProjectCount()
+    {
+        return self::where('status', 6)->count();
+    }
+
+    
+    public static function getOnHoldProjectCount()
+    {
+        return self::where('status', 7)->count();
+    }
+
+
+
 
     // public function client()
     // {
@@ -352,4 +372,6 @@ public function getDepartmentNameAttribute()
     }
 
    
+
+
 }
