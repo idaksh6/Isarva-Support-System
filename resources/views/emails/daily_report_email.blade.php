@@ -52,29 +52,35 @@
     <table>
         <thead>
             <tr>
-                <th>NO</th>
-                <th>Task</th>
-                <th>Comments</th>
-                <th>Spent Hrs</th>
+              <th>NO</th>
+              <th>Task</th>
+              <th>Comments</th>
+              <th>Spent Hrs</th>
             </tr>
         </thead>
+
         <tbody>
+
             @foreach($reportData as $index => $data)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>
+                  <td>{{ $index + 1 }}</td>
+                  <td>
+                    @if($data->type == 1) <!-- Project -->
                         <strong>Project:</strong> {{ $data->project_name }}<br>
                         <strong>Task:</strong> {{ $data->task_name }}
-                    </td>
-                    <td>{{ $data->comments }}</td> <!-- Comments from si_daily_report_fields -->
-                    <td>{{ $data->hrs }}</td> <!-- Hrs from si_daily_report_fields -->
+                    @elseif($data->type == 2) <!-- Ticket -->
+                        <strong>Ticket:</strong> {{ $data->project_name }} 
+                    @endif
+                  </td>
+                  <td>{{ $data->comments }}</td>
+                  <td>{{ $data->hrs }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3">Total Hours</td>
-                <td><strong>{{ $totalTime }}</strong></td> <!-- Dynamic total time -->
+              <td colspan="3">Total Hours</td>
+              <td><strong>{{ $totalTime }}</strong></td>
             </tr>
         </tfoot>
     </table>

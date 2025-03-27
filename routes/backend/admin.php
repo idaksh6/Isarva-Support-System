@@ -80,6 +80,10 @@ Route::group([
     // Route to bring Task name under daily report field
     Route::get('/admin/tasks/search', [DailyReportController::class, 'searchTasks'])->name('tasks.search');
 
+    
+    // Route to bring Ticket name under daily report field
+    Route::get('/tickets/search', [DailyReportController::class, 'searchTickets'])->name('tickets.search');
+
     // Daily Report Route
     Route::get('/add/daily-reports', [DailyReportController::class, 'index'])->name('add_dailyreport');
     Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
