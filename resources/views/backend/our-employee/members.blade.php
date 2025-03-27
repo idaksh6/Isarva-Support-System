@@ -179,7 +179,7 @@
                     @method('PUT')
                     <!-- Employee Name -->
                     <div class="mb-3">
-                        <label class="form-label">Employee Name</label>
+                        <label class="form-label">Employee Name<span class="required">*</span></label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="Enter the Project Name">
                         <div class="text-danger" id="edit-error-name"></div> <!-- Error container for "name" -->
                     </div>
@@ -192,7 +192,7 @@
                             <div class="text-danger" id="edit-error-employee_id"></div> <!-- Error container for "employee_id" -->
                         </div>
                         <div class="col-sm-6">
-                            <label for="joining_date" class="form-label">Joining Date</label>
+                            <label for="joining_date" class="form-label">Joining Date<span class="required">*</span></label>
                             <input type="date" class="form-control" name="joining_date" id="joining_date">
                             <div class="text-danger" id="edit-error-joining_date"></div> <!-- Error container for "joining_date" -->
                         </div>
@@ -215,7 +215,7 @@
                     <!-- Email ID and Phone -->
                     <div class="row g-3 mb-3">
                         <div class="col">
-                            <label class="form-label">Email ID</label>
+                            <label class="form-label">Email ID<span class="required">*</span></label>
                             <input type="email" class="form-control" name="email_id" id="email_id" placeholder="User Name">
                             <div class="text-danger" id="edit-error-email_id"></div> <!-- Error container for "email_id" -->
                         </div>
@@ -234,7 +234,7 @@
                             <div class="text-danger" id="edit-error-webhook_url"></div> <!-- Error container for "webhook_url" -->
                         </div>
                         <div class="col">
-                            <label class="form-label">Status</label>
+                            <label class="form-label">Status<span class="required">*</span></label>
                             <select class="form-select" name="status" id="status" aria-label="Default select status Category">
                                 <option value="1">Active</option>
                                 <option value="2">Blocked</option>
@@ -246,7 +246,7 @@
                     <!-- Department and Designation -->
                     <div class="row g-3 mb-3">
                         <div class="col">
-                            <label class="form-label">Department</label>
+                            <label class="form-label">Department<span class="required">*</span></label>
                             <select class="form-select" name="department" id="department" aria-label="Default select Project Category">
                                 <option value="1">Front-end</option>
                                 <option value="2">Back-end</option>
@@ -257,7 +257,7 @@
                             <div class="text-danger" id="edit-error-department"></div> <!-- Error container for "department" -->
                         </div>
                         <div class="col">
-                            <label class="form-label">Designation</label>
+                            <label class="form-label">Designation<span class="required">*</span></label>
                             <select class="form-select" name="designation" id="designation" aria-label="Default select Project Category">
                                 <option value="1">Website Design</option>
                                 <option value="2">App Development</option>
@@ -275,7 +275,7 @@
 
                     <!-- Role -->
                     <div class="mb-3">
-                        <label class="form-label">Role</label>
+                        <label class="form-label">Role<span class="required">*</span></label>
                         <select class="form-select" name="role" id="role" aria-label="Default select Role Category">
                             <option value="1">Admin</option>
                             <option value="2">Staff</option>
@@ -427,294 +427,7 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar4.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Lillian	Powell</h6>
-                                    <span class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Quality Assurance</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>First Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar9.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">10</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">04</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">15</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Rachel Parsons</h6>
-                                    <span class="bg-lightgreen py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Website Designer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar11.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">12</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">03</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">25</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">John Hardacre</h6>
-                                    <span class="light-orange-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Developer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar12.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">12</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">4.5</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">25</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Jan Ince</h6>
-                                    <span class="bg-lightblue py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">QA/QC Engineer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar8.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">08</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">03</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">12</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Steven	Butler</h6>
-                                    <span class="bg-lightyellow py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Mobile developer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar7.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">04</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">4.5</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">04</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Robert Hammer</h6>
-                                    <span class="light-info-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">UI/UX Designer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar1.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Paul Slater</h6>
-                                    <span class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Quality Assurance</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>First Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar5.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">10</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">4.5</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">15</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Rachel Parsons</h6>
-                                    <span class="bg-lightgreen py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Website Designer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    {{-- <div class="col">
-                        <div class="card teacher-card">
-                            <div class="card-body d-flex">
-                                <div class="profile-av pe-xl-4 pe-md-2 pe-sm-4 pe-4 text-center w220">
-                                    <img src="{{url('/').'/images/lg/avatar6.jpg'}}" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
-                                    <div class="about-info d-flex align-items-center mt-3 justify-content-center">
-                                        <div class="followers me-2">
-                                            <i class="icofont-tasks color-careys-pink fs-4"></i>
-                                            <span class="">10</span>
-                                        </div>
-                                        <div class="star me-2">
-                                            <i class="icofont-star text-warning fs-4"></i>
-                                            <span class="">04</span>
-                                        </div>
-                                        <div class="own-video">
-                                            <i class="icofont-data color-light-orange fs-4"></i>
-                                            <span class="">15</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="teacher-info border-start ps-xl-4 ps-md-3 ps-sm-4 ps-4 w-100">
-                                    <h6  class="mb-0 mt-2  fw-bold d-block fs-6">Rachel Parsons</h6>
-                                    <span class="bg-lightgreen py-1 px-2 rounded-1 d-inline-block fw-bold small-11 mb-0 mt-1">Website Designer</span>
-                                    <div class="video-setting-icon mt-3 pt-3 border-top">
-                                        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices</p>
-                                    </div>
-                                    <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a>
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
+                  
                     @endforeach
                     @else
                      <div class="col-12 text-center py-5 mx-auto">
@@ -773,7 +486,7 @@
                         $('#joining_date').val(response.joining_date);
                         $('#user_name').val(response.user_name);
                         $('#emp_password').val(response.password);
-                        $('#email_id').val(response.email_id);
+                        $('#email_id').val(response.email);
                         $('#phone_no').val(response.phone);
                         $('#webhook_url').val(response.webhook_url);
                         $('#status').val(response.status);

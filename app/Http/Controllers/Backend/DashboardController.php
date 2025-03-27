@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
+use App\Models\Backend\Project;
+use App\Models\Backend\Ticket;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class DashboardController.
@@ -44,7 +47,27 @@ class DashboardController
 
     public function project()
     {
-        return view('backend.project_dashboard');
+
+        $userId = Auth::id(); // Get logged-in user ID
+
+        $totalProjects = Project::getTotalProjects(); // Get total project count
+        $openProjects = Project::getOpenProjectCount(); // Count of open projects
+        $closedProjects = Project::getClosedProjectCount(); // Closed projects count
+        $OnHoldProjects = Project::getOnHoldProjectCount(); // OnHold Count
+
+        $openTickets = Ticket::countOpenTickets(); // Get active tickets count
+        $onHoldTickets = Ticket::countOnHoldTickets();
+        $flaggedTickets = Ticket::countFlaggedTickets(); // Get flagged tickets count
+        $activeTickets = Ticket::getActiveTicketCount(); // Other than closed ticket
+
+        // Count projects where the logged-in user is assigned (as Manager, Team Leader, or Team Member)
+        $totalProjectsCount = Project::where('manager', $userId)
+            ->orWhere('team_leader', $userId)
+            ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId])
+            ->count();
+
+        return view('backend.project_dashboard', compact('totalProjectsCount','totalProjects','openProjects','closedProjects','OnHoldProjects',
+        'openTickets','onHoldTickets','flaggedTickets', 'activeTickets'));
     }
     
     public function help()

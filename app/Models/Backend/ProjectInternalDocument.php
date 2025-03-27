@@ -68,7 +68,7 @@ class ProjectInternalDocument extends Model
      */
     public function createdByUser()
     {
-        return $this->belongsTo(Employee::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
@@ -76,6 +76,6 @@ class ProjectInternalDocument extends Model
      */
     public function updatedByUser()
     {
-        return $this->belongsTo(Employee::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
