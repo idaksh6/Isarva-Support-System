@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Billable/Non-Billable Report</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,7 +29,16 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align: center;">Billable/Non-Billable Report</h2>
+    <h2 style="text-align: center;"> All (Project, Ticket, Meeting and Other) </h1>
+    <h3 style="text-align: center; font-size: 25px; margin-top: 25px;">Billable/Non-Billable Report</h3>
+    <h4 style="text-align: center;">
+        @if(request('start_date') && request('end_date'))
+            Starting from {{ \Carbon\Carbon::parse(request('start_date'))->format('d-m-Y') }} 
+            to {{ \Carbon\Carbon::parse(request('end_date'))->format('d-m-Y') }}
+        @else
+            No Date Range Selected
+        @endif
+    </h4>
     
     <table>
         <thead>
@@ -46,7 +56,7 @@
             @foreach($reports as $report)
                 <tr>
                     <td>{{ $report->user->name ?? 'N/A' }}</td>
-                    <td>{{ $report->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $report->created_at ? $report->created_at->format('d.m.Y') : '-' }}</td>
                     <td>{{ $report->project_name }} ({{ $report->type == 1 ? 'P' : 'T' }})</td>
                     <td>{{ $report->task_name }}</td>
                     <td>{{ $report->comments }}</td>

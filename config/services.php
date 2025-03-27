@@ -61,6 +61,7 @@ return [
 
    
 
+
     'google' => [
         'active' => env('GOOGLE_ACTIVE', true),
         'client_id' => env('GOOGLE_CLIENT_ID'),

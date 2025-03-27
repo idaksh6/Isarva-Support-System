@@ -255,7 +255,20 @@
 <!-- Bootstrap Bundle includes Popper.js -->
 
 
+    <!-- Jquery Page Js -->
+    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+    <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script>
+
+    <script src="{{ asset('js/template.js') }}"></script>
+
+
+        <!-- Jquery Page Js -->
+        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+    
+        <script src="{{ asset('js/template.js') }}"></script>
+
 <script>
+    
     $(document).ready(function () {
         $("#ticket-comment-form").validate({
             rules: {

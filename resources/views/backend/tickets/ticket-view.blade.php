@@ -383,6 +383,13 @@
     
 
 
+        <!-- Jquery Page Js -->
+        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+    
+        {{-- <script src="{{ asset('js/template.js') }}"></script> --}}
+
+
+
 
     <script>
         var editTicketRoute = "{{ route('admin.ticket.edit-ticket', ':id') }}";

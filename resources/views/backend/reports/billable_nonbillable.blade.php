@@ -5,85 +5,6 @@
 @section('content')
 
 
-{{-- 
-<div class="container">
-    <div class="card mt-3">
-        <div class="card-header bg-primary text-white">
-            <h5>Search Filters</h5>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('admin.billable_nonbillable_report') }}" method="GET">
-                <div class="row">
-                    <!-- Start Date -->
-                    <div class="col-md-3">
-                        <label for="start_date">Start Date:</label>
-                        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ now()->subDay()->toDateString() }}">
-                    </div>
-
-                    <!-- End Date -->
-                    <div class="col-md-3">
-                        <label for="end_date">End Date:</label>
-                        <input type="date" id="end_date" name="end_date" class="form-control" value="{{ now()->toDateString() }}">
-                    </div>
-
-                    <!-- Employee Dropdown -->
-                    <div class="col-md-3">
-                        <label for="employee">Employee:</label>
-                        <select id="employee" name="employee" class="form-control">
-                            <option value="">Select Employee</option>
-                            @foreach($employees as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Project/Ticket Dropdown -->
-                    <div class="col-md-3">
-                        <label for="project_ticket">Project/Ticket:</label>
-                        <select id="project_ticket" name="project_ticket" class="form-control">
-                            <option value="none">None</option>
-                            <option value="project">Project</option>
-                            <option value="ticket">Ticket</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Select Project/Ticket Field -->
-                <div class="row mt-3" id="select_project_field" style="display: none;">
-                    <div class="col-md-3">
-                        <label id="select_label" for="select_project">Select Project:</label>
-                        <select id="select_project" name="select_project" class="form-control">
-                            <option value="">Select</option>
-                            @foreach($projects as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Billing Type -->
-                <div class="row mt-3">
-                    <div class="col-md-3">
-                        <label for="billing_type">Billing Type:</label>
-                        <select id="billing_type" name="billing_type" class="form-control">
-                            <option value="none">None</option>
-                            <option value="billable">Billable</option>
-                            <option value="nonbillable">Non-Billable</option>
-                            <option value="internal_billable">Internal Billable</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Search Button -->
-                <div class="row mt-3">
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> --}}
 <div class="container">
     <div class="card mt-3">
         <div class="card-header bg-primary text-white">
@@ -113,7 +34,7 @@
                         <select id="employee" name="employee" class="form-control select2">
                             <option value="">Select Employee</option>
                             @foreach($employees as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
+                                <option value="{{ $id }}" {{ request('employee') == $id ? 'selected' : '' }}>{{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -136,7 +57,7 @@
                         <select id="select_project" name="select_project" class="form-control select2">
                             <option value="">Select</option>
                             @foreach($projects as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
+                                <option value="{{ $name }}">{{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -197,7 +118,7 @@
             @foreach($reports as $report)
                 <tr>
                     <td>{{ $report->user->name ?? 'N/A' }}</td>
-                    <td>{{ $report->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $report->created_at ? $report->created_at->format('d.m.Y') : '-' }}</td>
                     <td>{{ $report->project_name }} ({{ $report->type == 1 ? 'P' : 'T' }})</td>
                     <td>{{ $report->task_name }}</td>
                     <td>{{ $report->comments }}</td>
@@ -253,63 +174,49 @@
     <script src="{{ asset('js/template.js') }}"></script>
 
     <!-- Include Select2 Library -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
 
-    <script>
-        // $(document).ready(function() {
-        //     $('#project_ticket').change(function() {
-        //         var selectedValue = $(this).val();
-        //         if (selectedValue === 'project') {
-        //             $('#select_label').text('Select Project:');
-        //             $('#select_project').html(`@foreach($projects as $id => $name) <option value="{{ $id }}">{{ $name }}</option> @endforeach`);
-        //             $('#select_project_field').show();
-        //         } else if (selectedValue === 'ticket') {
-        //             $('#select_label').text('Select Ticket:');
-        //             $('#select_project').html('<option value="1">Ticket 1</option><option value="2">Ticket 2</option>');
-        //             $('#select_project_field').show();
-        //         } else {
-        //             $('#select_project_field').hide();
-        //         }
-        //     });
-        // });
-        </script>
+
 
 <script>
-    $(document).ready(function() {
-        // Initialize all select2 elements
-        $('.select2').select2({
-            width: '100%',
-            placeholder: "Select an option",
-            allowClear: true
-        });
+            $(document).ready(function() {
+                // Initialize all select2 elements
+                $('.select2').select2({
+                    width: '100%',
+                    placeholder: "Select an option",
+                    allowClear: true
+                });
 
-        // Handle dynamic change for Project/Ticket field
-        $('#project_ticket').change(function() {
-            var selectedValue = $(this).val();
-            if (selectedValue === 'project') {
-                $('#select_label').text('Select Project:');
-                var options = `<option value="">Select</option>
-                    @foreach($projects as $id => $name)
-                        <option value="{{ $name }}">{{ $name }}</option>
-                    @endforeach`;
-                $('#select_project').html(options);
-                $('#select_project_field').show();
-                $('#select_project').select2({ width: '100%' });
-            } else if (selectedValue === 'ticket') {
-                $('#select_label').text('Select Ticket:');
-                var options = `<option value="">Select</option>
-                    <option value="Ticket 1">Ticket 1</option>
-                    <option value="Ticket 2">Ticket 2</option>`;
-                $('#select_project').html(options);
-                $('#select_project_field').show();
-                $('#select_project').select2({ width: '100%' });
-            } else {
-                $('#select_project_field').hide();
-            }
-        });
-    });
+                // Handle dynamic change for Project/Ticket field
+                $('#project_ticket').change(function() {
+                    var selectedValue = $(this).val();
+                    if (selectedValue === 'project') {
+                        $('#select_label').text('Select Project:');
+                        var options = `<option value="">Select</option>
+                            @foreach($projects as $id => $name)
+                                <option value="{{ $name }}">{{ $name }}</option>
+                            @endforeach`;
+                        $('#select_project').html(options);
+                        $('#select_project_field').show();
+                        $('#select_project').select2({ width: '100%' });
+                    } else if (selectedValue === 'ticket') {
+                        $('#select_label').text('Select Ticket:');
+                        var options = `<option value="">Select</option>
+                        @foreach($tickets as $id => $title)
+                            <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $title }}</option>
+                        @endforeach`;
+                        $('#select_project').html(options);
+                        $('#select_project_field').show();
+                        $('#select_project').select2({ width: '100%' });
+                    } else {
+                        $('#select_project_field').hide();
+                    }
+                });
+            });
+            
+                   
             // JS to trigger the PDF EXPORT
             document.getElementById('exportPdf').addEventListener('click', function() {
             // Get all current filter values
@@ -335,8 +242,4 @@
 
 </script>
     
-@endsection
-
-
-
-
+@endsection 

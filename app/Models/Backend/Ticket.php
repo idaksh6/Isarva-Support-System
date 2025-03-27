@@ -50,7 +50,7 @@ class Ticket extends Model
      */
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Employee::class, 'created_by');
     }
 
     /**
@@ -58,7 +58,7 @@ class Ticket extends Model
      */
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(Employee::class, 'updated_by');
     }
     /**
      * Get all comments for the ticket

@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- Body: Body -->
-    <div class="body d-flex py-3">
+    {{-- <div class="body d-flex py-3">
         <div class="container-xxl">
             <div class="row g-3 mb-3 row-deck">
                 <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
@@ -85,8 +85,8 @@
                         <button class="btn btn-primary mt-2">Create Credentials</button>
                     </div>
                 </div>
-            </div><!-- Row End -->
-            <div class="row g-3 mb-3 row-deck">
+            </div><!-- Row End --> --}}
+            {{-- <div class="row g-3 mb-3 row-deck">
                 <div class="col-md-12 col-lg-4">
                     <div class="card">
                         <div class="card-body">
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                 </div>
-            </div><!-- Row End -->
+            </div><!-- Row End --> --}}
             <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 row-cols-xxl-4">
                 <div class="col">
                     <div class="card bg-primary">
@@ -141,7 +141,7 @@
                         <div class="card-body text-white d-flex align-items-center">
                             <i class="icofont-chart-flow fs-3"></i>
                             <div class="d-flex flex-column ms-3">
-                                <h6 class="mb-0">Coming Projects</h6>
+                                <h6 class="mb-0">Open Projects</h6>
                                 <span class="text-white">210</span>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                         <div class="card-body text-white d-flex align-items-center">
                             <i class="icofont-chart-flow-2 fs-3"></i>
                             <div class="d-flex flex-column ms-3">
-                                <h6 class="mb-0">Progress Projects</h6>
+                                <h6 class="mb-0">Closed Projects</h6>
                                 <span class="text-white">8456 Files</span>
                             </div>
                         </div>
@@ -163,14 +163,14 @@
                         <div class="card-body text-white d-flex align-items-center">
                             <i class="icofont-tasks fs-3"></i>
                             <div class="d-flex flex-column ms-3">
-                                <h6 class="mb-0">Finished Projects</h6>
+                                <h6 class="mb-0">Closed Projects</h6>
                                 <span class="text-white">88 Files</span>
                             </div>
                         </div>
                     </div>
                 </div>             
             </div>
-            <div class="row g-3 mb-3 row-deck">
+            {{-- <div class="row g-3 mb-3 row-deck">
                 <div class="col-md-12">
                     <div class="card mb-3">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -280,7 +280,7 @@
                             </div>
                     </div>
                 </div>
-            </div><!-- Row End -->
+            </div><!-- Row End --> --}}
         </div>             
     </div>
     <!-- Jquery Page Js -->
