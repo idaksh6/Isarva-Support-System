@@ -11,6 +11,14 @@
 @endphp
 
 
+@if (session()->has('flash_success_project'))
+<div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+    <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+    <span>{{ session('flash_success_project') }}</span>
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
 
 <!-- Create Project-->
 <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
@@ -1806,7 +1814,7 @@
                                         @if(isset($tasksByStatus[2]) && count($tasksByStatus[2]) > 0)
                                             @foreach ($tasksByStatus[2] as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
-                                                    <div class="dd-handle edit-task-btn" 
+                                                    <div class="dd-handle edit-taskreview-btn" 
                                                          data-id="{{ $task->id }}" 
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
@@ -1860,7 +1868,7 @@
                                         @if(isset($tasksByStatus[3]) && count($tasksByStatus[3]) > 0)
                                             @foreach ($tasksByStatus[3] as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
-                                                    <div class="dd-handle edit-task-btn" 
+                                                    <div class="dd-handle edit-taskcompleted-btn" 
                                                          data-id="{{ $task->id }}" 
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
@@ -2944,73 +2952,71 @@ console.log("Number of task items:", $(".dd-item").length);
 
 
                  // JS/AJAX FOR PROJECT ADD/EDIT -- 
-   
-   
-        
-        $(document).ready(function () {
+     
+            $(document).ready(function () {
 
-            // When edit button is clicked
-             $('.edit-project-btn').on('click', function () {
-               
-                var projectId = $(this).data('id'); 
-                console.log(projectId);
+                // When edit button is clicked
+                $('.edit-project-btn').on('click', function () {
+                
+                    var projectId = $(this).data('id'); 
+                    console.log(projectId);
 
-                 // Generate the URL using the route name and Project ID
-                 var url = editProjectRoute.replace(':id', projectId);
-                //  console.log(url);
-             
-                // Fetch Employee data via AJAX
-                $.ajax({
+                    // Generate the URL using the route name and Project ID
+                    var url = editProjectRoute.replace(':id', projectId);
+                    //  console.log(url);
+                
+                    // Fetch Employee data via AJAX
+                    $.ajax({
 
-                    url: url, // Use the dynamically generated URL
-                    method: 'GET',
-                    success: function (response) {    // callback function that runs only if the request is successful.
-                        console.log(response);
-                        // Populate the modal form with the fetched data from db column
-                        $('#proj_client').val(response.client);
-                        $('#proj_name').val(response.project_name);
-                        $('#proj_category').val(response.category);
-                        $('#project_image').val(response.project_image);
-                        $('#proj_manager').val(response.manager);
-                        $('#proj_team_leader').val(response.team_leader);
-                        // $('#teamMembersInput').val(response.team_members);
-                        $('#proj_start_date').val(response.start_date);
-                        $('#proj_end_date').val(response.end_date);
-                        $('#proj_department').val(response.department);
-                        $('#proj_status').val(response.status);
-                        $('#proj_budget').val(response.budget);
-                        $('#proj_priority').val(response.priority);
-                        $('#proj_type').val(response.type);
-                        $('#proj_estimation').val(response.estimation);
-                        $('#proj_biiling_company').val(response.biiling_company);
-                        $('#proj_description').val(response.description);
-                        
-                        console.log("Team Members from Response:", response.team_members);
-                        prefillEditTeamMembers(response.team_members);
+                        url: url, // Use the dynamically generated URL
+                        method: 'GET',
+                        success: function (response) {    // callback function that runs only if the request is successful.
+                            console.log(response);
+                            // Populate the modal form with the fetched data from db column
+                            $('#proj_client').val(response.client);
+                            $('#proj_name').val(response.project_name);
+                            $('#proj_category').val(response.category);
+                            $('#project_image').val(response.project_image);
+                            $('#proj_manager').val(response.manager);
+                            $('#proj_team_leader').val(response.team_leader);
+                            // $('#teamMembersInput').val(response.team_members);
+                            $('#proj_start_date').val(response.start_date);
+                            $('#proj_end_date').val(response.end_date);
+                            $('#proj_department').val(response.department);
+                            $('#proj_status').val(response.status);
+                            $('#proj_budget').val(response.budget);
+                            $('#proj_priority').val(response.priority);
+                            $('#proj_type').val(response.type);
+                            $('#proj_estimation').val(response.estimation);
+                            $('#proj_biiling_company').val(response.biiling_company);
+                            $('#proj_description').val(response.description);
+                            
+                            console.log("Team Members from Response:", response.team_members);
+                            prefillEditTeamMembers(response.team_members);
 
-                         // Set the form action URL for updating
-                         $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
-                        
-                          // Display the existing profile image
-                        if (response.profile_image) {
-                            $('#proj_current-profile-image img')
-                                .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
-                                .show(); // Show the image
-                        } else {
-                            $('#proj_current-profile-image img').hide(); // Hide the image if no profile image exists
+                            // Set the form action URL for updating
+                            $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
+                            
+                            // Display the existing profile image
+                            if (response.profile_image) {
+                                $('#proj_current-profile-image img')
+                                    .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
+                                    .show(); // Show the image
+                            } else {
+                                $('#proj_current-profile-image img').hide(); // Hide the image if no profile image exists
+                            }
+
+                            // Dynamically populate the Estimation Change Log table
+                            populateEstimationChangeLogTable(response.estimation_change_logs);
+
+                        },
+                        error: function (xhr) {
+                            console.error('Error fetching Project data:', xhr.responseText);
                         }
 
-                        // Dynamically populate the Estimation Change Log table
-                         populateEstimationChangeLogTable(response.estimation_change_logs);
-
-                    },
-                    error: function (xhr) {
-                        console.error('Error fetching Project data:', xhr.responseText);
-                    }
-
+                    });
                 });
             });
-        });
 
         
         // Function to populate the Estimation Change Log table
@@ -3049,7 +3055,7 @@ console.log("Number of task items:", $(".dd-item").length);
 </script>
               
 
-                <script>
+            <script>
                     // JS for Project team_member section
                     let selectedTeamMembers = {}; // Store selected members
 
@@ -3147,5 +3153,5 @@ console.log("Number of task items:", $(".dd-item").length);
                     });
 
 
-                </script>
+            </script>
 @endsection

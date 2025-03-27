@@ -4,6 +4,13 @@
 @section('title', __('Dashboard'))
 
 @section('content')
+
+    @if (session('flash_success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('flash_success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <!-- Body: Body -->
     <div class="body d-flex py-lg-3 py-md-2">
         <div class="container-xxl">
@@ -49,7 +56,8 @@
                                             <td>
                                                 <img class="avatar rounded-circle" src="{{ url('/').'/images/xs/avatar1.jpg' }}" alt="">
                                                 @foreach ($employees as $id=>$name)
-                                                    <span class="fw-bold ms-1">{{ $id == $ticket->flag_to ? $name : '' }}</span>
+                                                    {{-- <span class="fw-bold ms-1">{{ $id == $ticket->flag_to ? $name : '' }}</span> --}}
+                                                    {{ $id == $ticket->flag_to ? $name : '' }}
                                                 @endforeach
                                                 
                                             </td>

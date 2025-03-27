@@ -124,14 +124,125 @@
                     </div>
                 </div>
             </div><!-- Row End --> --}}
-            <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 row-cols-xxl-4">
+
+            <!-- Project Count Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick on Projects</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+                        <div class="col">
+                            <div class="card bg-primary">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-data fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Total Projects</h6>
+                                        <span class="text-white">{{$totalProjects}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-success">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-chart-flow fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Open Projects</h6>
+                                        <span class="text-white">{{ $openProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-danger">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-chart-flow-2 fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Closed Projects</h6>
+                                        <span class="text-white">{{ $closedProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-warning">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-tasks fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">OnHold Projects</h6>
+                                        <span class="text-white">{{ $OnHoldProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>             
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ticket Count section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick on Tickets</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+                        <div class="col">
+                            <div class="card bg-danger">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-flag fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Flagged Tickets</h6>
+                                        <span class="text-white">{{ $flaggedTickets}}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-success">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-live-support fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Active Tickets</h6>
+                                        <span class="text-white">{{$activeTickets}}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-primary">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-ui-message fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Open Tickets</h6>
+                                        <span class="text-white">{{ $openTickets }}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-warning">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-clock-time fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">OnHold Tickets</h6>
+                                        <span class="text-white">{{ $onHoldTickets }}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>             
+                    </div>
+                </div>
+            </div>
+            
+            {{-- <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 row-cols-xxl-4">
                 <div class="col">
                     <div class="card bg-primary">
                         <div class="card-body text-white d-flex align-items-center">
                             <i class="icofont-data fs-3"></i>
                             <div class="d-flex flex-column ms-3">
                                 <h6 class="mb-0">Total Projects</h6>
-                                <span class="text-white">550</span>
+                                <span class="text-white">{{$totalProjects}}</span>
                             </div>
                         </div>
                     </div>
@@ -142,7 +253,7 @@
                             <i class="icofont-chart-flow fs-3"></i>
                             <div class="d-flex flex-column ms-3">
                                 <h6 class="mb-0">Open Projects</h6>
-                                <span class="text-white">210</span>
+                                <span class="text-white">{{ $openProjects }}</span>
                             </div>
                         </div>
                     </div>
@@ -153,7 +264,7 @@
                             <i class="icofont-chart-flow-2 fs-3"></i>
                             <div class="d-flex flex-column ms-3">
                                 <h6 class="mb-0">Closed Projects</h6>
-                                <span class="text-white">8456 Files</span>
+                                <span class="text-white">{{ $closedProjects}}</span>
                             </div>
                         </div>
                     </div>
@@ -163,13 +274,13 @@
                         <div class="card-body text-white d-flex align-items-center">
                             <i class="icofont-tasks fs-3"></i>
                             <div class="d-flex flex-column ms-3">
-                                <h6 class="mb-0">Closed Projects</h6>
-                                <span class="text-white">88 Files</span>
+                                <h6 class="mb-0">OnHold Projects</h6>
+                                <span class="text-white">{{ $OnHoldProjects}}</span>
                             </div>
                         </div>
                     </div>
                 </div>             
-            </div>
+            </div> --}}
             {{-- <div class="row g-3 mb-3 row-deck">
                 <div class="col-md-12">
                     <div class="card mb-3">
