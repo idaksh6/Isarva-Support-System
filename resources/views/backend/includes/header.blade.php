@@ -111,7 +111,7 @@
                                     <img class="avatar rounded-circle" src="{{ url('/').'/images/profile_av.png' }}" alt="profile">
                                     <div class="flex-fill ms-3">
                                         <p class="mb-0"><span class="font-weight-bold">ADMIN</span></p>
-                                        <small class="">admin123@gmail.com</small>
+                                        <small class="">{{ Auth::check() ? Auth::user()->email : 'Guest' }}</small>
                                     </div>
                                 </div>
                                 

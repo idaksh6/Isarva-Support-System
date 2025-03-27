@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
+use App\Models\Backend\User;
 use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\Backend\Employee;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
@@ -63,34 +65,30 @@ class GoogleController extends Controller
     // }
 
     public function handleGoogleCallback()
-        {
-            try {
-                // Get Google user details
-                $googleUser = Socialite::driver('google')->user();
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
-                // Check if email exists in the Employee table
-                $employee = Employee::where('email_id', $googleUser->getEmail())->first();
-
-                if (!$employee) {
-                    return redirect()->route('auth.google')->with('error', 'No access to this account.');
-                }
-
-                //  Make sure password is set to null (prevents auth errors)
-                $employee->password = null;
-                $employee->save();
-
-                //  Log in the user
-                Auth::login($employee);
-
-                //  Set session manually (ensures persistence)
-                session(['employee_id' => $employee->id]);
-
-                // Redirect to admin dashboard
-                return redirect()->route('admin.dashboard');
-            } catch (\Exception $e) {
-                return redirect()->route('auth.google')->with('error', 'Something went wrong. Please try again.');
+            // Check if user exists
+            $user = User::where('email', $googleUser->getEmail())->first();
+            
+            if (!$user) {
+                //print_r($user);exit;
+                return redirect()->route('login')->with('error', 'No access to this account.');
             }
+
+            // Log in the user
+            Auth::login($user, true); // Now $user is an Authenticatable instance
+
+            session(['employee_id' => $user->id]); // Optional session data
+
+            return redirect()->route('admin.dashboard');
+
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
         }
+    }
+
 
 }
 

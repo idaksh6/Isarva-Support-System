@@ -13,6 +13,9 @@
         @endif
 
         <!-- Main Content -->
+        <div>
+            <a href="{{ route('admin.ticket.ticket-view') }}" class="btn btn-danger text-white float-end">Back</a>
+        </div>
         <div class="col-lg-8">
             <!-- Header Section -->
             <div class="d-flex align-items-center justify-content-between bg-white p-4 rounded-3 shadow-sm mb-4">
@@ -115,7 +118,7 @@
             </div>
 
             <!-- Reply Section -->
-            <div class="bg-light rounded-3 p-4 mt-4 shadow-sm">
+            <div class="bg-light rounded-3 p-4  shadow-sm">
                 <form action="{{ route('admin.ticket.comment-store') }}" method="POST" id="ticket-comment-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="ticket_id" value="{{ $id }}">
@@ -245,7 +248,10 @@
     </div>
 </div>
 
+<script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>    
+    <script src="{{ asset('js/template.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+
 <!-- Bootstrap Bundle includes Popper.js -->
 
 

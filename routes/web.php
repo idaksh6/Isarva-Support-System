@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Backend\GoogleController;
+use App\Domains\Auth\Http\Controllers\Frontend\Auth\LoginController;
 
 
 
 // Google ROUTE
 Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
-
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.googleCallback');
 /*
  * Global Routes
  *
@@ -32,8 +33,9 @@ Route::group(['as' => 'frontend.'], function () {
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
     includeRouteFiles(__DIR__.'/backend/');
 });
-
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login'])->name("frontend.auth.login");
 
 // GOOGLE ROUTE 
-Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+// Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
+// Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);

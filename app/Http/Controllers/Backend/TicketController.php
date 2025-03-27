@@ -92,6 +92,32 @@ class TicketController
 
         // Create a new Ticket instance
         $ticket = new Ticket();
+
+        if ($request->hasFile('attachment')) {
+            $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
+        
+            // Ensure the folder exists, create if not
+            if (!File::exists($folderPath)) {
+                File::makeDirectory($folderPath, 0775, true, true);
+            }
+        
+            // Generate a unique file name
+            $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+        
+            // Move the file to the target folder
+            $request->file('attachment')->move($folderPath, $fileName);
+        
+            // Delete old file if exists
+            if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
+                File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
+            }
+        
+            // Store the new file path in the database
+            $ticket->attachment = 'images/ticket_attachments/' . $fileName;
+        }else{
+            $fileName="";
+        }
+
         $ticket->client = $request->client;
         $ticket->title = $request->title;
         $ticket->domain = $request->domain;
@@ -117,6 +143,7 @@ class TicketController
         $ticket->email_cc_list =  "";
         $ticket->ip_address =  "";
         $ticket->flag_to = $request->assignedTo;
+        $ticket->attachment=$fileName;
         
 
         // Handle file upload for attachment
@@ -184,19 +211,29 @@ class TicketController
         $ticket->last_updated_by = Auth::id();
         $ticket->last_modified_on = now();
 
-        // Handle file upload for attachment if a new file is uploaded
-        if ($request->hasFile('attachment')) {
-            $fileName = time() . '_' . $request->attachment->getClientOriginalName();
-            $filePath = $request->attachment->storeAs('images/ticket_attachments', $fileName, 'public');
-
-            // Delete the old attachment if exists
-            if ($ticket->attachment) {
-                Storage::disk('public')->delete($ticket->attachment);
+        if ($request->hasFile('t_attachment')) {
+            $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
+        
+            // Ensure the folder exists, create if not
+            if (!File::exists($folderPath)) {
+                File::makeDirectory($folderPath, 0775, true, true);
             }
-
-            // Store the new file path
-            $ticket->attachment = $filePath;
+        
+            // Generate a unique file name
+            $fileName = time() . '_' . $request->file('t_attachment')->getClientOriginalName();
+        
+            // Move the file to the target folder
+            $request->file('t_attachment')->move($folderPath, $fileName);
+        
+            // Delete old file if exists
+            if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
+                File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
+            }
+        
+            // Store the new file path in the database
+            $ticket->attachment = $fileName;
         }
+
 
         // Save the updated ticket
         $ticket->save();
@@ -266,8 +303,8 @@ class TicketController
             $request->file('attachment')->move($folderPath, $fileName);
         
             // Delete old file if exists
-            if (!empty($ticket->attachment) && File::exists(public_path($ticket->attachment))) {
-                File::delete(public_path($ticket->attachment));
+            if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
+                File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
             }
         
             // Store the new file path in the database

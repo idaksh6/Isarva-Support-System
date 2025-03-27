@@ -329,6 +329,13 @@
                             <label for="t_attachment" class="form-label">Attachment</label>
                             <input type="file" class="form-control" id="t_attachment" name="t_attachment">
                         </div>
+                        <div class="d-flex align-items-center gap-2 attachment-div">
+                            <i class="icofont-paperclip text-muted"></i>
+                            <a id="attachment-link" href="#" class="text-decoration-none small" target="_blank" style="display: none;">
+                                View Attachment
+                            </a>
+                        </div>
+                        
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Update</button>
@@ -367,10 +374,13 @@
     </div>
 
     <!-- Jquery Page Js -->
+    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>    
+    <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script> 
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap/bootstrap.bundle.min.js')}}"></script>
+    
 
 
 
@@ -417,6 +427,15 @@
                                                 ("0" + (dateObj.getMonth() + 1)).slice(-2) + "-" + 
                                                 ("0" + dateObj.getDate()).slice(-2);
                             $('#t_dueDate').val(formattedDate);
+                        }
+
+                        if (response.attachment) {
+                            let attachmentUrl = "{{ asset('images/ticket_attachments/') }}" + "/" + response.attachment;
+                            $('#attachment-link').attr('href', attachmentUrl).text('View Attachment').show();
+                            $(".attachment-div").removeClass("d-none");
+                        } else {
+                            $('#attachment-link').hide();
+                            $(".attachment-div").addClass("d-none");
                         }
 
                         // Set the form action URL for updating

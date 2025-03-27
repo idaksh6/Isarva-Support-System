@@ -65,16 +65,16 @@
             </li>
 
 
-            
-            <li class="collapsed">
-                <a class="m-link {{ Request::segment(2)=='ticket' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#tikit-Components" href="#"><i
+            <li><a class="m-link {{ Request::segment(2) == 'ticket' ? 'active' : '' }}"   href="{{ route('admin.ticket.ticket-view') }}">  <i class="icofont-ticket"></i>  <span>Tickets </span></a></li>
+            {{-- <li class="collapsed">
+                <a class="m-link {{ Request::segment(2)=='ticket' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#ticket-Components" href=""><i
                         class="icofont-ticket"></i> <span>Tickets</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <!-- Menu: Sub menu ul -->
-                <ul class="sub-menu {{ Request::segment(2)=='ticket' ? 'collapsed show' : 'collapse' }}" id="tikit-Components">
+                <ul class="sub-menu {{ Request::segment(2)=='ticket' ? 'collapsed show' : 'collapse' }}" id="ticket-Components">
                     <li><a class="ms-link {{  Request::segment(3) == 'ticket-view' ? 'active' : '' }}" href="{{ route('admin.ticket.ticket-view') }}"> <span>Tickets View</span></a></li>
                     
                 </ul>
-            </li>
+            </li> --}}
 
             <!-- Report adding section -->
             <li class="collapsed">
