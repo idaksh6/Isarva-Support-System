@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Models\Backend\User;
+
 use Illuminate\Http\Request;
 use App\Models\Backend\Employee;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Foundation\Auth\User;
 
 class GoogleController extends Controller
 {
@@ -33,36 +34,13 @@ class GoogleController extends Controller
         //     dd($e->getMessage());
         // }
 
-       
-        // return Socialite::driver('google')->redirect();
     }
     
 
     /**
      * Handle Google callback.
      */
-    // public function handleGoogleCallback()
-    // {
-    //     try {
-    //         // Get Google user details
-    //         $googleUser = Socialite::driver('google')->user();
-
-    //         // Check if email exists in the Employee table
-    //         $employee = Employee::where('email_id', $googleUser->getEmail())->first();
-
-    //         if ($employee) {
-    //             // Log in the user
-    //             Auth::login($employee);
-
-    //             // Redirect to admin dashboard
-    //             return redirect()->route('admin.dashboard');
-    //         } else {
-    //             return redirect()->route('auth.google')->with('error', 'No access to this account.');
-    //         }
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('auth.google')->with('error', 'Something went wrong. Please try again.');
-    //     }
-    // }
+   
 
     public function handleGoogleCallback()
     {
@@ -77,10 +55,15 @@ class GoogleController extends Controller
                 return redirect()->route('login')->with('error', 'No access to this account.');
             }
 
+          
             // Log in the user
             Auth::login($user, true); // Now $user is an Authenticatable instance
 
+             
+            
+
             session(['employee_id' => $user->id]); // Optional session data
+            session()->save(); // Ensures the session is saved immediately
 
             return redirect()->route('admin.dashboard');
 

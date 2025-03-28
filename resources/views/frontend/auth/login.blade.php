@@ -36,9 +36,9 @@
                             @csrf
                             <div class="col-12 text-center mb-5">
                                 <h1>Sign in</h1>
-                                <span>Free access to our dashboard.</span>
-                                <span class="d-flex justify-content-center text-secondary">Email : admin@admin.com</span>
-                                <span class="d-flex justify-content-center text-secondary">Password : secret</span>
+                                {{-- <span>Free access to our dashboard.</span> --}}
+                                {{-- <span class="d-flex justify-content-center text-secondary">Email : admin@admin.com</span>
+                                <span class="d-flex justify-content-center text-secondary">Password : secret</span> --}}
                             </div>
                             <div class="col-12 text-center mb-4">
                                 {{-- <a class="btn btn-lg btn-outline-secondary btn-block" href="#">
@@ -66,7 +66,7 @@
                                     <div class="form-label">
                                         <span class="d-flex justify-content-between align-items-center">
                                             Password
-                                            <a class="text-secondary" href="{{route('admin.authentication.password-reset')}}">Forgot Password?</a>
+                                            {{-- <a class="text-secondary" href="{{route('admin.authentication.password-reset')}}">Forgot Password?</a> --}}
                                         </span>
                                     </div>
                                     <input type="password" name="password" class="form-control form-control-lg" placeholder="***************">
@@ -75,16 +75,16 @@
                             <div class="col-12">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">
+                                    {{-- <label class="form-check-label" for="flexCheckDefault">
                                         Remember me
-                                    </label>
+                                    </label> --}}
                                 </div>
                             </div>
                             <div class="col-12 text-center mt-4">
                                 <button type="submit" class="btn btn-lg btn-block btn-light lift text-uppercase">SIGN IN</button>
                             </div>
                             <div class="col-12 text-center mt-4">
-                                <span class="text-muted">Don't have an account yet? <a href="{{route('admin.authentication.signup')}}" class="text-secondary">Sign up here</a></span>
+                                {{-- <span class="text-muted">Don't have an account yet? <a href="{{route('admin.authentication.signup')}}" class="text-secondary">Sign up here</a></span> --}}
                             </div>
                         </form>
                         <!-- End Form -->

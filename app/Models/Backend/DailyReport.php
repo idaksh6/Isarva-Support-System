@@ -23,17 +23,17 @@ class DailyReport extends Model
 
     public function user()
     {
-        return $this->belongsTo(Employee::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function createdBy()
     {
-        return $this->belongsTo(Employee::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updatedBy()
     {
-        return $this->belongsTo(Employee::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     // Relationship to DailyReportField
