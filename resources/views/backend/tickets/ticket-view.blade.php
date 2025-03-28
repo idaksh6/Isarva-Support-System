@@ -25,7 +25,93 @@
                 </div>
             </div> <!-- Row end  -->
             <div class="row clearfix g-3">
+                
                 <div class="col-sm-12">
+                    {{-- Search filter --}}
+                    <div class="card mb-2">
+                        <div class="card-header">
+                            <h5 class="fw-bold py-2"><i class="fa fa-search"></i> Search Tickets</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="GET" action="{{ route('admin.ticket.ticket-view') }}">
+                                <div class="row g-3">
+                                    <!-- Search Input -->
+                                    <div class="col-md-4 ">
+                                        <label for="q" class="form-label ">Search</label>
+                                        <div class="input-group">
+                                            <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control ticket_search " placeholder="Search by Ticket Title, Ticket No, Domain" aria-label="Search">
+                                            <button class="btn btn-primary my-1" type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Month and Year Selection -->
+                                    <div class="col-md-4">
+                                        <label for="month_year" class="form-label">Month & Year</label>
+                                        <input type="month" class="form-control" name="month_year" id="month-year" value="{{ request('month_year') }}">
+                                    </div>
+                            
+                            
+                                    <!-- Assigned To -->
+                                    <div class="col-md-4">
+                                        <label for="assignedTo" class="form-label">Assigned To</label>
+                                        <select class="form-select" name="assignedTo" id="assignedTo">
+                                            <option value="">Select Assigned To</option>
+                                            @foreach($employees as $id => $name)
+                                                <option value="{{ $id }}" {{ request('assignedTo') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                            
+                                    <!-- Department -->
+                                    <div class="col-md-4">
+                                        <label for="department" class="form-label">Department</label>
+                                        <select class="form-select" id="department" name="department">
+                                            <option value="">Select Department</option>
+                                            <@foreach($department as $id => $name)
+                                                <option value="{{ $id }}" {{ request('department') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- Priority -->
+                                    <div class="col-md-4">
+                                        <label for="priority" class="form-label">Priority</label>
+                                        <select class="form-select" id="priority" name="priority">
+                                            <option value="">Select Priority</option>
+                                            <@foreach($priority as $id => $name)
+                                                <option value="{{ $id }}" {{ request('priority') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- status -->
+                                    <div class="col-md-4">
+                                        <label for="status" class="form-label">Status</label>
+                                        <select class="form-select" name="status" id="status">
+                                            <option value="">Select Status</option>
+                                            @foreach($status as $id => $name)
+                                                <option value="{{ $id }}" {{ request('status') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- Search Button -->
+                                    <div class="col-12 text-end">
+                                        <button type="submit" class="btn btn-primary float-start">
+                                            <i class="fa fa-search"></i> Search
+                                        </button>
+                                        <a href="{{ route('admin.ticket.ticket-view') }}" class="btn btn-secondary float-start mx-2">
+                                            <i class="fa fa-times"></i> Clear
+                                        </a>
+                                    </div>
+                                    
+                                </div> 
+                            </form>
+                            
+                        </div>
+                    </div>
+
                     <div class="card mb-3">
                         <div class="card-body">
                             <table id="myProjectTable" class="table table-hover align-middle mb-0" style="width:100%">
@@ -54,7 +140,13 @@
                                                 {{ $ticket->title }}
                                             </td>
                                             <td>
-                                                <img class="avatar rounded-circle" src="{{ url('/').'/images/xs/avatar1.jpg' }}" alt="">
+                                                @php
+                                                    $profileImg=\App\Helpers\ClientHelper::ProfileImg($ticket->flag_to);
+
+                                                @endphp
+                                                <img class="avatar rounded-circle" 
+                                                src="{{ $profileImg ? url('/').'/'.$profileImg : url('/images/xs/avatar1.jpg') }}" 
+                                                alt="Profile Image">
                                                 @foreach ($employees as $id=>$name)
                                                     {{-- <span class="fw-bold ms-1">{{ $id == $ticket->flag_to ? $name : '' }}</span> --}}
                                                     {{ $id == $ticket->flag_to ? $name : '' }}
@@ -65,7 +157,35 @@
                                                 {{ $ticket->created_at->format('d/m/Y') }}
                                             </td>
                                             <td>
-                                                <span class="badge bg-{{ $ticket->status == 'Completed' ? 'success' : 'warning' }}">{{ $ticket->status }}</span>
+                                                @if ($ticket->status==2)
+                                                    <span class="badge bg-info text-white  rounded-pill">
+                                                         Progress
+                                                    </span>
+                                                @elseif ($ticket->status==3)
+                                                    <span class="badge bg-warning text-white  rounded-pill">
+                                                         On Hold
+                                                    </span>
+                                                @elseif ($ticket->status==4)
+                                                    <span class="badge bg-success text-white  rounded-pill">
+                                                         Monitor
+                                                    </span>
+                                                @elseif ($ticket->status==5)
+                                                    <span class="badge bg-success text-white  rounded-pill">
+                                                         Assigned
+                                                    </span>
+                                                @elseif ($ticket->status==6)
+                                                    <span class="badge bg-danger text-white  rounded-pill">
+                                                         Awaiting for Client Response
+                                                    </span>
+                                                @elseif ($ticket->status==7)
+                                                    <span class="badge bg-danger text-white  rounded-pill">
+                                                         Closed
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-warning text-white  rounded-pill">
+                                                         Open
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if ($ticket->priority==1)

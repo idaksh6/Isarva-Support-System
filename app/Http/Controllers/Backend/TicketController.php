@@ -17,23 +17,68 @@ class TicketController
 {
     //
 
-    public function ticketView(){
-        // Fetch all tickets from the database
-        $tickets = Ticket::all();
+    public function Index(Request $request)
+    {
+        // Retrieve query parameters
+        $query = Ticket::query();
 
-        // Created by AK
-        $clients=ClientHelper::getClientNames();
-        $projects=ClientHelper::getProjects();
-        $employees=ClientHelper::getEmployees();
-      //  dd($projects);
-        // Pass the tickets to the view
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->q . '%')
+                ->orWhere('id', 'like', '%' . $request->q . '%')
+                ->orWhere('domain', 'like', '%' . $request->q . '%');
+            });
+        }
+
+        if ($request->filled('month_year')) {
+            $monthYear = explode('-', $request->month_year); // Splitting into [YYYY, MM]
+            if (count($monthYear) == 2) {
+                $query->whereYear('created_at', $monthYear[0])
+                    ->whereMonth('created_at', $monthYear[1]);
+            }
+        }
+
+        if ($request->filled('assignedTo')) {
+            $query->where('flag_to', $request->assignedTo);
+        }
+
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
+        }
+
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Fetch filtered tickets
+        $tickets = $query->get();
+
+        // Get supporting data
+        $clients = ClientHelper::getClientNames();
+        $projects = ClientHelper::getProjects();
+        $employees = ClientHelper::getEmployees();
+        $status = ClientHelper::TicketStatus();
+        $department=ClientHelper::Departments();
+        $priority=ClientHelper::Priority();
+        
+
+        // Pass the filtered tickets to the view
         return view('backend.tickets.ticket-view', [
             'tickets' => $tickets,
             'clients' => $clients,
-            'projects'=>$projects,
-            'employees'=>$employees
+            'projects' => $projects,
+            'employees' => $employees,
+            'status' => $status,
+            'department'=>$department,
+            'priority'=>$priority,
+            
         ]);
     }
+
 
 
     public function ticketDetail($id)
