@@ -97,9 +97,10 @@ class Task extends Model
     }
 
     
-public function assignedUser()
-{
-    return $this->belongsTo(Employee::class, 'assigned_to');
-}
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
 
 }

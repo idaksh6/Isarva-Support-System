@@ -46,36 +46,36 @@ class ProjectEstimationChangeLog extends Model
     // A change log belongs to a user who changed it
     public function changedBy()
     {
-        return $this->belongsTo(Employee::class, 'changed_by');
+        return $this->belongsTo(User::class, 'changed_by');
     }
 
     // A change log may have a requester
     public function changeRequester()
     {
-        return $this->belongsTo(Employee::class, 'change_req_by');
+        return $this->belongsTo(User::class, 'change_req_by');
     }
 
     // A change log may have an approver
     public function changeApprovedBy()
     {
-        return $this->belongsTo(Employee::class, 'change_approved_by');
+        return $this->belongsTo(User::class, 'change_approved_by');
     }
 
     // A change log may have a rejecter
     public function changeRejectedBy()
     {
-        return $this->belongsTo(Employee::class, 'change_rejected_by');
+        return $this->belongsTo(User::class, 'change_rejected_by');
     }
 
     // A change log is created by a user
     public function createdBy()
     {
-        return $this->belongsTo(Employee::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     // A change log is updated by a user
     public function updatedBy()
     {
-        return $this->belongsTo(Employee::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

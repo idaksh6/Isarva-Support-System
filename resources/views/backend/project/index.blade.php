@@ -1405,9 +1405,10 @@
       
     </script>
 
-     <!-- Script to edit and update the Project values -->
+   
     <script>
-        
+
+        // Script to edit and update the Project values 
         $(document).ready(function () {
 
             // When edit button is clicked
@@ -1692,11 +1693,10 @@
                             }
                         });
                     });
-                });
 
-                //----- AJAX for Project-edit form Modal -----
+                     //----- AJAX for Project-edit form Modal -----
 
-                $(document).ready(function () {
+              
                     // Handle edit form submission
                     $('#editprojectform').on('submit', function (e) {
                         e.preventDefault(); // Prevent the default form submission
@@ -1734,7 +1734,67 @@
                             } 
                         });
                     });
+
+                      // JS To handle the Yes/No button logic and make the estimation field editable when Yes is clicked.
+                    $('#changeEstimationYes').on('click', function () {
+                            $('#proj_estimation').prop('readonly', false); // Make estimation field editable
+                            $('#changeEstimationReasonField').show(); // Show the change estimation reason field
+                        });
+
+                        // Handle "No" button click
+                        $('#changeEstimationNo').on('click', function () {
+                            $('#proj_estimation').prop('readonly', true); // Make estimation field read-only
+                            $('#changeEstimationReasonField').hide(); // Hide the change estimation reason field
+                        });
+                    
                 });
+
+                
+
+                // //----- AJAX for Project-edit form Modal -----
+
+                // $(document).ready(function () {
+                //     // Handle edit form submission
+                //     $('#editprojectform').on('submit', function (e) {
+                //         e.preventDefault(); // Prevent the default form submission
+
+                //         var form = $(this);
+                //         var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
+                //         var formData = new FormData(form[0]); // Include file uploads
+
+                //         // Clear previous errors
+                //         $('.text-danger').html('');
+
+                //         $.ajax({
+                //             url: url,
+                //             type: 'POST',
+                //             data: formData,
+                //             processData: false,
+                //             contentType: false,
+                //             success: function (response) {
+                //                 // If the form is successfully submitted, show a success message and close the modal
+                //                 alert('Project updated successfully!'); // Show success message
+                //                 $('#editproject').modal('hide'); // Close the modal
+                //                 window.location.reload(); // Reload the page to reflect changes
+                //             },
+                //             error: function (xhr) {
+                //                 // Log the error response to the console
+                //                 console.log(xhr.responseJSON);
+
+                //                 // If there are validation errors, display them below each field
+                //                 var errors = xhr.responseJSON.errors;
+                //                 if (errors) {
+                //                     $.each(errors, function (key, value) {
+                //                         $('#proj-edit-error-' + key).html(value[0]); // Display the first error message
+                //                     });
+                //                 }
+                //             } 
+                //         });
+                //     });
+                // });
+
+              
+                    
             </script>
 
 
@@ -1819,21 +1879,6 @@
 
 
 
-
-            // JS To handle the Yes/No button logic and make the estimation field editable when Yes is clicked.
-                $(document).ready(function () {
-                    // Handle "Yes" button click
-                    $('#changeEstimationYes').on('click', function () {
-                        $('#proj_estimation').prop('readonly', false); // Make estimation field editable
-                        $('#changeEstimationReasonField').show(); // Show the change estimation reason field
-                    });
-
-                    // Handle "No" button click
-                    $('#changeEstimationNo').on('click', function () {
-                        $('#proj_estimation').prop('readonly', true); // Make estimation field read-only
-                        $('#changeEstimationReasonField').hide(); // Hide the change estimation reason field
-                    });
-                });
 
             
         </script>

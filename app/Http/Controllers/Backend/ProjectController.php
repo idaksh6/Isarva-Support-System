@@ -94,9 +94,9 @@ class ProjectController
             'project_name'    => 'required|string|max:100',
             'category'        => 'nullable|integer|in:1,2,3,4,5,6,7,8,9,10',
             'project_image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'manager'         => 'required|integer|exists:si_users,id',
-            'team_leader'     => 'required|integer|exists:si_users,id',
-            'team_members'    => 'required|string|exists:si_users,id', // Comma-separated string of team member IDs
+            'manager'         => 'required|integer|exists:users,id',
+            'team_leader'     => 'required|integer|exists:users,id',
+            'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
             'start_date'      => 'required|date',
             'end_date'        => 'required|date|after_or_equal:start_date',
             'department'      => 'required|integer|in:1,2,3',
@@ -197,7 +197,7 @@ class ProjectController
             return response()->json(['success' => 'Project created successfully!']);
         }
 
-        return redirect()->back()->with('success', 'Project created successfully!');
+        return redirect()->back()->with('flash_success_project', 'Project added successfully.');
     }
     
     // public function edit($id)
@@ -229,7 +229,8 @@ class ProjectController
         return response()->json($project);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
 
         // Fetch the employee by ID
         $project = Project::findOrFail($id);
@@ -240,9 +241,9 @@ class ProjectController
             'project_name'    => 'required|string|max:100',
             'category'        => 'nullable|integer|in:1,2,3,4,5,6,7,8,9,10',
             'project_image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'manager'         => 'required|integer|exists:si_users,id',
-            'team_leader'     => 'required|integer|exists:si_users,id',
-            'team_members'    => 'required|string|exists:si_users,id', // Comma-separated string of team member IDs
+            'manager'         => 'required|integer|exists:users,id',
+            'team_leader'     => 'required|integer|exists:users,id',
+            'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
             // 'team_members' => 'required|array',
             //  'team_members.*' => 'integer|exists:si_users,id',
 
