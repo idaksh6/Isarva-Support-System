@@ -179,7 +179,7 @@
     @elseif(request()->hasAny(['start_date', 'end_date', 'employee', 'project_ticket', 'select_project', 'billing_type']))
     <p class="mt-4 text-center text-danger">No info found</p>
     @endif
-    <!-- Pagination Links -->
+  
     <!-- Display pagination links -->
    
     @if(method_exists($reports, 'appends'))
@@ -234,7 +234,7 @@
             //         }
             //     });
             // });
-
+            
             $(document).ready(function() {
             // Initialize all select2 elements
             $('.select2').select2({
@@ -246,11 +246,13 @@
             // Handle dynamic change for Project/Ticket field
             $('#project_ticket').change(function() {
                 var selectedValue = $(this).val();
+                var currentSelected = $('#select_project').val(); // Get current selected value
+                
                 if (selectedValue === 'project') {
                     $('#select_label').text('Select Project:');
                     var options = `<option value="">Select</option>
                         @foreach($projects as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
+                            <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $name }}</option>
                         @endforeach`;
                     $('#select_project').html(options);
                     $('#select_project_field').show();
@@ -258,19 +260,26 @@
                     $('#select_label').text('Select Ticket:');
                     var options = `<option value="">Select</option>
                         @foreach($tickets as $id => $title)
-                            <option value="{{ $id }}">{{ $title }}</option>
+                            <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $title }}</option>
                         @endforeach`;
                     $('#select_project').html(options);
                     $('#select_project_field').show();
                 } else {
                     $('#select_project_field').hide();
                 }
-                $('#select_project').select2({ width: '100%' });
+                
+                // Reinitialize select2 and preserve the selected value
+                $('#select_project').select2({ 
+                    width: '100%',
+                    placeholder: "Select an option",
+                    allowClear: true
+                }).val(currentSelected).trigger('change');
             });
 
-            // Trigger change on page load if needed
-            @if(request('project_ticket') == 'project' || request('project_ticket') == 'ticket')
-                $('#project_ticket').trigger('change');
+            // Set initial values from request
+            $('#project_ticket').val('{{ request("project_ticket", "none") }}').trigger('change');
+            @if(request('select_project'))
+                $('#select_project').val('{{ request("select_project") }}').trigger('change');
             @endif
         });
             

@@ -66,7 +66,7 @@
                             @case(0) Non-Billable @break
                             @case(1) Billable @break
                             @case(2) Internal Billable @break
-                            @default Unknown
+                        @default Unknown
                         @endswitch
                     </td>
                 </tr>
