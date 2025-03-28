@@ -50,8 +50,8 @@
                     </div>
                 </div>
 
-                <!-- Select Project/Ticket Field -->
-                <div class="row mt-3" id="select_project_field" style="display: none;">
+                <!-- Select Project/Ticket Field  works fine without ticket -28/03/2025 -->
+                {{-- <div class="row mt-3" id="select_project_field" style="display: none;">
                     <div class="col-md-3">
                         <label id="select_label" for="select_project">Select Project:</label>
                         <select id="select_project" name="select_project" class="form-control select2">
@@ -59,6 +59,24 @@
                             @foreach($projects as $id => $name)
                                 <option value="{{ $name }}">{{ $name }}</option>
                             @endforeach
+                        </select>
+                    </div>
+                </div> --}}
+
+                <div class="row mt-3" id="select_project_field" style="display: none;">
+                    <div class="col-md-3">
+                        <label id="select_label" for="select_project">Select:</label>
+                        <select id="select_project" name="select_project" class="form-control select2">
+                            <option value="">Select</option>
+                            @if(request('project_ticket') == 'project')
+                                @foreach($projects as $id => $name)
+                                    <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                @endforeach
+                            @elseif(request('project_ticket') == 'ticket')
+                                @foreach($tickets as $id => $title)
+                                    <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $title }}</option>
+                                @endforeach
+                            @endif
                         </select>
                     </div>
                 </div>
@@ -181,40 +199,80 @@
 
 
 <script>
-            $(document).ready(function() {
-                // Initialize all select2 elements
-                $('.select2').select2({
-                    width: '100%',
-                    placeholder: "Select an option",
-                    allowClear: true
-                });
+            // Works fine 
+            // $(document).ready(function() {
+            //     // Initialize all select2 elements
+            //     $('.select2').select2({
+            //         width: '100%',
+            //         placeholder: "Select an option",
+            //         allowClear: true
+            //     });
 
-                // Handle dynamic change for Project/Ticket field
-                $('#project_ticket').change(function() {
-                    var selectedValue = $(this).val();
-                    if (selectedValue === 'project') {
-                        $('#select_label').text('Select Project:');
-                        var options = `<option value="">Select</option>
-                            @foreach($projects as $id => $name)
-                                <option value="{{ $name }}">{{ $name }}</option>
-                            @endforeach`;
-                        $('#select_project').html(options);
-                        $('#select_project_field').show();
-                        $('#select_project').select2({ width: '100%' });
-                    } else if (selectedValue === 'ticket') {
-                        $('#select_label').text('Select Ticket:');
-                        var options = `<option value="">Select</option>
-                        @foreach($tickets as $id => $title)
-                            <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $title }}</option>
-                        @endforeach`;
-                        $('#select_project').html(options);
-                        $('#select_project_field').show();
-                        $('#select_project').select2({ width: '100%' });
-                    } else {
-                        $('#select_project_field').hide();
-                    }
-                });
+            //     // Handle dynamic change for Project/Ticket field
+            //     $('#project_ticket').change(function() {
+            //         var selectedValue = $(this).val();
+            //         if (selectedValue === 'project') {
+            //             $('#select_label').text('Select Project:');
+            //             var options = `<option value="">Select</option>
+            //                 @foreach($projects as $id => $name)
+            //                     <option value="{{ $name }}">{{ $name }}</option>
+            //                 @endforeach`;
+            //             $('#select_project').html(options);
+            //             $('#select_project_field').show();
+            //             $('#select_project').select2({ width: '100%' });
+            //         } else if (selectedValue === 'ticket') {
+            //             $('#select_label').text('Select Ticket:');
+            //             var options = `<option value="">Select</option>
+            //             @foreach($tickets as $id => $title)
+            //                 <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $title }}</option>
+            //             @endforeach`;
+            //             $('#select_project').html(options);
+            //             $('#select_project_field').show();
+            //             $('#select_project').select2({ width: '100%' });
+            //         } else {
+            //             $('#select_project_field').hide();
+            //         }
+            //     });
+            // });
+
+            $(document).ready(function() {
+            // Initialize all select2 elements
+            $('.select2').select2({
+                width: '100%',
+                placeholder: "Select an option",
+                allowClear: true
             });
+
+            // Handle dynamic change for Project/Ticket field
+            $('#project_ticket').change(function() {
+                var selectedValue = $(this).val();
+                if (selectedValue === 'project') {
+                    $('#select_label').text('Select Project:');
+                    var options = `<option value="">Select</option>
+                        @foreach($projects as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach`;
+                    $('#select_project').html(options);
+                    $('#select_project_field').show();
+                } else if (selectedValue === 'ticket') {
+                    $('#select_label').text('Select Ticket:');
+                    var options = `<option value="">Select</option>
+                        @foreach($tickets as $id => $title)
+                            <option value="{{ $id }}">{{ $title }}</option>
+                        @endforeach`;
+                    $('#select_project').html(options);
+                    $('#select_project_field').show();
+                } else {
+                    $('#select_project_field').hide();
+                }
+                $('#select_project').select2({ width: '100%' });
+            });
+
+            // Trigger change on page load if needed
+            @if(request('project_ticket') == 'project' || request('project_ticket') == 'ticket')
+                $('#project_ticket').trigger('change');
+            @endif
+        });
             
                    
             // JS to trigger the PDF EXPORT

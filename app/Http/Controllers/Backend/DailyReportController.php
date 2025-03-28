@@ -27,32 +27,78 @@ class DailyReportController extends Controller
     }
 
   
+     // Works fine
+    // public function search($term = null)
+    // {
+    //     if ($term) {
+    //         $projects = Project::where('project_name', 'like', '%' . $term . '%')
+    //                           ->select('id', 'project_name as label') // Select id and project_name (aliased as label)
+    //                           ->get();
+    //     } else {
+    //         $projects = []; // Return an empty array if no term is provided
+    //     }
 
-    public function search($term = null)
-    {
-        if ($term) {
-            $projects = Project::where('project_name', 'like', '%' . $term . '%')
-                              ->select('id', 'project_name as label') // Select id and project_name (aliased as label)
-                              ->get();
-        } else {
-            $projects = []; // Return an empty array if no term is provided
+    //     return response()->json($projects);
+    // }
+
+       
+        public function search($term = null)
+        {
+            $userId = Auth::id(); // Get logged-in user ID
+
+            if ($term) {
+                $projects = Project::where('project_name', 'like', '%' . $term . '%')
+                                ->where(function ($query) use ($userId) {
+                                    $query->where('created_by', $userId) // Projects created by user
+                                            ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // Projects where user is a team member
+                                })
+                                ->select('id', 'project_name as label')
+                                ->get();
+            } else {
+                $projects = [];
+            }
+
+            return response()->json($projects);
         }
-
-        return response()->json($projects);
-    }
 
 
     // New task search method
+    // public function searchTasks(Request $request)
+    // {
+    //     $term = $request->input('term');
+    //     $projectId = $request->input('project_id'); // Get the selected project ID
+
+    //     if ($term && $projectId) {
+    //         $tasks = Task::where('task_name', 'like', '%' . $term . '%')
+    //                      ->where('project_id', $projectId) // Filter tasks by project ID
+    //                      ->select('id', 'task_name as label')
+    //                      ->get();
+    //     } else {
+    //         $tasks = [];
+    //     }
+
+    //     return response()->json($tasks);
+    // }
+            
+
     public function searchTasks(Request $request)
     {
+        $userId = Auth::id();
         $term = $request->input('term');
-        $projectId = $request->input('project_id'); // Get the selected project ID
+        $projectId = $request->input('project_id');
 
         if ($term && $projectId) {
             $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-                         ->where('project_id', $projectId) // Filter tasks by project ID
-                         ->select('id', 'task_name as label')
-                         ->get();
+                        ->where('project_id', $projectId)
+                        ->where(function ($query) use ($userId) {
+                            $query->where('assigned_to', $userId) // Task assigned to logged-in user
+                                ->orWhereHas('project', function ($subQuery) use ($userId) {
+                                    $subQuery->where('created_by', $userId) // Project created by user
+                                                ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // User is a team member
+                                });
+                        })
+                        ->select('id', 'task_name as label')
+                        ->get();
         } else {
             $tasks = [];
         }
@@ -61,21 +107,7 @@ class DailyReportController extends Controller
     }
 
 
-    // public function searchTickets(Request $request)
-    // {
-    //     $term = $request->input('term');
-        
-    //     if ($term) {
-    //         $tickets = Ticket::where('title', 'like', '%' . $term . '%')
-    //                         ->select('id', 'title as label')
-    //                         ->get();
-    //     } else {
-    //         $tickets = [];
-    //     }
-
-    //     return response()->json($tickets);
-    // }
-
+   
 
     public function searchTickets(Request $request)
     {
