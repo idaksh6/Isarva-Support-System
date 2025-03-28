@@ -17,7 +17,7 @@ class TicketController
 {
     //
 
-    public function Index(Request $request)
+    public function ticketView(Request $request)
     {
         // Retrieve query parameters
         $query = Ticket::query();
