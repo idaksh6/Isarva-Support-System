@@ -1,21 +1,22 @@
 <?php
 
-use App\Http\Controllers\Backend\DashboardController;
-use App\Http\Controllers\Backend\ProjectController;
-use App\Http\Controllers\Backend\TaskController;
-use App\Http\Controllers\Backend\UielementController;
-use App\Http\Controllers\Backend\AuthenticationController;
-use App\Http\Controllers\Backend\TicketController;
-use App\Http\Controllers\Backend\ClientController;
-use App\Http\Controllers\Backend\EmployeeController;
-use App\Http\Controllers\Backend\AccountsController;
+use Tabuna\Breadcrumbs\Trail;
 use App\Http\Controllers\Backend\AppsController;
+use App\Http\Controllers\Backend\TaskController;
+use App\Http\Controllers\Backend\ClientController;
+use App\Http\Controllers\Backend\GoogleController;
+use App\Http\Controllers\Backend\TicketController;
+use App\Http\Controllers\Backend\ProjectController;
+use App\Http\Controllers\Backend\AccountsController;
+use App\Http\Controllers\Backend\EmployeeController;
+use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\UielementController;
 use App\Http\Controllers\Backend\OtherpagesController;
 use App\Http\Controllers\Backend\DailyReportController;
-use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
-use App\Http\Controllers\Backend\GoogleController;
+use App\Http\Controllers\Backend\AuthenticationController;
 
-use Tabuna\Breadcrumbs\Trail;
+use App\Http\Controllers\Backend\Reports\ReportsController;
+use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
 
 
 // All route names are prefixed with 'admin.'.
@@ -236,7 +237,24 @@ Route::group([
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('our-client.destroy-client');
 });
 
+// Reports section
+Route::group([
+    'prefix' => 'reports'
+], function () {
+    Route::get('Active-ticket', [ReportsController::class, 'ActiveTicketReport'])
+    ->name('reports.active-tickets')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.reports.active-tickets'));
+    });
 
+    Route::get('ExportPdf-ticket', [ReportsController::class, 'ExportPdf'])
+    ->name('reports.ExportPdf-ticket')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.reports.ExportPdf-ticket'));
+    });
+
+    
+});
 
 // Employee routes
 Route::group([

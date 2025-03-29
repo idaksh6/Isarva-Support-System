@@ -57,7 +57,8 @@
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 
     
-
+    {{-- select 2  --}}
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/select2.min.css') }}">
 </head>
 <body>
 
@@ -217,6 +218,7 @@
 
 <script src="{{ asset('assets/plugins/fullcalendar/main.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/prism/prism.js') }}"></script>
+<script src="{{ asset('assets/plugins/select2/select2.min.js') }}"></script>
 {{-- <script src="{{ asset('assets/plugins/bootstrap/bootstrap.bundle.min.js')}}"></script> --}}
 @stack('before-scripts')
 

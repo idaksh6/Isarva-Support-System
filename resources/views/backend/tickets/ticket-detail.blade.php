@@ -253,24 +253,12 @@
 </div>
 
 <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>    
-    <script src="{{ asset('js/template.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
-
-<!-- Bootstrap Bundle includes Popper.js -->
+<script src="{{ asset('js/template.js') }}"></script>
 
 
-    <!-- Jquery Page Js -->
-    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-    <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script>
-
-    <script src="{{ asset('js/template.js') }}"></script>
-
-
-        <!-- Jquery Page Js -->
-        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-    
-        <script src="{{ asset('js/template.js') }}"></script>
-
+<!-- Jquery Page Js -->
+<script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script>
+<script src="{{asset('js/jquery.validate.min.js')}}"></script>
 <script>
     
     $(document).ready(function () {
