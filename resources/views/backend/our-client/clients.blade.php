@@ -53,13 +53,13 @@
                         </div>
                         <div class="col">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Password" >
+                            <input type="password" class="form-control" name="password" placeholder="Password"   autocomplete="new-password">>
                             <div class="text-danger" id="clientadd_error-password"></div>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col">
-                            <label class="form-label">Email ID</label>
+                            <label class="form-label">Email ID<span class="required">*</span></label>
                             <input type="email" class="form-control" name="email" placeholder="Email ID" >
                             <div class="text-danger" id="clientadd_error-email"></div>
                         </div>
@@ -128,18 +128,18 @@
                             </div>
                             <div class="col">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password"  autocomplete="off">
                             
                             </div>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col">
-                                <label for="email" class="form-label">Email ID</label>
+                                <label for="email" class="form-label">Email ID <span class="required">*</span></label>
                                 <input type="email" class="form-control" id="email" name="email">
                                 <div class="text-danger" id="client-edit-error-email"></div>
                             </div>
                             <div class="col">
-                                <label for="phone" class="form-label">Phone</label>
+                                <label for="phone" class="form-label">Phone<span class="required">*</span></label>
                                 <input type="text" class="form-control" id="phone" name="phone">
                                 <div class="text-danger" id="client-edit-error-phone"></div>
                             </div>
@@ -202,7 +202,7 @@
                         <div class="col-md-4">
                             <form method="GET" action="{{ route('admin.our-client.search-client') }}">
                                 <div class="input-group">
-                                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control client_search" placeholder="Search .. " aria-label="Search">
+                                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control client_search" placeholder="Search  " aria-label="Search">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search"></i>
                                     </button>
@@ -297,7 +297,8 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
-    <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
+    {{-- <script src = " {{ asset('js/sweetalert2@11.js')}}"></script> --}}
+    <script src ="{{ asset('sweetalaertcdn/sweetalert2@11.js')}}"></script>
 
     <script>
         var editClientRoute = "{{ route('admin.our-client.edit-client', ':id') }}";
@@ -374,149 +375,131 @@
 
         // Send the delete request via AJAX
         $.ajax({
-            url: url,
-            method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
-            data: form.serialize(), // Serialize the form data
-            success: function (response) {
-                if (response.success) {
-                    // Show a success message
-                    alert(response.message);
+                    url: url,
+                    method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
+                    data: form.serialize(), // Serialize the form data
+                    success: function (response) {
+                        if (response.success) {
+                            // Show a success message
+                            alert(response.message);
 
-                    // Optionally, reload the page or remove the deleted client from the list
-                    location.reload(); // Reload the page to reflect the changes
-                }
-            },
-            error: function (xhr) {
-                console.error('Error deleting client:', xhr.responseText);
-                alert('An error occurred while deleting the client.');
-            }
-        });
-    });
+                            // Optionally, reload the page or remove the deleted client from the list
+                            location.reload(); // Reload the page to reflect the changes
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error deleting client:', xhr.responseText);
+                        alert('An error occurred while deleting the client.');
+                    }
+                });
+            });
 
-
-
-    
             // Client ADD form validation code
-            // $(document).ready(function () {
-            //     // Handle form submission
-            //     $('#createclientform').on('submit', function (e) {
-            //         e.preventDefault(); // Prevent the default form submission
-
-            //         var form = $(this);
-            //         var url = form.attr('action');
-            //         var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
-
-            //         // Clear previous errors
-            //         $('.text-danger').html('');
-
-            //         $.ajax({
-            //             url: url,
-            //             type: 'POST',
-            //             data: formData,
-            //             processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
-            //             contentType: false, // for the proper handling of file uploads, 
-            //             success: function (response) {
-            //                 // If the form is successfully submitted, close the modal and redirect
-            //                 // alert('Employee added successfully!'); // Show success message
-            //                 $('#createemp').modal('hide');
-            //                 window.location.href = "{{ route('admin.our-client.clients') }}";
-            //             },
-            //             error: function (xhr) {
-            //                 // If there are validation errors, display them below each field
-            //                 var errors = xhr.responseJSON.errors;
-            //                 $.each(errors, function (key, value) {
-            //                     $('#clientadd_error-' + key).html(value[0]); // Display the first error message
-            //                 });
-            //             }
-            //         });
-            //     });
-            // });
             $(document).ready(function () {
                 $('#createclientform').on('submit', function (e) {
-                    e.preventDefault(); // Prevent default form submission
+                    e.preventDefault();
 
                     var form = $(this);
                     var url = form.attr('action');
                     var formData = new FormData(form[0]);
 
-                    // Clear previous errors
-                    $('.text-danger').html('');
+                    $('.text-danger').html(''); // Clear errors
 
                     $.ajax({
                         url: url,
                         type: 'POST',
                         data: formData,
-                        processData: false, 
-                        contentType: false, 
+                        processData: false,
+                        contentType: false,
+                
                         success: function (response) {
-                            // Show success message using SweetAlert
+                            // Show loading spinner (optional)
+                            $('#createclient').modal('hide');
+                        
+                            // Then show success message
                             Swal.fire({
-                                title: "Success!",
-                                text: "Client added successfully!",
-                                icon: "success",
-                                confirmButtonText: "OK"
+                                title: 'Success!',
+                                text: 'Client created successfully!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
                             }).then(() => {
-                                // Close modal and redirect
-                                $('#createemp').modal('hide');
                                 window.location.href = "{{ route('admin.our-client.clients') }}";
                             });
                         },
                         error: function (xhr) {
+                        // Reopen modal if error occurs
+                            $('#createclient').modal('show');
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function (key, value) {
-                                $('#clientadd_error-' + key).html(value[0]);
+                            $('#clientadd_error-' + key).html(value[0]);
                             });
                         }
                     });
                 });
+
+
+                          
+                   //----- AJAX for Client-edit form Modal validation -----
+
+                    $('#edit-client-form').on('submit', function(e) {
+                        e.preventDefault();
+                        var form = $(this);
+                        var formData = new FormData(form[0]);
+
+                            // Clear previous errors
+                            $('.text-danger').html('');
+
+                                $.ajax({
+                                    url: form.attr('action'),
+                                    type: 'POST',
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function(response) {
+                                            // Close modal immediately
+                                            $('#editclient').modal('hide');
+                                            
+                                            // Remove modal backdrop (fixes black background issue)
+                                            $('body').removeClass('modal-open');
+                                            $('.modal-backdrop').remove();
+
+                                            // Show properly oriented success alert
+                                            Swal.fire({
+                                                title: 'Success!',
+                                                html: '<div style="transform: scaleX(1)">Client has been updated!</div>',
+                                                icon: 'success',
+                                                timer: 2000, // 2 seconds
+                                                timerProgressBar: true,
+                                                showConfirmButton: false,
+                                                position: 'center',
+                                                willClose: () => {
+                                                    window.location.reload();
+                                                }
+                                            });
+                                        },
+                                        error: function(xhr) {
+                                            var errors = xhr.responseJSON.errors;
+                                            if (errors) {
+                                                $.each(errors, function(key, value) {
+                                                    $('#client-edit-error-' + key).html(value[0]);
+                                                });
+                                            }
+                                        }
+                                    });
+                                });
+                
+
+
             });
+
+
+
+            
 
 
 
 
             
-                //----- AJAX for Client-edit form Modal validation -----
-
-                $(document).ready(function () {
-                    // Handle edit form submission
-                    $('#edit-client-form').on('submit', function (e) {
-                        e.preventDefault(); // Prevent the default form submission
-
-                        var form = $(this);
-                        var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
-                        var formData = new FormData(form[0]); // Include file uploads
-
-                        // Clear previous errors
-                        $('.text-danger').html('');
-
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success: function (response) {
-                                // If the form is successfully submitted, show a success message and close the modal
-                                alert('Client updated successfully!'); // Show success message
-                                $('#editclient').modal('hide'); // Close the modal
-                                window.location.reload(); // Reload the page to reflect changes
-                            },
-                            error: function (xhr) {
-                                // Log the error response to the console
-                                console.log(xhr.responseJSON);
-
-                                // If there are validation errors, display them below each field
-                                var errors = xhr.responseJSON.errors;
-                                if (errors) {
-                                    $.each(errors, function (key, value) {
-                                        $('#client-edit-error-' + key).html(value[0]); // Display the first error message
-                                    });
-                                }
-                            } 
-                        });
-                    });
-                });
-
     </script>
 
 @endsection

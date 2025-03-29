@@ -212,6 +212,28 @@
 }
 
 
+.project_search {
+
+    margin: 0;
+}
+
+.advancebtn{
+
+    background-color: rgb(72, 76, 127);
+    color: white;
+    padding: 8px 8px;
+    border-radius: 6px;
+    border: 0px;
+}
+
+.resetbtn{
+
+    color: white;
+    padding: 8px 8px;
+    border-radius: 6px;
+}
+
+
 /* .text-primary {
     color: blue;
 }

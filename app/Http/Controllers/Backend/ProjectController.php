@@ -47,42 +47,91 @@ class ProjectController
         'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects'));
     }
 
+    // public function manage(Request $request)
+    // {
+    //     $query = Project::query();
+
+    //     // Apply filters based on search parameters
+    //     if ($request->has('status') && $request->status != 'None') {
+    //         $query->where('si_projects.status', $request->status); // Specify table name
+    //     }
+
+    //     if ($request->has('assigned_to') && $request->assigned_to != '') {
+    //         $query->where('si_projects.manager', $request->assigned_to); // Specify table name
+    //     }
+
+    //     if ($request->has('department') && $request->department != 'None') {
+    //         $query->where('si_projects.department', $request->department); // Specify table name
+    //     }
+
+    //     // Fetch projects with necessary joins and paginate the results
+    //     $projectsmanage = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
+    //         ->leftJoin('si_users', 'si_projects.manager', '=', 'si_users.id')
+    //         ->select(
+    //             'si_projects.*',
+    //             'isar_clients.client_name as client_name', // Corrected column name
+    //             'si_users.name as manager_name'
+    //         )
+    //         ->paginate(10); // Use paginate() instead of get()
+
+    //     // Count total projects dynamically
+    //     $totalProjectscount = $projectsmanage->total();
+
+    //         // Fetch filtered projects
+    //         $projects = $query->get();
+        
+
+    //     return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
+    // }
+
     public function manage(Request $request)
     {
         $query = Project::query();
-
+    
+        // Project name search
+        if ($request->has('project_name') && $request->project_name != '') {
+            $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+        }
+    
         // Apply filters based on search parameters
         if ($request->has('status') && $request->status != 'None') {
-            $query->where('si_projects.status', $request->status); // Specify table name
+            $query->where('si_projects.status', $request->status);
         }
-
+    
         if ($request->has('assigned_to') && $request->assigned_to != '') {
-            $query->where('si_projects.manager', $request->assigned_to); // Specify table name
+            $query->where('si_projects.manager', $request->assigned_to);
         }
-
+    
         if ($request->has('department') && $request->department != 'None') {
-            $query->where('si_projects.department', $request->department); // Specify table name
+            $query->where('si_projects.department', $request->department);
         }
-
-        // Fetch projects with necessary joins and paginate the results
+    
+        // Month filter
+        if ($request->has('month') && $request->month != 'None') {
+            $query->whereMonth('si_projects.start_date', $request->month);
+        }
+    
+        // Year filter
+        if ($request->has('year') && $request->year != 'None') {
+            $query->whereYear('si_projects.start_date', $request->year);
+        }
+    
+        // Rest of your existing code...
         $projectsmanage = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
             ->leftJoin('si_users', 'si_projects.manager', '=', 'si_users.id')
             ->select(
                 'si_projects.*',
-                'isar_clients.client_name as client_name', // Corrected column name
+                'isar_clients.client_name as client_name',
                 'si_users.name as manager_name'
             )
-            ->paginate(10); // Use paginate() instead of get()
-
-        // Count total projects dynamically
+            ->paginate(10);
+    
         $totalProjectscount = $projectsmanage->total();
-
-            // Fetch filtered projects
-            $projects = $query->get();
-        
-
+        $projects = $query->get();
+    
         return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
     }
+        
     
 
     public function store(Request $request)

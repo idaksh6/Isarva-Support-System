@@ -371,7 +371,35 @@ public function getDepartmentNameAttribute()
         }
     }
 
-   
+    public static function getMonthsList()
+    {
+        return [
+            '1' => 'January',
+            '2' => 'February',
+            '3' => 'March',
+            '4' => 'April',
+            '5' => 'May',
+            '6' => 'June',
+            '7' => 'July',
+            '8' => 'August',
+            '9' => 'September',
+            '10' => 'October',
+            '11' => 'November',
+            '12' => 'December'
+        ];
+    }
+    
+    public static function getYearsList($startYear = 2020)
+    {
+        $currentYear = date('Y');
+        $years = [];
+        
+        for ($year = $currentYear; $year >= $startYear; $year--) {
+            $years[$year] = $year;
+        }
+        
+        return $years;
+    }
 
 
 }
