@@ -104,7 +104,9 @@ class ClientController
 
         // return redirect()->back()->withFlashSuccess(__('The client was successfully created.'));
         
-       return redirect()->route('admin.our-client.clients')->withFlashSuccess(_('The client was successfully created.'));
+    //    return redirect()->route('admin.our-client.clients')->withFlashSuccess(_('The client was successfully created.'));
+
+    return response()->json(['success' => true]);
 
     }
 
