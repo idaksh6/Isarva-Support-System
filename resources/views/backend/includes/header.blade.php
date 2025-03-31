@@ -1,7 +1,11 @@
 <!-- Body: Header -->
 <div class="header">
     <nav class="navbar py-4">
-        <div class="container-xxl">
+        <div class="container-xxl" style="
+    background-color: #484c7f;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;">
 
             <!-- header rightbar icon -->
             <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
@@ -96,6 +100,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Year and Month Filters -->
+                <div class="d-flex align-items-center ms-auto me-3" style="height: 50%;">
+                    <div class="filter-container d-flex align-items-center gap-3" style="height: 100%;">
+                        <div class="filter-item d-flex align-items-center">
+                            <label for="yearFilter" class="form-label me-2 mb-0">Year:</label>
+                            <select id="yearFilter" class="form-select">
+                                @for ($year = date('Y'); $year >= 2020; $year--)
+                                    <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                
+                        <div class="filter-item d-flex align-items-center">
+                            <label for="monthFilter" class="form-label me-2 mb-0">Month:</label>
+                            <select id="monthFilter" class="form-select">
+                                @for ($month = 1; $month <= 12; $month++)
+                                    <option value="{{ $month }}" {{ $month == date('m') ? 'selected' : '' }}>
+                                        {{ date('F', mktime(0, 0, 0, $month, 10)) }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
                     <div class="u-info me-2">
                         <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">  {{Auth::user()->name}}</span></p>
@@ -132,7 +165,7 @@
 
             <!-- menu toggler -->
             <button class="navbar-toggler p-0 border-0 menu-toggle order-3" type="button" data-bs-toggle="collapse" data-bs-target="#mainHeader">
-                <span class="fa fa-bars"></span>
+                <span class="fa fa-bars" style="color: white;"></span>
             </button>
 
             <!-- main menu Search-->

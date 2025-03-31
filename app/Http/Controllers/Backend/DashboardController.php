@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
-use App\Models\Backend\Project;
 use App\Models\Backend\Ticket;
+use Illuminate\Support\Carbon;
+use App\Models\Backend\Project;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Backend\DailyReportField;
 
 /**
  * Class DashboardController.
@@ -88,5 +91,67 @@ class DashboardController
     }
     public function reviews(){
         return view('backend.reviews');
+    }
+
+    public function dailyReportStatisticsChart($year = null, $month = null)
+    {
+        // Use current year/month if not provided
+        $year = $year ?? date('Y');
+        $month = $month ?? date('m');
+        
+        // Create Carbon instance for the selected month/year
+        $date = Carbon::create($year, $month, 1);
+        
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth = $date->copy()->endOfMonth();
+
+        $data = DailyReportField::select('billable_type', DB::raw('SUM(hrs) as total'))
+            ->whereIn('billable_type', [0, 1, 2])
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->groupBy('billable_type')
+            ->get()
+            ->keyBy('billable_type');
+
+        return response()->json([
+            'series' => [
+                $data->get(1)?->total ?? 0,
+                $data->get(2)?->total ?? 0,
+                $data->get(0)?->total ?? 0
+            ],
+            'labels' => ['Billable', 'Non-Billable', 'Internal Billable']
+        ]);
+    }
+
+
+    public function lastOneYearData($year = null, $month = null)
+    {
+        $year = $year ?? date('Y');
+        $month = $month ?? date('m');
+        
+        $endDate = Carbon::create($year, $month)->endOfMonth();
+        $startDate = $endDate->copy()->subMonths(12)->startOfMonth();
+
+        $labels = [];
+        $billedHours = [];
+
+        for ($i = 0; $i < 13; $i++) {
+            $currentDate = $startDate->copy()->addMonths($i);
+            $labels[] = $currentDate->format('M Y');
+            
+            $monthStart = $currentDate->copy()->startOfMonth();
+            $monthEnd = $currentDate->copy()->endOfMonth();
+
+            $total = DailyReportField::where('billable_type', 1)
+                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->sum('hrs');
+
+            $billedHours[] = $total ?? 0;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'series' => [$billedHours],
+            'selectedMonthIndex' => 12 // Last month in the range
+        ]);
     }
 }

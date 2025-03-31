@@ -44,6 +44,9 @@ Route::get('hr-dashboard', [DashboardController::class, 'index'])
         $trail->push(__('Home'), route('admin.dashboard'));
     });
 
+Route::get('get-daily-stats/{year}/{month}', [DashboardController::class, 'dailyReportStatisticsChart']);
+Route::get('last-one-year/{year}/{month}', [DashboardController::class, 'lastOneYearData']);
+
 Route::get('project-dashboard', [DashboardController::class, 'project'])
     ->name('project')
     ->breadcrumbs(function (Trail $trail) {
