@@ -28,83 +28,83 @@ class DailyReportController extends Controller
 
   
      // Works fine
-    // public function search($term = null)
-    // {
-    //     if ($term) {
-    //         $projects = Project::where('project_name', 'like', '%' . $term . '%')
-    //                           ->select('id', 'project_name as label') // Select id and project_name (aliased as label)
-    //                           ->get();
-    //     } else {
-    //         $projects = []; // Return an empty array if no term is provided
-    //     }
+    public function search($term = null)
+    {
+        if ($term) {
+            $projects = Project::where('project_name', 'like', '%' . $term . '%')
+                              ->select('id', 'project_name as label') // Select id and project_name (aliased as label)
+                              ->get();
+        } else {
+            $projects = []; // Return an empty array if no term is provided
+        }
 
-    //     return response()->json($projects);
-    // }
+        return response()->json($projects);
+    }
 
        
-        public function search($term = null)
-        {
-            $userId = Auth::id(); // Get logged-in user ID
+        // public function search($term = null)
+        // {
+        //     $userId = Auth::id(); // Get logged-in user ID
 
-            if ($term) {
-                $projects = Project::where('project_name', 'like', '%' . $term . '%')
-                                ->where(function ($query) use ($userId) {
-                                    $query->where('created_by', $userId) // Projects created by user
-                                            ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // Projects where user is a team member
-                                })
-                                ->select('id', 'project_name as label')
-                                ->get();
-            } else {
-                $projects = [];
-            }
+        //     if ($term) {
+        //         $projects = Project::where('project_name', 'like', '%' . $term . '%')
+        //                         ->where(function ($query) use ($userId) {
+        //                             $query->where('created_by', $userId) // Projects created by user
+        //                                     ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // Projects where user is a team member
+        //                         })
+        //                         ->select('id', 'project_name as label')
+        //                         ->get();
+        //     } else {
+        //         $projects = [];
+        //     }
 
-            return response()->json($projects);
-        }
+        //     return response()->json($projects);
+        // }
 
 
     // New task search method
-    // public function searchTasks(Request $request)
-    // {
-    //     $term = $request->input('term');
-    //     $projectId = $request->input('project_id'); // Get the selected project ID
-
-    //     if ($term && $projectId) {
-    //         $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-    //                      ->where('project_id', $projectId) // Filter tasks by project ID
-    //                      ->select('id', 'task_name as label')
-    //                      ->get();
-    //     } else {
-    //         $tasks = [];
-    //     }
-
-    //     return response()->json($tasks);
-    // }
-            
-
     public function searchTasks(Request $request)
     {
-        $userId = Auth::id();
         $term = $request->input('term');
-        $projectId = $request->input('project_id');
+        $projectId = $request->input('project_id'); // Get the selected project ID
 
         if ($term && $projectId) {
             $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-                        ->where('project_id', $projectId)
-                        ->where(function ($query) use ($userId) {
-                            $query->where('assigned_to', $userId) // Task assigned to logged-in user
-                                ->orWhereHas('project', function ($subQuery) use ($userId) {
-                                    $subQuery->where('created_by', $userId) // Project created by user
-                                                ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // User is a team member
-                                });
-                        })
-                        ->select('id', 'task_name as label')
-                        ->get();
+                         ->where('project_id', $projectId) // Filter tasks by project ID
+                         ->select('id', 'task_name as label')
+                         ->get();
         } else {
             $tasks = [];
         }
 
         return response()->json($tasks);
     }
+            
+
+    // public function searchTasks(Request $request)
+    // {
+    //     $userId = Auth::id();
+    //     $term = $request->input('term');
+    //     $projectId = $request->input('project_id');
+
+    //     if ($term && $projectId) {
+    //         $tasks = Task::where('task_name', 'like', '%' . $term . '%')
+    //                     ->where('project_id', $projectId)
+    //                     ->where(function ($query) use ($userId) {
+    //                         $query->where('assigned_to', $userId) // Task assigned to logged-in user
+    //                             ->orWhereHas('project', function ($subQuery) use ($userId) {
+    //                                 $subQuery->where('created_by', $userId) // Project created by user
+    //                                             ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // User is a team member
+    //                             });
+    //                     })
+    //                     ->select('id', 'task_name as label')
+    //                     ->get();
+    //     } else {
+    //         $tasks = [];
+    //     }
+
+    //     return response()->json($tasks);
+    // }
 
 
    
@@ -143,7 +143,7 @@ class DailyReportController extends Controller
             'billable.*' => 'required|integer|in:0,1,2',
             'total_hrs' => 'required|numeric',
             'overall_status' => 'required|string',
-            
+        
             // Make all fields nullable by default
             'project_name.*' => 'nullable|string|max:255',
             'project_id.*' => 'nullable|integer',
@@ -152,9 +152,48 @@ class DailyReportController extends Controller
             'ticket-name.*' => 'nullable|string|max:255',
             'ticket_id.*' => 'nullable|integer'
         ], [
-            // Your existing error messages
+            'type.required' => 'You must select at least one type.',
+            'type.*.required' => 'Each type is required.',
+            'type.*.integer' => 'Type must be an integer.',
+            'type.*.in' => 'Invalid type selected.',
+        
+            'comments.required' => 'Comments are required.',
+            'comments.*.required' => 'Each comment field is required.',
+            'comments.*.string' => 'Each comment must be a valid text.',
+        
+            'hrs.required' => 'Hours field is required.',
+            'hrs.*.required' => 'Each hour field is required.',
+            'hrs.*.numeric' => 'Hours must be a numeric value.',
+        
+            'link.*.url' => 'Each link must be a valid URL.',
+        
+            'billable.required' => 'Billable status is required.',
+            'billable.*.required' => 'Each billable field is required.',
+            'billable.*.integer' => 'Billable must be an integer.',
+            'billable.*.in' => 'Invalid billable option selected.',
+        
+            'total_hrs.required' => 'Total hours are required.',
+            'total_hrs.numeric' => 'Total hours must be a numeric value.',
+        
+            'overall_status.required' => 'Overall status is required.',
+            'overall_status.string' => 'Overall status must be a valid text.',
+        
+            'project_name.*.string' => 'Each project name must be a valid text.',
+            'project_name.*.max' => 'Project name must not exceed 255 characters.',
+        
+            'project_id.*.integer' => 'Project ID must be an integer.',
+        
+            'task_name.*.string' => 'Each task name must be a valid text.',
+            'task_name.*.max' => 'Task name must not exceed 255 characters.',
+        
+            'task_id.*.integer' => 'Task ID must be an integer.',
+        
+            'ticket-name.*.string' => 'Each ticket name must be a valid text.',
+            'ticket-name.*.max' => 'Ticket name must not exceed 255 characters.',
+        
+            'ticket_id.*.integer' => 'Ticket ID must be an integer.'
         ]);
-    
+        
         // Manual conditional validation
         foreach ($request->get('type', []) as $index => $type) {
             if ($type == 1) { // Project

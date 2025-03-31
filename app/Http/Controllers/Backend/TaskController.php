@@ -9,9 +9,16 @@ use App\Models\Backend\ProjectEstimationChangeLog;
 use App\Models\Backend\Task;
 use App\Models\Backend\ProjectInternalDocument;
 use App\Models\Backend\ProjectAsset;
-
+use Illuminate\Support\Facades\DB;
 class TaskController
 {
+
+    protected $projectController;
+
+    public function __construct(ProjectController $projectController)
+    {
+        $this->projectController = $projectController;
+    }
 
     // public function tasks()
     //     {
@@ -42,7 +49,7 @@ class TaskController
 
        
 
-        public function tasksByProject($id)
+        public function tasksByProject($id, )
         {
             $project = Project::find($id);
         
@@ -62,8 +69,33 @@ class TaskController
         
             // Fetch uploaded files for the project
             $uploadedFiles = ProjectAsset::where('project_id', $id)->get();
+
+             // Fetched Worked Hours directly from ProjectController
+            $workedHours = $this->projectController->getWorkedHours($id);
+
+             //  Calculate Total Worked Hours
+            $totalWorkedHours = $workedHours->sum('spent_hrs'); // Summing the spent hours
+
+            // Fetch Estimated Hours from `si_projects`
+            $estimatedHours = $project->estimation;
+
         
-            return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs', 'assets'));
+
+            // Calculate Remaining or Overflow Hours
+            $remainingHours = $estimatedHours - $totalWorkedHours;
+            $statusColor = ($remainingHours < 0) ? 'red' : 'blue';
+            $statusText = ($remainingHours < 0) ? 'overflow' : 'remaining';
+            $remainingHours = abs($remainingHours); // Convert negative to positive for display
+
+             // ✅ Calculate Spent Days (Count of unique dates in `si_daily_report_fields`)
+            $spentDays = DB::table('si_daily_report_fields')
+            ->where('project_id', $id)
+            ->select(DB::raw('COUNT(DISTINCT DATE(created_at)) as spent_days'))
+            ->first()->spent_days ?? 0; // Default to 0 if no data found
+
+        
+            return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
+             'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays'));
         }
         
         

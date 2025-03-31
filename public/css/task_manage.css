@@ -93,18 +93,6 @@
     cursor: pointer;
 }
 
-/* Responsive design for smaller screens */
-@media (max-width: 768px) {
-    .file-item {
-        width: calc(50% - 1rem); /* 2 items per row */
-    }
-}
-
-@media (max-width: 480px) {
-    .file-item {
-        width: 100%; /* 1 item per row */
-    }
-}
 
 
 .editaddbtn {
@@ -130,4 +118,102 @@
     visibility: visible !important; /* Ensure it's always visible */
     height: 50px; /* Adjust height as needed */
     margin: 5px 0; /* Add some spacing */
+}
+
+.hours-summary{
+
+    background-color: #ffffff;
+    padding: 15px;
+    color: white;
+    border: 1px solid #e5e5e5;
+}
+
+h3.esthrs {
+
+    font-size: medium !important;
+}
+
+h1.spentdays {
+ 
+   font-size: x-large !important;
+    font-weight: bold;
+
+}
+
+h4.totalhrs {
+
+    font-size: medium !important;
+}
+
+.hours-summary h3{
+
+    background: #659933;
+    padding: 10px;
+    color: white;
+  }
+ 
+
+/*  Second Row - Spent Days (White Background) */
+.spent-days {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    font-weight: 700;
+   
+}
+
+/*  Third Row - Total Hours Remaining/Overflow (Dynamic Background) */
+.total-hours {
+    color: white;
+    padding: 10px;
+   
+}
+
+/* Default Background (Blue) */
+.total-hours.blue {
+    background-color: #007bff;
+}
+
+/*  Overflow Background (Red) */
+.total-hours.red {
+    background-color: #dc3545;
+}
+
+
+
+#additionalHrsTable input {
+    min-width: 100px;
+}
+
+#additionalHrsTable td {
+    vertical-align: middle;
+}
+
+.add-row, .remove-row {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.projectlists{
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progrsbar {
+    width: 20% !important;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .file-item {
+        width: calc(50% - 1rem); /* 2 items per row */
+    }
+}
+
+@media (max-width: 480px) {
+    .file-item {
+        width: 100%; /* 1 item per row */
+    }
 }

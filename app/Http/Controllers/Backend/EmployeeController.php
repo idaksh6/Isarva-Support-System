@@ -288,11 +288,13 @@ class EmployeeController
         // Validation
         $request->validate([
             'name'         => 'required|string|max:100',
-            'employee_id'  => 'nullable|string|max:200|unique:si_users,employee_id,' . $id,
+            // 'employee_id'  => 'nullable|string|max:200|unique:users,employee_id,' . $id,
+            'employee_id'  => 'nullable|string|max:200',
             'joining_date' => 'required|date',
             'user_name'    => 'required|string|max:100',
             'password'     => 'nullable|string|min:1', // Password can be nullable during update
-            'email_id'     => 'required|email|max:40|unique:si_users,email_id,' . $id,
+            // 'email_id'     => 'required|email|max:40|unique:users,email_id,' . $id,
+            'email_id'     => 'required|email|max:40',
             'phone'        => 'required|string|max:30',
             'department'   => 'required|integer|in:1,2,3,4,5',
             'designation'  => 'required|integer|in:1,2,3,4,5,6,7,8,9,10',

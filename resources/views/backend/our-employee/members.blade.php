@@ -36,7 +36,7 @@
                     <div class="deadline-form">
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="exampleFormControlInput1778" class="form-label">Employee ID</label>
+                                <label for="exampleFormControlInput1778" class="form-label">Employee ID<span class="required">*</span></label>
                                 <input type="text" class="form-control" name="employee_id" id="exampleFormControlInput1778" value="{{ old('employee_id') }}" placeholder="Enter Employee Id">
                                 <div class="text-danger" id="error-employee_id"></div> <!-- Error container for "employee_id" -->
                             </div>
@@ -55,7 +55,7 @@
                                 <div class="text-danger" id="error-user_name"></div> <!-- Error container for "user_name" -->
                             </div>
                             <div class="col">
-                                <label class="form-label">Password</label>
+                                <label class="form-label">Password<span class="required">*</span></label>
                                 <input type="password" class="form-control" name="password" value="{{ old('password') }}" placeholder="Password" autocomplete="new-password">
                                 <div class="text-danger" id="error-password"></div> <!-- Error container for "password" -->
                             </div>
@@ -140,7 +140,7 @@
 
                         <!-- Address -->
                         <div class="mb-3">
-                            <label class="form-label">Address</label>
+                            <label class="form-label">Address<span class="required">*</span></label>
                             <textarea class="form-control" name="address" placeholder="">{{ old('address') }}</textarea>
                             <div class="text-danger" id="error-address"></div> <!-- Error container for "address" -->
                         </div>
@@ -187,7 +187,7 @@
                     <!-- Employee ID and Joining Date -->
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
-                            <label for="employee_id" class="form-label">Employee ID</label>
+                            <label for="employee_id" class="form-label">Employee ID<span class="required">*</span></label>
                             <input type="text" class="form-control" name="employee_id" id="employee_id" placeholder="Enter Employee Id">
                             <div class="text-danger" id="edit-error-employee_id"></div> <!-- Error container for "employee_id" -->
                         </div>
@@ -206,7 +206,7 @@
                             <div class="text-danger" id="edit-error-user_name"></div> <!-- Error container for "user_name" -->
                         </div>
                         <div class="col">
-                            <label class="form-label">Password</label>
+                            <label class="form-label">Password<span class="required">*</span></label>
                             <input type="password" class="form-control" name="password" id="emp_password" placeholder="Password" autocomplete="new-password">
                             <div class="text-danger" id="edit-error-password"></div> <!-- Error container for "password" -->
                         </div>
@@ -287,7 +287,7 @@
 
                     <!-- Address -->
                     <div class="mb-3">
-                        <label class="form-label">Address</label>
+                        <label class="form-label">Address<span class="required">*</span></label>
                         <textarea class="form-control" name="address" id="emp_address" placeholder=""></textarea>
                         <div class="text-danger" id="edit-error-address"></div> <!-- Error container for "address" -->
                     </div>
@@ -322,6 +322,32 @@
 
 
 
+
+<!-- Modal for Delete Confirmation of Employee-->
+<div class="modal fade" id="deleteemployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="deleteprojectLabel">Delete Item Permanently?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body justify-content-center flex-column d-flex">
+                <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                <p class="mt-4 fs-5 text-center">You can only delete this item permanently.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <!-- Add a form for the delete action -->
+                <form id="delete-employee-form" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger color-fff">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
    <!-- Display success or error message -->
    @if (session('success'))
    <div class="alert alert-success">
@@ -340,7 +366,7 @@
                             <div class="col-md-4">
                                 <form method="GET" action="{{ route('admin.our-employee.search') }}">
                                     <div class="input-group">
-                                        <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control employee_search" placeholder="Search .. " aria-label="Search">
+                                        <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control employee_search" placeholder="Search " aria-label="Search">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="fa fa-search"></i>
                                         </button>
@@ -563,84 +589,113 @@
 <script>
 
     
-    // Employee Add Modal pop-up hidden function
-    $(document).ready(function () {
-        // Handle form submission
-        $('#createEmployeeForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+    
+                   // Employee Add Modal pop-up hidden function
+            
+                    $(document).ready(function () {
+                        // Handle form submission
+                        $('#createEmployeeForm').on('submit', function (e) {
+                            e.preventDefault(); // Prevent the default form submission
 
-            var form = $(this);
-            var url = form.attr('action');
-            var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+                            var form = $(this);
+                            var url = form.attr('action');
+                            var formData = new FormData(form[0]); // Extract all form data, including file inputs
 
-            // Clear previous errors
-            $('.text-danger').html('');
+                            // Clear previous errors
+                            $('.text-danger').html('');
 
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: formData,
-                processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
-                contentType: false, // for the proper handling of file uploads, 
-                success: function (response) {
-                    // If the form is successfully submitted, close the modal and redirect
-                    alert('Employee added successfully!'); // Show success message
-                    $('#createemp').modal('hide');
-                    window.location.href = "{{ route('admin.our-employee.members') }}";
-                },
-                error: function (xhr) {
-                    // If there are validation errors, display them below each field
-                    var errors = xhr.responseJSON.errors;
-                    $.each(errors, function (key, value) {
-                        $('#error-' + key).html(value[0]); // Display the first error message
-                    });
-                }
-            });
-        });
-    });
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: formData,
+                                processData: false, // Allow FormData to handle formatting
+                                contentType: false, // Ensure correct handling of file uploads
+                                success: function (response) {
+                                    // Hide modal only if form submission is successful
+                                    $('#createemp').modal('hide');
 
-    //----- AJAX for Employee_edit form Modal -----
-
-    $(document).ready(function () {
-        // Handle edit form submission
-        $('#edit-employee-form').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            var form = $(this);
-            var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
-            var formData = new FormData(form[0]); // Include file uploads
-
-            // Clear previous errors
-            $('.text-danger').html('');
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    // If the form is successfully submitted, show a success message and close the modal
-                    alert('Employee updated successfully!'); // Show success message
-                    $('#editemployee').modal('hide'); // Close the modal
-                    window.location.reload(); // Reload the page to reflect changes
-                },
-                error: function (xhr) {
-                    // Log the error response to the console
-                    console.log(xhr.responseJSON);
-
-                    // If there are validation errors, display them below each field
-                    var errors = xhr.responseJSON.errors;
-                    if (errors) {
-                        $.each(errors, function (key, value) {
-                            $('#edit-error-' + key).html(value[0]); // Display the first error message
+                                    // Show success message with SweetAlert
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Employee added successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.href = "{{ route('admin.our-employee.members') }}";
+                                    });
+                                },
+                                error: function (xhr) {
+                                    var errors = xhr.responseJSON.errors;
+                                    $.each(errors, function (key, value) {
+                                        $('#error-' + key).html(value[0]); // Display validation errors
+                                    });
+                                }
+                            });
                         });
-                    }
-                } 
-            });
-        });
-    });
+                    });
 
+
+                //----- AJAX for Employee_edit form Modal -----
+
+                $(document).ready(function () {
+                    // Handle edit form submission
+                    $('#edit-employee-form').on('submit', function (e) {
+                        e.preventDefault(); // Prevent the default form submission
+
+                        var form = $(this);
+                        var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
+                        var formData = new FormData(form[0]); // Include file uploads
+
+                        // Clear previous errors
+                        $('.text-danger').html('');
+
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                // Close modal immediately
+                                $('#editemployee').modal('hide');
+
+                                // Remove modal backdrop (fixes black background issue)
+                                $('body').removeClass('modal-open');
+                                $('.modal-backdrop').remove();
+
+                                // Show success alert with proper orientation
+                                Swal.fire({
+                                    title: 'Success!',
+                                    html: '<div style="transform: scaleX(1)">Employee has been updated!</div>',
+                                    icon: 'success',
+                                    timer: 2000, // 2 seconds
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                    position: 'center',
+                                    willClose: () => {
+                                        window.location.reload();
+                                    }
+                                });
+                            },
+                            error: function (xhr) {
+                                // Log the error response to the console
+                                console.log(xhr.responseJSON);
+
+                                // If there are validation errors, display them below each field
+                                var errors = xhr.responseJSON.errors;
+                                if (errors) {
+                                    $.each(errors, function (key, value) {
+                                        $('#edit-error-' + key).html(value[0]); // Display the first error message
+                                    });
+                                }
+                            } 
+                        });
+
+                    });
+                });
+
+
+                   
 </script>
     
 @endsection

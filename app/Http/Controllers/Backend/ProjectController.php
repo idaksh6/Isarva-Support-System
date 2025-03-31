@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Backend\ProjectEstimationChangeLog;
 use App\Models\Backend\Task;
 use App\Helpers\ClientHelper;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController
 {
@@ -440,5 +441,36 @@ class ProjectController
     public function leaders(){
         return view('backend.project.leaders');
     }
+
+    // public function getWorkedHours($projectId)
+    // {
+    //     $workedHours = DB::table('si_daily_report_fields')
+    //         ->select('users.name as employee', DB::raw('SUM(si_daily_report_fields.hrs) as spent_hrs'))
+    //         ->join('users', 'si_daily_report_fields.user_id', '=', 'users.id')
+    //         ->where('si_daily_report_fields.project_id', $projectId)
+    //         ->where('si_daily_report_fields.type', 1)
+    //         ->groupBy('si_daily_report_fields.user_id', 'users.name')
+    //         ->get();
+
+    //     if ($workedHours->isEmpty()) {
+    //         return response()->json(['message' => 'No data found'], 404);
+    //     }
+
+    //     return response()->json($workedHours);
+    // }
+
+     // Fetched under TaskController for workedhrs field 
+    public function getWorkedHours($projectId)
+    {
+        return DB::table('si_daily_report_fields')
+            ->select('users.name as employee', DB::raw('SUM(si_daily_report_fields.hrs) as spent_hrs'))
+            ->join('users', 'si_daily_report_fields.user_id', '=', 'users.id')
+            ->where('si_daily_report_fields.project_id', $projectId)
+            ->where('si_daily_report_fields.type', 1) // Only type=1 for hours calculation
+            ->groupBy('si_daily_report_fields.user_id', 'users.name')
+            ->get();
+    }
+
+
 
 }

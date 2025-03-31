@@ -195,6 +195,12 @@ public function getDepartmentNameAttribute()
         return $this->hasMany(Task::class, 'project_id');
     }
 
+    // In your Project model (app/Models/Project.php)
+    public function additionalHours()
+    {
+        return $this->hasMany(ProjectAdditionalHours::class);
+    }
+
     
 
     // Accessor to calculate the project duration

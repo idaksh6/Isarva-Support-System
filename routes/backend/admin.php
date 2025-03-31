@@ -14,7 +14,7 @@ use App\Http\Controllers\Backend\UielementController;
 use App\Http\Controllers\Backend\OtherpagesController;
 use App\Http\Controllers\Backend\DailyReportController;
 use App\Http\Controllers\Backend\AuthenticationController;
-
+use App\Http\Controllers\Backend\ProjectAdditionalHrController;
 use App\Http\Controllers\Backend\Reports\ReportsController;
 use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
 
@@ -125,12 +125,20 @@ Route::group([
       // Route to store internal docs
       Route::post('/internal-docs/store', [TaskController::class, 'storeInternalDoc'])->name('internal-docs.store');
 
-    
+    // Assets Route
       Route::get('/task-assets/{projectId}', [TaskController::class, 'showAssets'])->name('task-assets.show');
 
-    //   Route::post('/update-task-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
+      // Worked Hour Route
+      Route::get('/admin/project/worked-hours/{id}', [ProjectController::class, 'getWorkedHours'])->name('project.worked-hours');
 
-
+ 
+    // Route for additinal Hr under Task
+   Route::get('/projects/{project}/additional-hrs', [ProjectAdditionalHrController::class, 'index'])
+      ->name('project.additional-hrs.index');
+  
+  Route::post('/projects/additional-hrs', [ProjectAdditionalHrController::class, 'store'])
+      ->name('project.additional-hrs.store');
+   
 
 
    // Define the route for updating task status
@@ -151,11 +159,7 @@ Route::group([
 Route::get('/admin/task-asset/fetch/{project_id}', [TaskController::class, 'fetchUploadedFiles'])
     ->name('task-asset.fetch');
 
-    
-    
-
-
-    Route::post('/task/update-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
+Route::post('/task/update-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
 
 
 
