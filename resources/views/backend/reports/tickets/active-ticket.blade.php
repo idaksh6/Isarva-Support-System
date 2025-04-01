@@ -52,6 +52,9 @@
     
     <div class="card my-4">
         <div class="card-body">
+            <div class="">
+                <h6 class="fw-bold">{{$ticketStatus}} Tickets: {{$ticketCount}}</h6>
+            </div>
             <button id="exportPdf" class="btn btn-success text-white my-2">
                 <i class="fas fa-file-pdf"></i> Export to PDF
             </button>
