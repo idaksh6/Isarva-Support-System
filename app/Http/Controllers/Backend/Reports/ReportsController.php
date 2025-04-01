@@ -13,7 +13,8 @@ class ReportsController extends Controller
 {
     public function ActiveTicketReport()
     {
-        $tickets = Ticket::leftJoinSub(
+        // Build the query without executing it
+        $query = Ticket::leftJoinSub(
             DB::table('si_daily_report_fields')
                 ->select('project_id', DB::raw('SUM(hrs) as total_hrs'))
                 ->where('type', 2)
@@ -50,25 +51,39 @@ class ReportsController extends Controller
             'isar_tickets.id as project_id',
             'latest_discussion.discussion_comments'
         )
-        ->orderBy('isar_tickets.id', 'desc')
-        ->get();
+        ->orderBy('isar_tickets.id', 'desc');
+
+        // Get the count of tickets based on the query
+        $ticketCount = $query->count();
+
+        // Execute the query to get the ticket results
+        $tickets = $query->get();
 
         $status = ClientHelper::TicketStatus();
         $Priority = ClientHelper::Priority();
         $employees = ClientHelper::getEmployees();
 
+        // Determine the selected status label
+        $selectedStatus = request('status', 0);
+        $ticketStatus = $selectedStatus == 0 
+            ? 'Active' 
+            : ($status[$selectedStatus] ?? 'Unknown Status');
+
         return view("backend.reports.tickets.active-ticket", [
             "tickets" => $tickets,
             "status" => $status,
-            "Priority"=>$Priority,
-            "employees"=>$employees
+            "Priority" => $Priority,
+            "employees" => $employees,
+            'ticketCount' => $ticketCount, // Correct count based on filters
+            'ticketStatus' => $ticketStatus,
         ]);
     }
 
 
     public function exportPdf(Request $request)
     {
-        $tickets = Ticket::leftJoinSub(
+        // Build the query without executing it
+        $query = Ticket::leftJoinSub(
             DB::table('si_daily_report_fields')
                 ->select('project_id', DB::raw('SUM(hrs) as total_hrs'))
                 ->where('type', 2)
@@ -87,7 +102,6 @@ class ReportsController extends Controller
             '=',
             'latest_discussion.ticket_id'
         )
-        // Corrected filter logic
         ->when($request->status == 0 || !$request->has('status'), function ($query) {
             // Default: Exclude status 3 and 7
             $query->whereNotIn('isar_tickets.status', [3, 7]);
@@ -105,20 +119,26 @@ class ReportsController extends Controller
             'isar_tickets.id as project_id',
             'latest_discussion.discussion_comments'
         )
-        ->orderBy('isar_tickets.id', 'desc')
-        ->get();
+        ->orderBy('isar_tickets.id', 'desc');
 
-        // Corrected variable names
+        // Get the count of filtered tickets
+        $ticketCount = $query->count(); 
+
+        // Execute the query to get results
+        $tickets = $query->get();
+
+        // Prepare data for the PDF
         $statusList = ClientHelper::TicketStatus();
         $priorityList = ClientHelper::Priority();
         $employees = ClientHelper::getEmployees();
-
+        
         $data = [
-            'status' => $statusList,  // Fixed variable name
+            'status' => $statusList,
             'Priority' => $priorityList,
             'employees' => $employees,
             'tickets' => $tickets,
-            'appliedStatus' => $request->status  // Pass applied filter status
+            'ticketStatus' => $request->status,
+            'ticketCount' => $ticketCount // Include accurate count
         ];
 
         $pdf = PDF::loadView('backend.reports.tickets.active-ticket-pdf', $data);

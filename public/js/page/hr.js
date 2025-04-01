@@ -194,12 +194,52 @@ $(function() {
         $('#lastYearChart').html('<div class="text-center">Loading chart...</div>');
     
         function initializeChart(data) {
+            // Process data for conditional styling - now based on gradient logic
+            // We'll use the same logic as the gradient - lower values are red, higher are blue
+            const pointColors = data.series[0].map(value => {
+                // Normalize value between 0 and 100 for comparison with gradient stops
+                const maxValue = Math.max(...data.series[0]);
+                const normalizedValue = maxValue > 0 ? (value / maxValue) * 100 : 0;
+                
+                // Use similar logic as gradient - values towards 0 are red, towards 100 are blue
+                return normalizedValue < 50 ? '#FF4560' : '#36A2EB';
+            });
+        
+            // Value-based gradient configuration
+            const gradientFill = {
+                type: 'gradient',
+                gradient: {
+                    type: 'vertical',
+                    shadeIntensity: 1,
+                    colorStops: [
+                        {
+                            offset: 0,
+                            color: '#36A2EB', // Blue for high values
+                            opacity: 0.6
+                        },
+                        {
+                            offset: 100,
+                            color: '#FF4560', // Red for low values
+                            opacity: 0.6
+                        }
+                    ]
+                }
+            };
+        
             const options = {
                 chart: {
                     height: 400,
                     type: 'line',
                     toolbar: { show: false },
-                    zoom: { enabled: false }
+                    zoom: { enabled: false },
+                    shadow: {
+                        enabled: true,
+                        color: '#36A2EB',
+                        top: 18,
+                        left: 7,
+                        blur: 10,
+                        opacity: 0.2
+                    }
                 },
                 series: [{
                     name: 'Billed Hours',
@@ -208,90 +248,77 @@ $(function() {
                 stroke: {
                     width: 4,
                     curve: 'smooth',
-                    colors: ['#36A2EB']
-                },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'light',
-                        type: 'vertical',
-                        shadeIntensity: 0.5,
-                        gradientToColors: ['rgba(54, 162, 235, 0.2)'],
-                        inverseColors: true,
-                        opacityFrom: 0.8,
-                        opacityTo: 0.2,
-                        stops: [0, 100]
+                    colors: ['#36A2EB'], // Base line color
+                    shadow: {
+                        enabled: true,
+                        color: '#36A2EB',
+                        top: 18,
+                        left: 7,
+                        blur: 10,
+                        opacity: 0.2
                     }
                 },
+                fill: gradientFill,
                 markers: {
                     size: 6,
-                    colors: ['#fff'],
-                    strokeColors: ['#36A2EB'],
-                    strokeWidth: 3,
-                    hover: { size: 8 }
+                    colors: pointColors, // Now matches gradient logic
+                    strokeColors: '#fff',
+                    strokeWidth: 2,
+                    hover: {
+                        size: 8,
+                        strokeWidth: 3
+                    }
                 },
                 xaxis: {
                     categories: data.labels,
-                    type: 'category',
                     labels: {
-                        rotate: -45,
                         style: {
+                            colors: '#6b7280',
                             fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return value;
                         }
-                    },
-                    tooltip: {
-                        enabled: false
                     }
                 },
                 yaxis: {
                     min: 0,
-                    title: { 
-                        text: 'Billed Hours',
-                        style: {
-                            fontSize: '14px'
-                        }
-                    },
                     labels: {
-                        formatter: function(val) { 
-                            return val.toFixed(0);
+                        style: {
+                            colors: '#6b7280',
+                            fontSize: '12px'
                         }
                     }
                 },
                 grid: {
-                    borderColor: '#f1f1f1',
-                    row: { colors: ['transparent', '#f8f8f8'] }
-                },
-                annotations: {
-                    xaxis: [{
-                        x: data.labels[data.selectedMonthIndex],
-                        borderColor: '#FF4560',
-                        label: {
-                            borderColor: '#FF4560',
-                            style: { 
-                                color: '#fff', 
-                                background: '#FF4560',
-                                fontSize: '12px'
-                            },
-                           // text: 'Selected Month'
-                        }
-                    }]
+                    borderColor: '#e5e7eb'
                 },
                 tooltip: {
+                    theme: 'light',
                     y: {
-                        formatter: function(val) { 
+                        formatter: function(val) {
                             return val + ' hrs';
                         }
                     }
+                },
+                annotations: {
+                    points: data.series[0].map((value, index) => {
+                        const color = pointColors[index];
+                        return {
+                            x: data.labels[index],
+                            y: value,
+                            marker: {
+                                size: 6,
+                                fillColor: color,
+                                strokeColor: '#fff',
+                                strokeWidth: 2
+                            }
+                        };
+                    })
                 }
             };
-    
-            if(lastYearChart) {
-                lastYearChart.destroy();
-            }
-    
+        
+            // Destroy existing chart
+            if(lastYearChart) lastYearChart.destroy();
+        
+            // Create new chart
             lastYearChart = new ApexCharts(document.querySelector("#lastYearChart"), options);
             lastYearChart.render();
         }

@@ -123,7 +123,7 @@
                  
    
                 <!-- Year and Month Filters -->
-           
+                @if(request()->routeIs('admin.project') || request()->is('admin.project'))
                 <div class="d-flex align-items-center ms-auto me-3" style="height: 50%;">
                     <div class="filter-container d-flex align-items-center gap-3" style="height: 100%;">
                         <div class="filter-item d-flex align-items-center">
@@ -149,6 +149,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
 
                 <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">

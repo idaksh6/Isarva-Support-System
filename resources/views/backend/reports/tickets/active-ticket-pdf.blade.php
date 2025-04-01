@@ -30,6 +30,9 @@
 </head>
 <body>
     <h2 style="text-align: center;"> Active Tickets Report </h1>
+    <div class="">
+        <h6 class="fw-bold">{{$status[$ticketStatus] ?? "Active"}} Tickets: {{$ticketCount}}</h6>
+    </div>
     <table>
         <thead>
             <th>Sl.No</th>
