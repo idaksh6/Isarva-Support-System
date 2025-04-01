@@ -12,11 +12,11 @@
 
 
 @if (session()->has('flash_success_project'))
-<div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
-    <i class="bi bi-check-circle-fill me-2 text-success"></i> 
-    <span>{{ session('flash_success_project') }}</span>
-    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+        <span>{{ session('flash_success_project') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 @endif
 
 
@@ -222,6 +222,14 @@
 </div>
 
 <!-- Edit Project -->
+@if (session()->has('flash_success_edit'))
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+        <span>{{ session('flash_success_edit') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="modal fade" id="editproject" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
@@ -733,7 +741,7 @@
                     </button>
                     
                     <button class="btn btn-outline-primary d-flex align-items-center" id="showAdditionHr">
-                        <i class="icofont-plus-circle me-2"></i> AdditionHr
+                        <i class="icofont-plus-circle me-2"></i> Add.Hrs
                     </button>
                     
                 </div>
@@ -835,12 +843,12 @@
                     <!-- Assets Section -->
                     <div id="assetsSection" class="tab-content shadow-sm p-3 rounded bg-white">
                         @if (session()->has('flash_success_asset'))
-                        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
-                            <i class="bi bi-check-circle-fill me-2 text-success"></i> 
-                            <span>{{ session('flash_success_asset') }}</span>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+                               <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+                              <span>{{ session('flash_success_asset') }}</span>
+                              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
                     
                                         
                         <h5 class="fw-bold mb-3">Assets</h5>
@@ -950,17 +958,6 @@
                     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
                   <!-- Additional Hr section -->
                     <div id="additionHrSection" class="tab-content shadow-sm p-3 rounded bg-white" style="display: none;">
                         <form id="additionalHrsForm">
@@ -1007,7 +1004,7 @@
        
                         
                 <div id="taskSection" class="tab-content shadow-sm p-3 rounded bg-white">
-                        <h5 class="fw-bold mb-3">Project Task section</h5>
+                    <h5 class="fw-bold mb-3">Project Task section</h5>
 
                     
                     <div class="col-lg-12 col-md-12 flex-column">
@@ -1242,21 +1239,18 @@
             </div>
          </div> <!-- div body end -->
     </div>
+
          <!-- SCRIPT for working of edit and create task model -->
            <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     
           <script src="{{ asset('js/template.js') }}"></script>
+          <script src = "{{ asset('js/jquery-3.6.0.min.js')}}"> </script> <!-- jQuery  -->
 
-            <!-- jQuery (Make sure this is loaded first) -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-            <!-- jQuery UI (Required for Sortable) -->
+            {{-- jQuery UI (Required for Sortable)  --}}
             <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
             
            <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-
-          
-            <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
+           <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
 
           
 
@@ -1355,6 +1349,7 @@
                         });
                     });
                 });
+
             // Task edit AJAX code
             $(document).ready(function () {
                 // When edit button is clicked
@@ -1493,69 +1488,133 @@
 
          
 
+            // document.addEventListener("DOMContentLoaded", function () {
+            //     let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
+
+            //     let taskBtn = document.getElementById("showTasks");
+            //     let internalDocsBtn = document.getElementById("showInternalDocs");
+            //     let assetsBtn = document.getElementById("showAssets");
+            //     let workedhrsbtn = document.getElementById("showWorkedHrs");
+            //     let additionalhrbtn = document.getElementById("showAdditionHr");
+
+            //     let taskSection = document.getElementById("taskSection");
+            //     let internalDocsSection = document.getElementById("internalDocsSection");
+            //     let assetsSection = document.getElementById("assetsSection");
+            //     let workedHrsSection = document.getElementById("workedHrsSection");
+            //     let additionHrSection =document.getElementById("additionHrSection");
+
+            //     // Ensure Task section is visible by default
+            //     taskSection.style.display = "block";
+            //     internalDocsSection.style.display = "none";
+            //     assetsSection.style.display = "none";
+            //     workedHrsSection.style.display = "none";
+            //     additionHrSection.style.display = "none";
+
+            //     // Tab click event listeners
+            //     taskBtn.addEventListener("click", function () {
+            //         taskSection.style.display = "block";
+            //         internalDocsSection.style.display = "none";
+            //         assetsSection.style.display = "none";
+            //         workedHrsSection.style.display ="none";
+            //         additionHrSection.style.display = "none";
+            //     });
+
+            //     internalDocsBtn.addEventListener("click", function () {
+            //         internalDocsSection.style.display = "block";
+            //         taskSection.style.display = "none";
+            //         assetsSection.style.display = "none";
+            //         workedHrsSection.style.display ="none";
+            //         additionHrSection.style.display = "none";
+            //     });
+
+            //     assetsBtn.addEventListener("click", function () {
+            //         assetsSection.style.display = "block";
+            //         taskSection.style.display = "none";
+            //         internalDocsSection.style.display = "none";
+            //         workedHrsSection.style.display ="none";
+            //         additionHrSection.style.display = "none";
+            //     });
+
+            //     workedhrsbtn.addEventListener("click", function () {
+            //         workedHrsSection.style.display ="block";
+            //         taskSection.style.display = "none";
+            //         internalDocsSection.style.display = "none";
+            //         assetsSection.style.display = "none";
+            //         additionHrSection.style.display = "none";
+            //     });   
+            //     additionalhrbtn.addEventListener("click", function () {
+            //         additionHrSection.style.display= "block";
+            //         taskSection.style.display = "none";
+            //         internalDocsSection.style.display = "none";
+            //         assetsSection.style.display = "none";
+            //         workedHrsSection.style.display ="none";
+
+            //     });         
+            //  });
+
             document.addEventListener("DOMContentLoaded", function () {
-                let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
+            let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
 
-                let taskBtn = document.getElementById("showTasks");
-                let internalDocsBtn = document.getElementById("showInternalDocs");
-                let assetsBtn = document.getElementById("showAssets");
-                let workedhrsbtn = document.getElementById("showWorkedHrs");
-                let additionalhrbtn = document.getElementById("showAdditionHr")
+            let taskBtn = document.getElementById("showTasks");
+            let internalDocsBtn = document.getElementById("showInternalDocs");
+            let assetsBtn = document.getElementById("showAssets");
+            let workedhrsbtn = document.getElementById("showWorkedHrs");
+            let additionalhrbtn = document.getElementById("showAdditionHr");  // Semicolon added here
 
-                let taskSection = document.getElementById("taskSection");
-                let internalDocsSection = document.getElementById("internalDocsSection");
-                let assetsSection = document.getElementById("assetsSection");
-                let workedHrsSection = document.getElementById("workedHrsSection");
-                let additionHrSection =document.getElementById("additionHrSection");
+            let taskSection = document.getElementById("taskSection");
+            let internalDocsSection = document.getElementById("internalDocsSection");
+            let assetsSection = document.getElementById("assetsSection");
+            let workedHrsSection = document.getElementById("workedHrsSection");
+            let additionHrSection = document.getElementById("additionHrSection");
 
-                // Ensure Task section is visible by default
+            // Ensure Task section is visible by default
+            taskSection.style.display = "block";
+            internalDocsSection.style.display = "none";
+            assetsSection.style.display = "none";
+            workedHrsSection.style.display = "none";
+            additionHrSection.style.display = "none";
+
+            // Tab click event listeners
+            taskBtn.addEventListener("click", function () {
                 taskSection.style.display = "block";
                 internalDocsSection.style.display = "none";
                 assetsSection.style.display = "none";
                 workedHrsSection.style.display = "none";
                 additionHrSection.style.display = "none";
+            });
 
-                // Tab click event listeners
-                taskBtn.addEventListener("click", function () {
-                    taskSection.style.display = "block";
-                    internalDocsSection.style.display = "none";
-                    assetsSection.style.display = "none";
-                    workedHrsSection.style.display ="none";
-                    additionHrSection.style.display = "none";
-                });
+            internalDocsBtn.addEventListener("click", function () {
+                internalDocsSection.style.display = "block";
+                taskSection.style.display = "none";
+                assetsSection.style.display = "none";
+                workedHrsSection.style.display = "none";
+                additionHrSection.style.display = "none";
+            });
 
-                internalDocsBtn.addEventListener("click", function () {
-                    internalDocsSection.style.display = "block";
-                    taskSection.style.display = "none";
-                    assetsSection.style.display = "none";
-                    workedHrsSection.style.display ="none";
-                    additionHrSection.style.display = "none";
-                });
+            assetsBtn.addEventListener("click", function () {
+                assetsSection.style.display = "block";
+                taskSection.style.display = "none";
+                internalDocsSection.style.display = "none";
+                workedHrsSection.style.display = "none";
+                additionHrSection.style.display = "none";
+            });
 
-                assetsBtn.addEventListener("click", function () {
-                    assetsSection.style.display = "block";
-                    taskSection.style.display = "none";
-                    internalDocsSection.style.display = "none";
-                    workedHrsSection.style.display ="none";
-                    additionHrSection.style.display = "none";
-                });
-
-                workedhrsbtn.addEventListener("click", function () {
-                    workedHrsSection.style.display ="block";
-                    taskSection.style.display = "none";
-                    internalDocsSection.style.display = "none";
-                    assetsSection.style.display = "none";
-                    additionHrSection.style.display = "none";
-                     
-                additionalhrbtn.addEventListener("click", function () {
-                    additionHrSection.style.display= "block";
-                    taskSection.style.display = "none";
-                    internalDocsSection.style.display = "none";
-                    assetsSection.style.display = "none";
-                    workedHrsSection.style.display ="none";
-
-                })              
-             })
+            workedhrsbtn.addEventListener("click", function () {
+                workedHrsSection.style.display = "block";
+                taskSection.style.display = "none";
+                internalDocsSection.style.display = "none";
+                assetsSection.style.display = "none";
+                additionHrSection.style.display = "none";
+            });   
+            
+            additionalhrbtn.addEventListener("click", function () {
+                additionHrSection.style.display = "block";
+                taskSection.style.display = "none";
+                internalDocsSection.style.display = "none";
+                assetsSection.style.display = "none";
+                workedHrsSection.style.display = "none";
+            });         
+        
 
                 // Function to get the next row index correctly
                 function getRowIndex() {
@@ -1627,14 +1686,7 @@
                         }
                     });
 
-                                });
-
-
-
-         
- 
-                 
-
+                });
 
 
           
@@ -1705,9 +1757,6 @@
 
 
 
-console.log("Number of .dd-list elements:", $(".dd-list").length);
-console.log("Number of task items:", $(".dd-item").length);
-
     
     </script>
 
@@ -1715,52 +1764,52 @@ console.log("Number of task items:", $(".dd-item").length);
 
     <script>
      
-     //----- AJAX for Task Add Modal form to show validation error---
-      $(document).ready(function () {
-        // Handle form submission
-        $('#createtaskform').on('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission
+                //----- AJAX for Task Add Modal form to show validation error---
+                $(document).ready(function () {
+                    // Handle form submission
+                    $('#createtaskform').on('submit', function (e) {
+                        e.preventDefault(); // Prevent default form submission
 
-            var form = $(this);
-            var url = form.attr('action');
-            var formData = new FormData(form[0]); // Capture all form data
+                        var form = $(this);
+                        var url = form.attr('action');
+                        var formData = new FormData(form[0]); // Capture all form data
 
-            // Clear previous errors
-            $('.text-danger').html('');
+                        // Clear previous errors
+                        $('.text-danger').html('');
 
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: formData,
-                processData: false, // Prevent jQuery from processing the data
-                contentType: false, // Prevent jQuery from setting content type
-                success: function (response) {
-                    alert('Task added successfully!');
-                    $('#createtask').modal('hide');
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false, // Prevent jQuery from processing the data
+                            contentType: false, // Prevent jQuery from setting content type
+                            success: function (response) {
+                                alert('Task added successfully!');
+                                $('#createtask').modal('hide');
 
-                    // Get project ID from form input
-                    var projectId = $('#createtaskform').find('input[name="project_id"]').val();
+                                // Get project ID from form input
+                                var projectId = $('#createtaskform').find('input[name="project_id"]').val();
 
-                    // Redirect using Laravel's route() helper
-                    window.location.href = "{{ route('admin.tasks.byProject', ':id') }}".replace(':id', projectId);
-                },
-                error: function (xhr) {
-                    // Handle validation errors
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function (key, value) {
-                            $('#task-error-' + key).html(value[0]); // Correct error display // Show first error message under respective field
+                                // Redirect using Laravel's route() helper
+                                window.location.href = "{{ route('admin.tasks.byProject', ':id') }}".replace(':id', projectId);
+                            },
+                            error: function (xhr) {
+                                // Handle validation errors
+                                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    $.each(errors, function (key, value) {
+                                        $('#task-error-' + key).html(value[0]); // Correct error display // Show first error message under respective field
+                                    });
+                                } else {
+                                    console.error('Unexpected error:', xhr.responseText);
+                                    alert('An unexpected error occurred. Please check the console.');
+                                }
+                            }
                         });
-                    } else {
-                        console.error('Unexpected error:', xhr.responseText);
-                        alert('An unexpected error occurred. Please check the console.');
-                    }
-                }
-            });
-        });
-    });
+                    });
+                });
 
-                //----- AJAX for Task-edit Validation form Modal -----
+                            //----- AJAX for Task-edit Validation form Modal -----
 
                     $(document).ready(function () {
                     // Handle form submission
@@ -2106,11 +2155,15 @@ console.log("Number of task items:", $(".dd-item").length);
                     $('#additionalHrsForm').on('submit', function(e) {
                         e.preventDefault();
                         
+                        // Add this to see what's being sent
+                        console.log("Form data:", $(this).serialize());
+                        
                         $.ajax({
                             url: "{{ route('admin.project.additional-hrs.store') }}",
                             method: "POST",
                             data: $(this).serialize(),
                             success: function(response) {
+                                console.log("Success response:", response);
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Success!',
@@ -2119,6 +2172,7 @@ console.log("Number of task items:", $(".dd-item").length);
                                 loadAdditionalHours();
                             },
                             error: function(xhr) {
+                                console.log("Error response:", xhr.responseJSON);
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
@@ -2129,60 +2183,62 @@ console.log("Number of task items:", $(".dd-item").length);
                     });
 
                     function loadAdditionalHours() {
-                    let projectId = "{{ $project->id }}";
-                    $.ajax({
-                        url: "{{ route('admin.project.additional-hrs.index', ':id') }}".replace(':id', projectId),
-                        method: "GET",
-                        success: function(response) {
-                            let tableBody = $('#additionalHrsTable tbody');
-                            tableBody.empty();
-                            
-                            if (response.length > 0) {
-                                response.forEach((item, index) => {
-                                    // Ensure date is properly formatted
-                                    let dateValue = item.date ? item.date : '';
-                                    
-                                    let row = `
+                        let projectId = "{{ $project->id }}";
+                        $.ajax({
+                            url: "{{ route('admin.project.additional-hrs.index', ':id') }}".replace(':id', projectId),
+                            method: "GET",
+                            success: function(response) {
+                                let tableBody = $('#additionalHrsTable tbody');
+                                tableBody.empty();
+                                
+                                if (response.length > 0) {
+                                    response.forEach((item, index) => {
+                                        let dateValue = item.date ? item.date : '';
+                                        let row = `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>
+                                                    <input type="hidden" name="additional_hrs[${index}][id]" value="${item.id}">
+                                                    <input type="date" class="form-control" name="additional_hrs[${index}][date]" value="${dateValue}" required>
+                                                </td>
+                                                <td><input type="text" class="form-control" name="additional_hrs[${index}][description]" value="${item.description}" required></td>
+                                                <td><input type="number" step="0.01" class="form-control" name="additional_hrs[${index}][hrs]" value="${item.hrs}" required></td>
+                                                <td><input type="text" class="form-control" name="additional_hrs[${index}][comments]" value="${item.comments || ''}"></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-success add-row">
+                                                        <i class="icofont-plus"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger remove-row">
+                                                        <i class="icofont-minus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `;
+                                        tableBody.append(row);
+                                    });
+                                } else {
+                                    tableBody.append(`
                                         <tr>
-                                            <td>${index + 1}</td>
-                                            <td><input type="date" class="form-control" name="additional_hrs[${index}][date]" value="${dateValue}" required></td>
-                                            <td><input type="text" class="form-control" name="additional_hrs[${index}][description]" value="${item.description}" required></td>
-                                            <td><input type="number" step="0.01" class="form-control" name="additional_hrs[${index}][hrs]" value="${item.hrs}" required></td>
-                                            <td><input type="text" class="form-control" name="additional_hrs[${index}][comments]" value="${item.comments || ''}"></td>
+                                            <td>1</td>
+                                            <td><input type="date" class="form-control" name="additional_hrs[0][date]" required></td>
+                                            <td><input type="text" class="form-control" name="additional_hrs[0][description]" required></td>
+                                            <td><input type="number" step="0.01" class="form-control" name="additional_hrs[0][hrs]" required></td>
+                                            <td><input type="text" class="form-control" name="additional_hrs[0][comments]"></td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success add-row">
                                                     <i class="icofont-plus"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-danger remove-row">
-                                                    <i class="icofont-minus"></i>
-                                                </button>
                                             </td>
                                         </tr>
-                                    `;
-                                    tableBody.append(row);
-                                });
-                            } else {
-                                tableBody.append(`
-                                    <tr>
-                                        <td>1</td>
-                                        <td><input type="date" class="form-control" name="additional_hrs[0][date]" required></td>
-                                        <td><input type="text" class="form-control" name="additional_hrs[0][description]" required></td>
-                                        <td><input type="number" step="0.01" class="form-control" name="additional_hrs[0][hrs]" required></td>
-                                        <td><input type="text" class="form-control" name="additional_hrs[0][comments]"></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-success add-row">
-                                                <i class="icofont-plus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `);
+                                    `);
+                                }
+                            },
+                            error: function(xhr) {
+                                console.error('Error loading additional hours:', xhr);
                             }
-                        },
-                        error: function(xhr) {
-                            console.error('Error loading additional hours:', xhr);
-                        }
-                    });
-                }
+                        });
+                    }
+
                     // Helper function to reindex rows
                     function reindexRows() {
                         $('#additionalHrsTable tbody tr').each(function(index) {
@@ -2195,138 +2251,7 @@ console.log("Number of task items:", $(".dd-item").length);
                     }
             });
 
-            // $(document).ready(function() {
-            //     // Load data when Additional Hours tab is clicked
-            //     $('#showAdditionHr').click(function() {
-            //         loadAdditionalHours();
-            //     });
-
-            //     // Add row functionality
-            //     $(document).on('click', '.add-row', function() {
-            //         let table = $('#additionalHrsTable tbody');
-            //         let rowCount = table.find('tr').length;
-            //         let newRow = `
-            //             <tr>
-            //                 <td>${rowCount + 1}</td>
-            //                 <td><input type="date" class="form-control" name="additional_hrs[${rowCount}][date]" required></td>
-            //                 <td><input type="text" class="form-control" name="additional_hrs[${rowCount}][description]" required></td>
-            //                 <td><input type="number" step="0.01" class="form-control" name="additional_hrs[${rowCount}][hrs]" required></td>
-            //                 <td><input type="text" class="form-control" name="additional_hrs[${rowCount}][comments]"></td>
-            //                 <td>
-            //                     <button type="button" class="btn btn-sm btn-success add-row">
-            //                         <i class="icofont-plus"></i>
-            //                     </button>
-            //                     <button type="button" class="btn btn-sm btn-danger remove-row">
-            //                         <i class="icofont-minus"></i>
-            //                     </button>
-            //                 </td>
-            //             </tr>
-            //         `;
-            //         table.append(newRow);
-            //     });
-
-            //     // Remove row functionality
-            //     $(document).on('click', '.remove-row', function() {
-            //         if ($('#additionalHrsTable tbody tr').length > 1) {
-            //             $(this).closest('tr').remove();
-            //             reindexRows();
-            //         } else {
-            //             Swal.fire('Warning', 'You must keep at least one row', 'warning');
-            //         }
-            //     });
-
-            //     // Form submission
-            //     $('#additionalHrsForm').on('submit', function(e) {
-            //         e.preventDefault();
-                    
-            //         $.ajax({
-            //             url: "{{ route('admin.project.additional-hrs.store') }}",
-            //             method: "POST",
-            //             data: $(this).serialize(),
-            //             success: function(response) {
-            //                 Swal.fire({
-            //                     icon: 'success',
-            //                     title: 'Success!',
-            //                     text: response.message,
-            //                 });
-            //                 loadAdditionalHours();
-            //             },
-            //             error: function(xhr) {
-            //                 Swal.fire({
-            //                     icon: 'error',
-            //                     title: 'Error!',
-            //                     text: xhr.responseJSON.message || 'Something went wrong!',
-            //                 });
-            //             }
-            //         });
-            //     });
-
-            //     function loadAdditionalHours() {
-            //     let projectId = "{{ $project->id }}";
-            //     $.ajax({
-            //         url: "{{ route('admin.project.additional-hrs.index', ':id') }}".replace(':id', projectId),
-            //         method: "GET",
-            //         success: function(response) {
-            //             let tableBody = $('#additionalHrsTable tbody');
-            //             tableBody.empty();
-                        
-            //             if (response.length > 0) {
-            //                 response.forEach((item, index) => {
-            //                     // Ensure date is properly formatted
-            //                     let dateValue = item.date ? item.date : '';
-                                
-            //                     let row = `
-            //                         <tr>
-            //                             <td>${index + 1}</td>
-            //                             <td><input type="date" class="form-control" name="additional_hrs[${index}][date]" value="${dateValue}" required></td>
-            //                             <td><input type="text" class="form-control" name="additional_hrs[${index}][description]" value="${item.description}" required></td>
-            //                             <td><input type="number" step="0.01" class="form-control" name="additional_hrs[${index}][hrs]" value="${item.hrs}" required></td>
-            //                             <td><input type="text" class="form-control" name="additional_hrs[${index}][comments]" value="${item.comments || ''}"></td>
-            //                             <td>
-            //                                 <button type="button" class="btn btn-sm btn-success add-row">
-            //                                     <i class="icofont-plus"></i>
-            //                                 </button>
-            //                                 <button type="button" class="btn btn-sm btn-danger remove-row">
-            //                                     <i class="icofont-minus"></i>
-            //                                 </button>
-            //                             </td>
-            //                         </tr>
-            //                     `;
-            //                     tableBody.append(row);
-            //                 });
-            //             } else {
-            //                 tableBody.append(`
-            //                     <tr>
-            //                         <td>1</td>
-            //                         <td><input type="date" class="form-control" name="additional_hrs[0][date]" required></td>
-            //                         <td><input type="text" class="form-control" name="additional_hrs[0][description]" required></td>
-            //                         <td><input type="number" step="0.01" class="form-control" name="additional_hrs[0][hrs]" required></td>
-            //                         <td><input type="text" class="form-control" name="additional_hrs[0][comments]"></td>
-            //                         <td>
-            //                             <button type="button" class="btn btn-sm btn-success add-row">
-            //                                 <i class="icofont-plus"></i>
-            //                             </button>
-            //                         </td>
-            //                     </tr>
-            //                 `);
-            //             }
-            //         },
-            //         error: function(xhr) {
-            //             console.error('Error loading additional hours:', xhr);
-            //         }
-            //     });
-            // }
-            //     // Helper function to reindex rows
-            //     function reindexRows() {
-            //         $('#additionalHrsTable tbody tr').each(function(index) {
-            //             $(this).find('td:first').text(index + 1);
-            //             $(this).find('input').each(function() {
-            //                 let name = $(this).attr('name').replace(/\[\d+\]/, '[' + index + ']');
-            //                 $(this).attr('name', name);
-            //             });
-            //         });
-            //     }
-            // });
+           
   
 </script>
               

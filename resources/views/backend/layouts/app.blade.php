@@ -51,8 +51,10 @@
 
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Include jQuery UI CSS -->
     <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
+    
     <!-- Include jQuery UI JS -->
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 

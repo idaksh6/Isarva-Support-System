@@ -12,6 +12,7 @@ class ProjectAdditionalHours extends Model
     protected $table = 'si_projects_additional_hrs'; // Explicitly specify the table name
 
     protected $fillable = [
+    
         'project_id',
         'description',
         'comments',

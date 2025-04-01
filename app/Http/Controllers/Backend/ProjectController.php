@@ -85,54 +85,106 @@ class ProjectController
     //     return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
     // }
 
+    // public function manage(Request $request)
+    // {
+    //     $query = Project::query();
+    
+    //     // Project name search
+    //     if ($request->has('project_name') && $request->project_name != '') {
+    //         $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+    //     }
+    
+    //     // Apply filters based on search parameters
+    //     if ($request->has('status') && $request->status != 'None') {
+    //         $query->where('si_projects.status', $request->status);
+    //     }
+    
+    //     if ($request->has('assigned_to') && $request->assigned_to != '') {
+    //         $query->where('si_projects.manager', $request->assigned_to);
+    //     }
+    
+    //     if ($request->has('department') && $request->department != 'None') {
+    //         $query->where('si_projects.department', $request->department);
+    //     }
+    
+    //     // Month filter
+    //     if ($request->has('month') && $request->month != 'None') {
+    //         $query->whereMonth('si_projects.start_date', $request->month);
+    //     }
+    
+    //     // Year filter
+    //     if ($request->has('year') && $request->year != 'None') {
+    //         $query->whereYear('si_projects.start_date', $request->year);
+    //     }
+    
+    //     // Rest of your existing code...
+    //     $projectsmanage = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
+    //         ->leftJoin('si_users', 'si_projects.manager', '=', 'si_users.id')
+    //         ->select(
+    //             'si_projects.*',
+    //             'isar_clients.client_name as client_name',
+    //             'si_users.name as manager_name'
+    //         )
+    //         ->paginate(10);
+    
+    //     $totalProjectscount = $projectsmanage->total();
+    //     $projects = $query->get();
+    
+    //     return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
+    // }
+
     public function manage(Request $request)
-    {
-        $query = Project::query();
-    
-        // Project name search
-        if ($request->has('project_name') && $request->project_name != '') {
-            $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+        {
+            $query = Project::query();
+
+            // Project name search
+            if ($request->has('project_name') && $request->project_name != '') {
+                $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+            }
+
+            // Project ID search
+            if ($request->has('project_id') && $request->project_id != '') {
+                $query->where('si_projects.id', $request->project_id);
+            }
+
+            // Apply filters based on search parameters
+            if ($request->has('status') && $request->status != 'None') {
+                $query->where('si_projects.status', $request->status);
+            }
+
+            if ($request->has('assigned_to') && $request->assigned_to != '') {
+                $query->where('si_projects.manager', $request->assigned_to);
+            }
+
+            if ($request->has('department') && $request->department != 'None') {
+                $query->where('si_projects.department', $request->department);
+            }
+
+            // Month filter
+            if ($request->has('month') && $request->month != 'None') {
+                $query->whereMonth('si_projects.start_date', $request->month);
+            }
+
+            // Year filter
+            if ($request->has('year') && $request->year != 'None') {
+                $query->whereYear('si_projects.start_date', $request->year);
+            }
+
+            $projectsmanage = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
+                ->leftJoin('si_users', 'si_projects.manager', '=', 'si_users.id')
+                ->select(
+                    'si_projects.*',
+                    'isar_clients.client_name as client_name',
+                    'si_users.name as manager_name'
+                )
+                ->paginate(10);
+
+            $totalProjectscount = $projectsmanage->total();
+            $projects = $query->get();
+
+            return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
         }
-    
-        // Apply filters based on search parameters
-        if ($request->has('status') && $request->status != 'None') {
-            $query->where('si_projects.status', $request->status);
-        }
-    
-        if ($request->has('assigned_to') && $request->assigned_to != '') {
-            $query->where('si_projects.manager', $request->assigned_to);
-        }
-    
-        if ($request->has('department') && $request->department != 'None') {
-            $query->where('si_projects.department', $request->department);
-        }
-    
-        // Month filter
-        if ($request->has('month') && $request->month != 'None') {
-            $query->whereMonth('si_projects.start_date', $request->month);
-        }
-    
-        // Year filter
-        if ($request->has('year') && $request->year != 'None') {
-            $query->whereYear('si_projects.start_date', $request->year);
-        }
-    
-        // Rest of your existing code...
-        $projectsmanage = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
-            ->leftJoin('si_users', 'si_projects.manager', '=', 'si_users.id')
-            ->select(
-                'si_projects.*',
-                'isar_clients.client_name as client_name',
-                'si_users.name as manager_name'
-            )
-            ->paginate(10);
-    
-        $totalProjectscount = $projectsmanage->total();
-        $projects = $query->get();
-    
-        return view('backend.project.manage', compact('projectsmanage', 'totalProjectscount', 'projects'));
-    }
-        
+                
     
 
     public function store(Request $request)
@@ -407,6 +459,8 @@ class ProjectController
        if ($request->ajax()) {
         return response()->json(['success' => 'Project updated successfully!']);
        }
+       
+       return redirect()->back()->with('flash_success_edit', 'Project updated successfully.');
 
     }
 
@@ -442,22 +496,7 @@ class ProjectController
         return view('backend.project.leaders');
     }
 
-    // public function getWorkedHours($projectId)
-    // {
-    //     $workedHours = DB::table('si_daily_report_fields')
-    //         ->select('users.name as employee', DB::raw('SUM(si_daily_report_fields.hrs) as spent_hrs'))
-    //         ->join('users', 'si_daily_report_fields.user_id', '=', 'users.id')
-    //         ->where('si_daily_report_fields.project_id', $projectId)
-    //         ->where('si_daily_report_fields.type', 1)
-    //         ->groupBy('si_daily_report_fields.user_id', 'users.name')
-    //         ->get();
-
-    //     if ($workedHours->isEmpty()) {
-    //         return response()->json(['message' => 'No data found'], 404);
-    //     }
-
-    //     return response()->json($workedHours);
-    // }
+    
 
      // Fetched under TaskController for workedhrs field 
     public function getWorkedHours($projectId)

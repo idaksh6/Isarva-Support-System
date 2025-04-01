@@ -135,17 +135,18 @@ Route::group([
       Route::get('/admin/project/worked-hours/{id}', [ProjectController::class, 'getWorkedHours'])->name('project.worked-hours');
 
  
-    // Route for additinal Hr under Task
-   Route::get('/projects/{project}/additional-hrs', [ProjectAdditionalHrController::class, 'index'])
+     // Route for additinal Hr under Task
+    Route::get('/projects/{project}/additional-hrs', [ProjectAdditionalHrController::class, 'index'])
       ->name('project.additional-hrs.index');
   
-  Route::post('/projects/additional-hrs', [ProjectAdditionalHrController::class, 'store'])
+    // Route to store additional Hr
+    Route::post('/projects/additional-hrs', [ProjectAdditionalHrController::class, 'store'])
       ->name('project.additional-hrs.store');
    
 
 
    // Define the route for updating task status
-//    Route::post('/admin/task/updateStatus', [TaskController::class, 'updateTaskStatus'])->name('task.updateStatus');
+  //  Route::post('/admin/task/updateStatus', [TaskController::class, 'updateTaskStatus'])->name('task.updateStatus');
 
     // Route for storing asset
     Route::post('/task-asset/store', [TaskController::class, 'storeasset'])->name('task-asset.store');

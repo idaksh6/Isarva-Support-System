@@ -504,17 +504,14 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>    
     <script src="{{ asset('js/template.js') }}"></script>
-    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+   
     <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script> 
-    <script src="{{ asset('js/template.js') }}"></script>
+ 
     <script src="{{ asset('assets/plugins/bootstrap/bootstrap.bundle.min.js')}}"></script>
     
 
 
-        <!-- Jquery Page Js -->
-        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-    
-        {{-- <script src="{{ asset('js/template.js') }}"></script> --}}
+      
 
 
 

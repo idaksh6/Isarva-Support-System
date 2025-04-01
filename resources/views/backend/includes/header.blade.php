@@ -6,9 +6,29 @@
     color: white;
     border-radius: 5px;
     padding: 5px 10px 5px 10px;">
+ 
 
+        
+        
+            
+          
+     
             <!-- header rightbar icon -->
-            <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
+            <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1 w-100">
+
+                <div class="globalsearch">
+                    <!-- Global Project Search Form -->
+                    <form action="{{ route('admin.project.manage') }}" method="GET" class="d-flex align-items-center" id="globalProjectSearch">
+                        <div class="input-group me-2" style="width: 180px;">
+                            <input type="text" class="form-control form-control-sm" style="font-size: small;" name="project_name" id="headerProjectName" 
+                                placeholder="Search by project name" value="{{ request('project_name') }}">
+                        </div>
+                        <div class="input-group me-2" style="width: 180px;">
+                            <input type="text" class="form-control form-control-sm" style="font-size: small;" name="project_id" id="headerProjectId" 
+                                placeholder="Search by project ID" value="{{ request('project_id') }}">
+                        </div>
+                    </form>
+                </div>
                 {{-- <div class="d-flex">
                     <a class="nav-link text-primary collapsed" href="{{ route('admin.help') }}" title="Get Help">
                         <i class="icofont-info-square fs-5"></i>
@@ -100,8 +120,10 @@
                         </div>
                     </div>
                 </div>
-
+                 
+   
                 <!-- Year and Month Filters -->
+           
                 <div class="d-flex align-items-center ms-auto me-3" style="height: 50%;">
                     <div class="filter-container d-flex align-items-center gap-3" style="height: 100%;">
                         <div class="filter-item d-flex align-items-center">
@@ -134,8 +156,13 @@
                         <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">  {{Auth::user()->name}}</span></p>
                         <small>Admin Profile</small>
                     </div>
-                    <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button"  data-bs-toggle="dropdown" data-bs-display="static">
+                    {{-- <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button"  data-bs-toggle="dropdown" data-bs-display="static">
                         <img class="avatar lg rounded-circle img-thumbnail" src="{{ url('/').'/images/profile_av.png' }}" alt="profile">
+                    </a> --}}
+                    <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+                        <img class="avatar lg rounded-circle img-thumbnail" 
+                             src="{{ EmployeeHelper::getProfileImage() }}" 
+                             alt="profile">
                     </a>
                     <div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
                         <div class="card border-0 w280">
@@ -180,6 +207,29 @@
         </div>
     </nav>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the form and input elements
+        const form = document.getElementById('globalProjectSearch');
+        const projectNameInput = document.getElementById('headerProjectName');
+        const projectIdInput = document.getElementById('headerProjectId');
+        
+        // Function to submit form when Enter is pressed
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                // Only submit if at least one field has value
+                if (projectNameInput.value.trim() || projectIdInput.value.trim()) {
+                    form.submit();
+                }
+            }
+        }
+        
+        // Add event listeners to both inputs
+        projectNameInput.addEventListener('keypress', handleEnterKey);
+        projectIdInput.addEventListener('keypress', handleEnterKey);
+    });
+</script>
 {{-- @include('backend.layouts.common-oppup') --}}
 
 {{-- @include('backend.layouts.common-oppup', ['clients' => $clients]) --}}
