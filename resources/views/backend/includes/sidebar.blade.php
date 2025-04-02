@@ -1,7 +1,7 @@
 @if(Request::segment(2) != 'ui-components') 
 <div class="sidebar px-4 py-4 py-md-5 me-0">
     <div class="d-flex flex-column h-100">
-        <a href="{{ route('admin.dashboard') }}" class="mb-0 brand-icon">
+        <a href="{{ route('admin.project') }}" class="mb-0 brand-icon">
             {{-- <span class="logo-icon">
                 <svg  width="35" height="35" fill="currentColor" class="bi bi-clipboard-check" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
@@ -54,7 +54,7 @@
                 </ul>  --}}
              {{-- </li>  --}}
 
-            <li><a class="m-link {{ Request::segment(2) == 'dailyreport' ? 'active' : '' }}"   href="{{ route('admin.add_dailyreport') }}">  <i class="icofont-ui-user"></i>  <span>Daily Report </span></a></li>
+            <li><a class="m-link {{ Request::segment(2) == 'add_daily-reports' ? 'active' : '' }}"   href="{{ route('admin.add_dailyreport') }}">  <i class="icofont-ui-user"></i>  <span>Daily Report </span></a></li>
 
 
 
@@ -89,7 +89,7 @@
                     <i class="icofont-chart-growth"></i> <span>Reports</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                 <!-- Menu: Sub menu ul -->
                 <ul class="sub-menu  {{ Request::segment(2)=='report' ? 'collapsed show' : 'collapse' }}" id="report-Components">
-                    <li><a class="ms-link {{ Request::segment(3) == 'Billable-Non Billable-Reports' ? 'active' : '' }}" href="{{ route('admin.billable_nonbillable_report') }}"> <span>Billable NonBillable Reports</span></a></li>
+                    <li><a class="ms-link {{ Request::segment(3) == 'billable_non_billable_reports' ? 'active' : '' }}" href="{{ route('admin.billable_nonbillable_report') }}"> <span>Billable NonBillable Reports</span></a></li>
                     <li><a class="ms-link {{ Request::segment(3) == 'Active-ticket' ? 'active' : '' }}" href="{{ route('admin.reports.active-tickets') }}"> <span>Active Ticket Reports</span></a></li>
                     {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
                     <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
@@ -170,7 +170,7 @@
         </ul> 
 
         <!-- Theme: Switch Theme -->
-        <ul class="list-unstyled mb-0">
+        {{-- <ul class="list-unstyled mb-0">
             <li class="d-flex align-items-center justify-content-center">
                 <div class="form-check form-switch theme-switch">
                     <input class="form-check-input" type="checkbox" id="theme-switch">
@@ -183,7 +183,7 @@
                     <label class="form-check-label" for="theme-rtl">Enable RTL Mode!</label>
                 </div>
             </li>
-        </ul>
+        </ul> --}}
         
         <!-- Menu: menu collepce btn -->
         <button type="button" class="btn btn-link sidebar-mini-btn text-light">

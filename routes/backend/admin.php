@@ -60,6 +60,46 @@ Route::get('payroll/employee-salary', [EmployeeController::class, 'payroll'])
 });
 
 
+// Route::get('add_daily-reports', [DailyReportController::class, 'index'])
+//     ->name('add_dailyreport')
+//     ->breadcrumbs(function (Trail $trail) {
+//         $trail->push(__('Home'), route('admin.add_dailyreport'));
+
+     
+//     });
+
+//     // Daily Report Route
+//     Route::get('add_daily-reports', [DailyReportController::class, 'index'])
+//     ->name('add_dailyreport');
+//     Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])
+//     ->name('daily-reports.store');
+
+
+// Billable report Routes
+Route::group([
+    'prefix' => 'report'
+], function () {
+
+  // Billable Reports
+  Route::get('billable_non_billable_reports', [BillableNonBillableController::class, 'index'])
+  ->name('billable_nonbillable_report')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.billable_nonbillable_report'));
+    });
+
+    // Billable-nonbillable PDF ROUTE
+    Route::get('/export-billable-report-pdf', [BillableNonBillableController::class, 'exportPdf'])
+    ->name('export.billable.pdf')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('export.billable.pdf'));
+    });
+      
+});
+
+
+
+
+
 // Project Route
 Route::group([
     'prefix' => 'project'
@@ -71,13 +111,13 @@ Route::group([
     });
 
 
-
-    Route::get('/adminreports/billable_non_billable_reports', [BillableNonBillableController::class, 'index'])->name('billable_nonbillable_report');
+    // // Billable Reports
+    // Route::get('/adminreports/billable_non_billable_reports', [BillableNonBillableController::class, 'index'])->name('billable_nonbillable_report');
     
-    //PDF ROUTE
-    Route::get('/export-billable-report-pdf', [BillableNonBillableController::class, 'exportPdf'])->name('export.billable.pdf');
+    // //PDF ROUTE
+    // Route::get('/export-billable-report-pdf', [BillableNonBillableController::class, 'exportPdf'])->name('export.billable.pdf');
 
-    // Route::get('/admin/projects/search', [DailyReportController::class, 'search'])->name('projects.search');
+ 
     // Route to bring project name under daily report field
     Route::get('/admin/projects/search/{term?}', [DailyReportController::class, 'search'])->name('projects.search');
 
@@ -89,11 +129,11 @@ Route::group([
     Route::get('/tickets/search', [DailyReportController::class, 'searchTickets'])->name('tickets.search');
 
     // Daily Report Route
-    Route::get('/add/daily-reports', [DailyReportController::class, 'index'])->name('add_dailyreport');
-    Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
+    // Route::get('/add/daily-reports', [DailyReportController::class, 'index'])->name('add_dailyreport');
+    // Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
 
-    //  Daily Report Store route
-    Route::post('dailyreport/store', [DailyReportController::class, 'store'])->name('dailyreport_store');
+    // //  Daily Report Store route
+    // Route::post('dailyreport/store', [DailyReportController::class, 'store'])->name('dailyreport_store');
 
 
      // Define the route for the ProjectController index method
@@ -182,6 +222,23 @@ Route::post('/task/update-status', [TaskController::class, 'updateStatus'])->nam
     });
 });
 
+
+// Daily Report Route 
+Route::group([
+    'prefix' => 'add_daily-reports'
+], function () {
+    Route::get('add_dailyreport', [DailyReportController::class, 'index'])
+    ->name('add_dailyreport')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.add_dailyreport'));
+    });
+
+    // Store Route
+    Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
+
+});
+
+
 Route::group([
     'prefix' => 'ticket'
 ], function () {
@@ -247,7 +304,7 @@ Route::group([
 
 // Reports section
 Route::group([
-    'prefix' => 'reports'
+    'prefix' => 'report'
 ], function () {
     Route::get('Active-ticket', [ReportsController::class, 'ActiveTicketReport'])
     ->name('reports.active-tickets')
