@@ -65,7 +65,7 @@ class GoogleController extends Controller
             session(['employee_id' => $user->id]); // Optional session data
             session()->save(); // Ensures the session is saved immediately
 
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.project');
 
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');

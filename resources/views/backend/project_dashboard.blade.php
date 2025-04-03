@@ -38,7 +38,59 @@
                 </div>
             </div>
             
-            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick on Projects</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+                        <div class="col">
+                            <div class="card bg-primary">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-data fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Total Projects</h6>
+                                        <span class="text-white">{{$totalProjects}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-success">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-chart-flow fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Open Projects</h6>
+                                        <span class="text-white">{{ $openProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-danger">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-chart-flow-2 fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">Closed Projects</h6>
+                                        <span class="text-white">{{ $closedProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-warning">
+                                <div class="card-body text-white d-flex align-items-center">
+                                    <i class="icofont-tasks fs-3"></i>
+                                    <div class="d-flex flex-column ms-3">
+                                        <h6 class="mb-0">OnHold Projects</h6>
+                                        <span class="text-white">{{ $OnHoldProjects }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>             
+                    </div>
+                </div>
+            </div>
             
             <!-- Ticket Count section -->
             <div class="card">

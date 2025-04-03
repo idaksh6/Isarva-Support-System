@@ -260,6 +260,9 @@ class EmployeeController
 
                 $request->profile_image->move($filePath, $fileName);
                 $employee->profile_image = 'images/employee_profiles/' . $fileName;
+            } else {
+                // Set default image if no image was provided
+                $employee->profile_image = 'images/xs/avatar1.jpg';
             }
 
             $employee->save();
@@ -388,7 +391,7 @@ class EmployeeController
     
             $request->profile_image->move($filePath, $fileName);
             $employee->profile_image = 'images/employee_profiles/' . $fileName;
-        }
+        } 
     
         $employee->save();
         // Save the updated employee data

@@ -480,7 +480,7 @@
       
     </script>
 
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    
 
     
     <!-- Script to edit and update the employee values -->
@@ -543,56 +543,49 @@
             });
         });
 
-        // When the delete button is clicked
-       $('.delete-employee-btn').on('click', function () {
-        var employeeId = $(this).data('id'); // Get the client ID from the data attribute
+                // When the delete button is clicked
+                $('.delete-employee-btn').on('click', function () {
+                    var employeeId = $(this).data('id'); // Get the client ID from the data attribute
 
-        // Set the form action dynamically
-        var deleteUrl = "{{ route('admin.our-employee.destroy-employee', ':id') }}"; // Route with placeholder
-        deleteUrl = deleteUrl.replace(':id', employeeId);       // Replace placeholder with actual ID
+                    // Set the form action dynamically
+                    var deleteUrl = "{{ route('admin.our-employee.destroy-employee', ':id') }}"; // Route with placeholder
+                    deleteUrl = deleteUrl.replace(':id', employeeId);       // Replace placeholder with actual ID
 
-        // Update the form action
-        $('#delete-employee-form').attr('action', deleteUrl);
-     });
+                    // Update the form action
+                    $('#delete-employee-form').attr('action', deleteUrl);
+                });
 
-     // Handle form submission
-     $('#delete-employee-form').on('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
+                // Handle form submission
+                $('#delete-employee-form').on('submit', function (e) {
+                    e.preventDefault(); // Prevent the default form submission
 
-        var form = $(this);
-        var url = form.attr('action');
+                    var form = $(this);
+                    var url = form.attr('action');
 
-        // Send the delete request via AJAX
-        $.ajax({
-            url: url,
-            method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
-            data: form.serialize(), // Serialize the form data
-            success: function (response) {
-                if (response.success) {
-                    // Show a success message
-                    alert(response.message);
+                    // Send the delete request via AJAX
+                    $.ajax({
+                        url: url,
+                        method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
+                        data: form.serialize(), // Serialize the form data
+                        success: function (response) {
+                            if (response.success) {
+                                // Show a success message
+                                alert(response.message);
 
-                    // Optionally, reload the page or remove the deleted client from the list
-                    location.reload(); // Reload the page to reflect the changes
-                }
-            },
-            error: function (xhr) {
-                console.error('Error deleting employee:', xhr.responseText);
-                alert('An error occurred while deleting the employee.');
-            }
-        });
-    });
-
-    </script> 
+                                // Optionally, reload the page or remove the deleted client from the list
+                                location.reload(); // Reload the page to reflect the changes
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error('Error deleting employee:', xhr.responseText);
+                            alert('An error occurred while deleting the employee.');
+                        }
+                    });
+                });
 
 
-<script>
 
-    
-    
-                   // Employee Add Modal pop-up hidden function
-            
-                    $(document).ready(function () {
+                        // Employee Add Modal pop-up hidden function
                         // Handle form submission
                         $('#createEmployeeForm').on('submit', function (e) {
                             e.preventDefault(); // Prevent the default form submission
@@ -632,12 +625,11 @@
                                 }
                             });
                         });
-                    });
+                    
 
 
-                //----- AJAX for Employee_edit form Modal -----
+                    //----- AJAX for Employee_edit form Modal -----
 
-                $(document).ready(function () {
                     // Handle edit form submission
                     $('#edit-employee-form').on('submit', function (e) {
                         e.preventDefault(); // Prevent the default form submission
@@ -692,10 +684,10 @@
                         });
 
                     });
-                });
+                
 
+            
+        </script>       
 
-                   
-</script>
     
 @endsection

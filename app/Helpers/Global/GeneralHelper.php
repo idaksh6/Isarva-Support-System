@@ -39,7 +39,8 @@ if (! function_exists('homeRoute')) {
     {
         if (auth()->check()) {
             if (auth()->user()->isAdmin()) {
-                return 'admin.dashboard';
+                // return 'admin.dashboard';
+                return 'admin.project';
             }
 
             if (auth()->user()->isUser()) {

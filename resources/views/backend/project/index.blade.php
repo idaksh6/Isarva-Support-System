@@ -1693,10 +1693,10 @@
                             }
                         });
                     });
+                });
 
                      //----- AJAX for Project-edit form Modal -----
 
-              
                     // Handle edit form submission
                     $('#editprojectform').on('submit', function (e) {
                         e.preventDefault(); // Prevent the default form submission
@@ -1747,51 +1747,11 @@
                             $('#changeEstimationReasonField').hide(); // Hide the change estimation reason field
                         });
                     
-                });
+               
 
                 
 
-                // //----- AJAX for Project-edit form Modal -----
-
-                // $(document).ready(function () {
-                //     // Handle edit form submission
-                //     $('#editprojectform').on('submit', function (e) {
-                //         e.preventDefault(); // Prevent the default form submission
-
-                //         var form = $(this);
-                //         var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
-                //         var formData = new FormData(form[0]); // Include file uploads
-
-                //         // Clear previous errors
-                //         $('.text-danger').html('');
-
-                //         $.ajax({
-                //             url: url,
-                //             type: 'POST',
-                //             data: formData,
-                //             processData: false,
-                //             contentType: false,
-                //             success: function (response) {
-                //                 // If the form is successfully submitted, show a success message and close the modal
-                //                 alert('Project updated successfully!'); // Show success message
-                //                 $('#editproject').modal('hide'); // Close the modal
-                //                 window.location.reload(); // Reload the page to reflect changes
-                //             },
-                //             error: function (xhr) {
-                //                 // Log the error response to the console
-                //                 console.log(xhr.responseJSON);
-
-                //                 // If there are validation errors, display them below each field
-                //                 var errors = xhr.responseJSON.errors;
-                //                 if (errors) {
-                //                     $.each(errors, function (key, value) {
-                //                         $('#proj-edit-error-' + key).html(value[0]); // Display the first error message
-                //                     });
-                //                 }
-                //             } 
-                //         });
-                //     });
-                // });
+            
 
               
                     

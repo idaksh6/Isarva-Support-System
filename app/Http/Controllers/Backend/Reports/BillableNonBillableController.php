@@ -40,10 +40,16 @@ class BillableNonBillableController extends Controller
         // Fetch search results
         $query = DailyReportField::query()->with('user');
     
-        // Date range filter
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
-            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
-        }
+        // Set default dates if not provided
+    $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
+    $endDate = $request->filled('end_date') ? $request->end_date : now()->toDateString();
+          // Only apply date filter if dates are different from defaults or explicitly set
+    if ($request->has('start_date') || $request->has('end_date')) {
+        $query->whereBetween('created_at', [
+            $request->filled('start_date') ? $request->start_date : '1970-01-01',
+            $request->filled('end_date') ? $request->end_date : now()->addYear()->toDateString()
+        ]);
+    }
     
         // Employee filter
         if (!empty($filters['employee'])) {
@@ -115,10 +121,16 @@ class BillableNonBillableController extends Controller
         // Build query (same as index method)
         $query = DailyReportField::query()->with('user');
     
-        // Date range filter
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
-            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
-        }
+            // Same logic as index method
+    $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
+    $endDate = $request->filled('end_date') ? $request->end_date : now()->toDateString();
+
+    if ($request->has('start_date') || $request->has('end_date')) {
+        $query->whereBetween('created_at', [
+            $request->filled('start_date') ? $request->start_date : '1970-01-01',
+            $request->filled('end_date') ? $request->end_date : now()->addYear()->toDateString()
+        ]);
+    }
     
         // Employee filter
         if (!empty($filters['employee'])) {

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon; // Import Carbon for date manipulation
 use App\Models\Backend\ProjectEstimationChangeLog;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; // Add SoftDeletes here;
 
     protected $table = 'si_projects';
 

@@ -1350,6 +1350,52 @@
                     });
                 });
 
+                 
+                     //----- AJAX for Project Add Modal validation form---
+                 
+                    $('#createProjectForm').on('submit', function (e) {
+                        e.preventDefault(); // Prevent the default form submission
+
+                        var form = $(this);
+                        var url = form.attr('action');
+                        var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+
+                        // Clear previous errors
+                        $('.text-danger').html('');
+
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
+                            contentType: false, // for the proper handling of file uploads, 
+                            success: function (response) {
+                            
+                                // If the form is successfully submitted, close the modal and redirect
+                                alert('Project added successfully!'); // Show success message
+                                $('#createproject').modal('hide');
+                                window.location.href = "{{ route('admin.project.index') }}";
+                            },
+                            error: function (xhr) {
+                                // If there are validation errors, display them below each field
+                                // var errors = xhr.responseJSON.errors;
+                                // $.each(errors, function (key, value) {
+                                //     $('#proj-add-error-' + key).html(value[0]); // Display the first error message
+                                // });
+
+                                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    $.each(errors, function (key, value) {
+                                        $('#proj-add-error-' + key).html(value[0]); // Display the first error message
+                                    });
+                                } else {
+                                    console.error('An unexpected error occurred:', xhr.responseText);
+                                    alert('An unexpected error occurred. Please check the console for details.');
+                                }
+                            }
+                        });
+                    });
+
             // Task edit AJAX code
             $(document).ready(function () {
                 // When edit button is clicked
@@ -1453,10 +1499,7 @@
             });
             
 
-</script>
 
-
-    <script>
 
         // JS to Display selected file
         document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -1758,11 +1801,11 @@
 
 
     
-    </script>
+  
 
 
 
-    <script>
+   
      
                 //----- AJAX for Task Add Modal form to show validation error---
                 $(document).ready(function () {
@@ -1809,7 +1852,7 @@
                     });
                 });
 
-                            //----- AJAX for Task-edit Validation form Modal -----
+                    //----- AJAX for Task-edit Validation form Modal -----
 
                     $(document).ready(function () {
                     // Handle form submission
@@ -2059,58 +2102,6 @@
 
               
                  
-
-                //  Worked Hours functionality
-                // var workedHoursRoute = "{{ route('admin.project.worked-hours', ':id') }}"; // ':id' is a placeholder
-
-                // $('#showWorkedHrs').click(function() {
-                //     var projectId = "{{ $project->id }}"; // Get project ID from Blade
-                //     var url = workedHoursRoute.replace(':id', projectId); // Replace placeholder with actual project ID
-
-                //     $.ajax({
-                //         url: url, 
-                //         method: "GET",
-                //         success: function(response) {
-                //             let tableHtml = `
-                //                 <table class="table table-bordered">
-                //                     <thead>
-                //                         <tr>
-                //                             <th>SI.No</th>
-                //                             <th>Employee</th>
-                //                             <th>Spent Hrs</th>
-                //                         </tr>
-                //                     </thead>
-                //                     <tbody>
-                //             `;
-
-                //             let totalHours = 0;
-                //             $.each(response, function(index, item) {
-                //                 tableHtml += `
-                //                     <tr>
-                //                         <td>${index + 1}</td>
-                //                         <td>${item.employee}</td>
-                //                         <td>${item.spent_hrs}</td>
-                //                     </tr>
-                //                 `;
-                //                 totalHours += parseFloat(item.spent_hrs);
-                //             });
-
-                //             tableHtml += `
-                //                     <tr>
-                //                         <td colspan="2"><strong>Total Hrs</strong></td>
-                //                         <td><strong>${totalHours}</strong></td>
-                //                     </tr>
-                //                     </tbody>
-                //                 </table>
-                //             `;
-
-                //             $('#workedHrsSection').html(tableHtml);
-                //         },
-                //         error: function(xhr) {
-                //             $('#workedHrsSection').html('<p class="text-danger">No data found</p>');
-                //         }
-                //     });
-                // });
 
                     // Load data when Additional Hours tab is clicked
                         $('#showAdditionHr').click(function() {

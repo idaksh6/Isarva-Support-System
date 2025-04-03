@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <div class="col-12 text-center mt-4">
-                                    <a href="{{ route('admin.dashboard') }}" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin">SIGN IN</a>
+                                    <a href="{{ route('admin.project') }}" class="btn btn-lg btn-block btn-light lift text-uppercase" atl="signin">SIGN IN</a>
                                 </div>
                                 <div class="col-12 text-center mt-4">
                                     <span class="text-muted">Don't have an account yet? <a href="{{route('admin.authentication.signup')}}" class="text-secondary">Sign up here</a></span>

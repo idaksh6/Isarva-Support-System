@@ -234,6 +234,34 @@
 }
 
 
+.search-container {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease-in-out;
+}
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ddd;
+}
+.advanced-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+.advanced-container.show {
+    max-height: 1000px;
+}
+
+
+
 /* .text-primary {
     color: blue;
 }

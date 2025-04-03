@@ -230,12 +230,95 @@
 }
 
 
+
+/* Project Dropdown Styles */
+.project-dropdown {
+ 
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.project-dropdown-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.project-dropdown-option {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.project-dropdown-option:hover {
+  background-color: blue;
+  color: white;
+}
+
+.ticket-dropdown-option:hover {
+
+  background-color: blue;
+  color: white;
+}
+
+/* Task Dropdown Styles */
+.task-dropdown {
+
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-dropdown-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.task-dropdown-option {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.task-dropdown-option:hover {
+  background-color: blue;
+  color: white;
+}
+
 @media(max-width:768px){
 
    .main-container{
     
      margin: 0px 20px;
    }
+
+}
+
+
+
+@media(max-width:768px){
+
+  .globalsearch{
+   
+    flex-direction: column;
+    align-items: start !important;
+  }
+
+  #ticketIdSearch{
+
+    margin: 0px;
+    padding: 0px;
+  }
 
 }
 

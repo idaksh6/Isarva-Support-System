@@ -53,7 +53,7 @@
                         </div>
                         <div class="col">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Password"   autocomplete="new-password">>
+                            <input type="password" class="form-control" name="password" placeholder="Password"   autocomplete="new-password">
                             <div class="text-danger" id="clientadd_error-password"></div>
                         </div>
                     </div>
@@ -306,6 +306,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+
         // Edit values populating code
         $(document).ready(function () {
             
@@ -350,35 +351,36 @@
                     }
                 });
             });
+        });
+     
 
+
+        // When the delete button is clicked
+        $('.delete-client-btn').on('click', function () {
+            var clientId = $(this).data('id'); // Get the client ID from the data attribute
+
+            // Set the form action dynamically
+            var deleteUrl = "{{ route('admin.our-client.destroy-client', ':id') }}"; // Route with placeholder
+            deleteUrl = deleteUrl.replace(':id', clientId); // Replace placeholder with actual ID
+
+            // Update the form action
+            $('#delete-client-form').attr('action', deleteUrl);
         });
 
+        // Handle form submission
+        $('#delete-client-form').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
 
-    // When the delete button is clicked
-    $('.delete-client-btn').on('click', function () {
-        var clientId = $(this).data('id'); // Get the client ID from the data attribute
+            var form = $(this);
+            var url = form.attr('action');
 
-        // Set the form action dynamically
-        var deleteUrl = "{{ route('admin.our-client.destroy-client', ':id') }}"; // Route with placeholder
-        deleteUrl = deleteUrl.replace(':id', clientId); // Replace placeholder with actual ID
+            // Send the delete request via AJAX
+            $.ajax({
 
-        // Update the form action
-        $('#delete-client-form').attr('action', deleteUrl);
-    });
-
-    // Handle form submission
-    $('#delete-client-form').on('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
-
-        var form = $(this);
-        var url = form.attr('action');
-
-        // Send the delete request via AJAX
-        $.ajax({
-                    url: url,
-                    method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
-                    data: form.serialize(), // Serialize the form data
-                    success: function (response) {
+                url: url,
+                method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
+                data: form.serialize(), // Serialize the form data
+                success: function (response) {
                         if (response.success) {
                             // Show a success message
                             alert(response.message);
@@ -387,25 +389,25 @@
                             location.reload(); // Reload the page to reflect the changes
                         }
                     },
-                    error: function (xhr) {
-                        console.error('Error deleting client:', xhr.responseText);
-                        alert('An error occurred while deleting the client.');
-                    }
-                });
-            });
+                        error: function (xhr) {
+                            console.error('Error deleting client:', xhr.responseText);
+                            alert('An error occurred while deleting the client.');
+                        }
+                    });
+        });
 
-            // Client ADD form validation code
-            $(document).ready(function () {
-                $('#createclientform').on('submit', function (e) {
-                    e.preventDefault();
+        // Client ADD form validation code
+          
+        $('#createclientform').on('submit', function (e) {
+            e.preventDefault();
 
-                    var form = $(this);
-                    var url = form.attr('action');
-                    var formData = new FormData(form[0]);
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = new FormData(form[0]);
 
-                    $('.text-danger').html(''); // Clear errors
+                $('.text-danger').html(''); // Clear errors
 
-                    $.ajax({
+                $.ajax({
                         url: url,
                         type: 'POST',
                         data: formData,
@@ -432,65 +434,64 @@
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function (key, value) {
                             $('#clientadd_error-' + key).html(value[0]);
-                            });
+                        });
+                }
+            });
+        });
+
+
+                //----- AJAX for Client-edit form Modal validation -----
+
+                $('#edit-client-form').on('submit', function(e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var formData = new FormData(form[0]);
+
+                        // Clear previous errors
+                        $('.text-danger').html('');
+
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function(response) {
+                                    // Close modal immediately
+                                    $('#editclient').modal('hide');
+                                            
+                                    // Remove modal backdrop (fixes black background issue)
+                                    $('body').removeClass('modal-open');
+                                    $('.modal-backdrop').remove();
+
+                                    // Show properly oriented success alert
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        html: '<div style="transform: scaleX(1)">Client has been updated!</div>',
+                                        icon: 'success',
+                                        timer: 2000, // 2 seconds
+                                        timerProgressBar: true,
+                                        showConfirmButton: false,
+                                        position: 'center',
+                                            willClose: () => {
+                                                window.location.reload();
+                                            }
+                                        });
+                                    },
+                                    error: function(xhr) {
+                                    var errors = xhr.responseJSON.errors;
+                                        if (errors) {
+                                            $.each(errors, function(key, value) {
+                                            $('#client-edit-error-' + key).html(value[0]);
+                                });
+                            }
                         }
                     });
                 });
-
-
-                          
-                   //----- AJAX for Client-edit form Modal validation -----
-
-                    $('#edit-client-form').on('submit', function(e) {
-                        e.preventDefault();
-                        var form = $(this);
-                        var formData = new FormData(form[0]);
-
-                            // Clear previous errors
-                            $('.text-danger').html('');
-
-                                $.ajax({
-                                    url: form.attr('action'),
-                                    type: 'POST',
-                                    data: formData,
-                                    processData: false,
-                                    contentType: false,
-                                    success: function(response) {
-                                            // Close modal immediately
-                                            $('#editclient').modal('hide');
-                                            
-                                            // Remove modal backdrop (fixes black background issue)
-                                            $('body').removeClass('modal-open');
-                                            $('.modal-backdrop').remove();
-
-                                            // Show properly oriented success alert
-                                            Swal.fire({
-                                                title: 'Success!',
-                                                html: '<div style="transform: scaleX(1)">Client has been updated!</div>',
-                                                icon: 'success',
-                                                timer: 2000, // 2 seconds
-                                                timerProgressBar: true,
-                                                showConfirmButton: false,
-                                                position: 'center',
-                                                willClose: () => {
-                                                    window.location.reload();
-                                                }
-                                            });
-                                        },
-                                        error: function(xhr) {
-                                            var errors = xhr.responseJSON.errors;
-                                            if (errors) {
-                                                $.each(errors, function(key, value) {
-                                                    $('#client-edit-error-' + key).html(value[0]);
-                                                });
-                                            }
-                                        }
-                                    });
-                                });
                 
 
 
-            });
+          
 
 
 

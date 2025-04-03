@@ -98,6 +98,9 @@ class ClientController
 
             $request->profile_image->move($filePath, $fileName);
             $client->profile_image = 'images/client_or_comp_images/' . $fileName; // Store relative path
+        } else {
+            // Set default image if no image was provided
+            $client->profile_image = 'images/xs/avatar1.jpg';
         }
 
         $client->save();

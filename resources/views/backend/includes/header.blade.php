@@ -7,27 +7,47 @@
     border-radius: 5px;
     padding: 5px 10px 5px 10px;">
  
+<style>
 
+.globalsearch {
+    display: flex;
+    align-items: center;
+}
+
+#ticketIdSearch {
+    margin-left: 10px;
+    border-left: 1px solid #ddd;
+    padding-left: 10px;
+}
+
+</style>
         
-        
-            
-          
-     
             <!-- header rightbar icon -->
-            <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1 w-100">
+            <div class="h-right d-flex align-items-center justify-content-between mr-5 mr-lg-0 order-1 w-100">
 
                 <div class="globalsearch">
                     <!-- Global Project Search Form -->
                     <form action="{{ route('admin.project.manage') }}" method="GET" class="d-flex align-items-center" id="globalProjectSearch">
                         <div class="input-group me-2" style="width: 180px;">
-                            <input type="text" class="form-control form-control-sm" style="font-size: small;" name="project_name" id="headerProjectName" 
+                            <input type="text" class="" style="font-size: small;" name="project_name" id="headerProjectName" 
                                 placeholder="Search by project name" value="{{ request('project_name') }}">
                         </div>
                         <div class="input-group me-2" style="width: 180px;">
-                            <input type="text" class="form-control form-control-sm" style="font-size: small;" name="project_id" id="headerProjectId" 
+                            <input type="text" class="" style="font-size: small;" name="project_id" id="headerProjectId" 
                                 placeholder="Search by project ID" value="{{ request('project_id') }}">
                         </div>
+                      
                     </form>
+                     
+                    <!-- Ticket ID Search Form -->
+                    <form action="{{ route('admin.ticket.ticket-view') }}" method="GET" class="d-flex align-items-center ms-2" id="ticketIdSearch">
+                        <div class="input-group" style="width: 180px;">
+                            <input type="text" class="" style="font-size: small;" name="ticket_id" id="headerTicketId" 
+                                placeholder="Search by ticket ID">
+                            <input type="hidden" name="q" id="ticketSearchQuery">
+                        </div>
+                    </form>
+                   
                 </div>
                 {{-- <div class="d-flex">
                     <a class="nav-link text-primary collapsed" href="{{ route('admin.help') }}" title="Get Help">
@@ -215,6 +235,11 @@
         const form = document.getElementById('globalProjectSearch');
         const projectNameInput = document.getElementById('headerProjectName');
         const projectIdInput = document.getElementById('headerProjectId');
+
+         // Ticket ID search form handling
+        const ticketForm = document.getElementById('ticketIdSearch');
+        const ticketIdInput = document.getElementById('headerTicketId');
+        const ticketSearchQuery = document.getElementById('ticketSearchQuery');
         
         // Function to submit form when Enter is pressed
         function handleEnterKey(event) {
@@ -225,11 +250,29 @@
                 }
             }
         }
+
+           // Function to handle ticket ID search
+            function handleTicketEnterKey(event) {
+                if (event.key === 'Enter') {
+                    const ticketId = ticketIdInput.value.trim();
+                    if (ticketId) {
+                        // Set the value for the 'q' parameter which your controller uses
+                        ticketSearchQuery.value = ticketId;
+                        ticketForm.submit();
+                    }
+                }
+            }
         
-        // Add event listeners to both inputs
+        // Add event listeners to inputs
         projectNameInput.addEventListener('keypress', handleEnterKey);
         projectIdInput.addEventListener('keypress', handleEnterKey);
-    });
+        ticketIdInput.addEventListener('keypress', handleTicketEnterKey);
+
+         // Optional: Focus the ticket ID field when clicking on it
+        ticketIdInput.addEventListener('click', function() {
+            this.select();
+            });
+        });
 </script>
 {{-- @include('backend.layouts.common-oppup') --}}
 

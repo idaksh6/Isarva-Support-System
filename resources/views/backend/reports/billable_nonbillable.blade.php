@@ -4,7 +4,12 @@
 
 @section('content')
 
+<style>
 
+
+
+
+</style>
 <div class="container">
     <div class="card mt-3">
         <div class="card-header bg-primary text-white">
@@ -18,14 +23,14 @@
                     <div class="col-md-3">
                         <label for="start_date">Start Date:</label>
                         <input type="date" id="start_date" name="start_date" class="form-control" 
-                            value="{{ request('start_date', now()->subDay()->toDateString()) }}">
+                            value="{{ request()->has('start_date') ? request('start_date') : now()->subDay()->toDateString() }}">
                     </div>
 
                     <!-- End Date -->
                     <div class="col-md-3">
                         <label for="end_date">End Date:</label>
                         <input type="date" id="end_date" name="end_date" class="form-control" 
-                            value="{{ request('end_date', now()->toDateString()) }}">
+                            value="{{ request()->has('end_date') ? request('end_date') : now()->toDateString() }}">
                     </div>
 
                     <!-- Employee Dropdown (Searchable) -->
@@ -50,18 +55,7 @@
                     </div>
                 </div>
 
-                <!-- Select Project/Ticket Field  works fine without ticket -28/03/2025 -->
-                {{-- <div class="row mt-3" id="select_project_field" style="display: none;">
-                    <div class="col-md-3">
-                        <label id="select_label" for="select_project">Select Project:</label>
-                        <select id="select_project" name="select_project" class="form-control select2">
-                            <option value="">Select</option>
-                            @foreach($projects as $id => $name)
-                                <option value="{{ $name }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div> --}}
+              
 
                 <div class="row mt-3" id="select_project_field" style="display: none;">
                     <div class="col-md-3">
@@ -186,8 +180,9 @@
         {{ $reports->appends(request()->query())->links() }}
     @endif
  
-    <!-- Jquery Page Js -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    <script src="{{ asset('js/jquery-3.6.0.min.js')}}"></script>
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
 
@@ -199,49 +194,17 @@
 
 
 <script>
-            // Works fine 
-            // $(document).ready(function() {
-            //     // Initialize all select2 elements
-            //     $('.select2').select2({
-            //         width: '100%',
-            //         placeholder: "Select an option",
-            //         allowClear: true
-            //     });
-
-            //     // Handle dynamic change for Project/Ticket field
-            //     $('#project_ticket').change(function() {
-            //         var selectedValue = $(this).val();
-            //         if (selectedValue === 'project') {
-            //             $('#select_label').text('Select Project:');
-            //             var options = `<option value="">Select</option>
-            //                 @foreach($projects as $id => $name)
-            //                     <option value="{{ $name }}">{{ $name }}</option>
-            //                 @endforeach`;
-            //             $('#select_project').html(options);
-            //             $('#select_project_field').show();
-            //             $('#select_project').select2({ width: '100%' });
-            //         } else if (selectedValue === 'ticket') {
-            //             $('#select_label').text('Select Ticket:');
-            //             var options = `<option value="">Select</option>
-            //             @foreach($tickets as $id => $title)
-            //                 <option value="{{ $id }}" {{ request('select_project') == $id ? 'selected' : '' }}>{{ $title }}</option>
-            //             @endforeach`;
-            //             $('#select_project').html(options);
-            //             $('#select_project_field').show();
-            //             $('#select_project').select2({ width: '100%' });
-            //         } else {
-            //             $('#select_project_field').hide();
-            //         }
-            //     });
-            // });
-            
+           
             $(document).ready(function() {
             // Initialize all select2 elements
             $('.select2').select2({
                 width: '100%',
                 placeholder: "Select an option",
                 allowClear: true
+               
             });
+        });
+           
 
             // Handle dynamic change for Project/Ticket field
             $('#project_ticket').change(function() {
@@ -281,7 +244,28 @@
             @if(request('select_project'))
                 $('#select_project').val('{{ request("select_project") }}').trigger('change');
             @endif
-        });
+
+             // Handle date input clearing
+            $('input[type="date"]').each(function() {
+                // Store original default values
+                const originalValue = $(this).val();
+                $(this).data('original', originalValue);
+                
+                $(this).on('change', function() {
+                    if (!this.value) {
+                        // If cleared, set to empty string
+                        $(this).val('');
+                    }
+                });
+            });
+
+            // Reset to defaults when form is reset
+            $('button[type="reset"]').on('click', function() {
+                $('input[type="date"]').each(function() {
+                    $(this).val($(this).data('original'));
+                });
+            });
+        
             
                    
             // JS to trigger the PDF EXPORT
