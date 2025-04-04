@@ -261,7 +261,23 @@
 }
 
 
+.manageaddbtn{
 
+    background-color: #484c7f;
+    border-color: #4DCA88;
+    color: white;
+}
+
+
+.page-item.active .page-link {
+    background-color: transparent !important;
+    border-color: var(--primary-color);
+}
+
+.page-item.active .page-link:hover{
+
+    border-color: transparent !important;
+}
 /* .text-primary {
     color: blue;
 }

@@ -6,6 +6,13 @@
 
 
 
+@if (session()->has('flash_success_project'))
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i> 
+        <span>{{ session('flash_success_project') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
 <!-- Create Project-->
 <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
@@ -495,8 +502,12 @@
         </div>
     </div>
 </div>
-
-
+    
+    <div class="editaddbtn  w-100 mt-1 mb-2 pe-3">
+       
+        <a href="#" class="btn manageaddbtn" data-bs-toggle="modal" data-bs-target="#createproject"><i class="icofont-plus-circle me-2"></i>Add Project</a>
+    </div>
+    <!-- Manage page main Container -->
     <div class="container-fluid">
             
         <div class="search-container mb-3">
@@ -745,7 +756,7 @@
                         {{ $projectsmanage->links() }}
                     </div> --}}
                     <!-- Pagination - Table View -->
-                    <div class="d-flex justify-content-center mt-4">
+                    <div class="d-flex justify-content-center mt-4 ">
                         {{ $projectsmanage->appends(['view' => 'table'])->links() }}
                     </div>
 
@@ -1162,9 +1173,16 @@
                             success: function (response) {
                             
                                 // If the form is successfully submitted, close the modal and redirect
-                                alert('Project added successfully!'); // Show success message
+                               
                                 $('#createproject').modal('hide');
-                                window.location.href = "{{ route('admin.project.index') }}";
+                                Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Project added successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.href.reload();
+                                    });
                             },
                             error: function (xhr) {
                                 // If there are validation errors, display them below each field
@@ -1186,7 +1204,7 @@
                         });
                     });
 
-                     //----- AJAX for Project-edit form Modal -----
+                     //----- AJAX for Project-edit form validation Modal -----
 
               
                     // Handle edit form submission
@@ -1208,9 +1226,27 @@
                             contentType: false,
                             success: function (response) {
                                 // If the form is successfully submitted, show a success message and close the modal
-                                alert('Project updated successfully!'); // Show success message
+                               
                                 $('#editproject').modal('hide'); // Close the modal
-                                window.location.reload(); // Reload the page to reflect changes
+
+                                 // Remove modal backdrop (fixes black background issue)
+                                 $('body').removeClass('modal-open');
+                                $('.modal-backdrop').remove();
+
+                                // Show success alert with proper orientation
+                                Swal.fire({
+                                    title: 'Success!',
+                                    html: '<div style="transform: scaleX(1)">Project details has been updated!</div>',
+                                    icon: 'success',
+                                    timer: 2000, // 2 seconds
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                    position: 'center',
+                                    willClose: () => {
+                                        window.location.reload(); // Reload the page to reflect changes
+                                    }
+                                });
+                               
                             },
                             error: function (xhr) {
                                 // Log the error response to the console

@@ -297,8 +297,7 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
-    {{-- <script src = " {{ asset('js/sweetalert2@11.js')}}"></script> --}}
-    <script src ="{{ asset('sweetalaertcdn/sweetalert2@11.js')}}"></script>
+
 
     <script>
         var editClientRoute = "{{ route('admin.our-client.edit-client', ':id') }}";

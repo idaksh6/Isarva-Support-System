@@ -54,6 +54,9 @@
 
     <!-- Include jQuery UI CSS -->
     <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
+      
+    <!-- Consolidated Report CSS-->
+    <link rel="stylesheet" href="{{ asset('css/consolidated_report.css')}}">
     
     <!-- Include jQuery UI JS -->
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>

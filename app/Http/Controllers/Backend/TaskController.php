@@ -36,20 +36,20 @@ class TaskController
 
     public function tasks()
     {
-        // Fetch tasks (if needed)
-        $alltasks = Task::all(); // Or any other logic to fetch tasks
+        // // Fetch tasks (if needed)
+        // $alltasks = Task::all(); // Or any other logic to fetch tasks
 
-        // Pass data to the view
-        return view('backend.project.tasks', [
-            'project' => null, // Ensures $project exists in view
-            'tasks' => $alltasks, // Pass tasks to the view
-            'internalDocs' => collect(), // Ensure internalDocs is always available
-        ]);
+        // // Pass data to the view
+        // return view('backend.project.tasks', [
+        //     'project' => null, // Ensures $project exists in view
+        //     'tasks' => $alltasks, // Pass tasks to the view
+        //     'internalDocs' => collect(), // Ensure internalDocs is always available
+        // ]);
     }
 
        
 
-        public function tasksByProject($id, )
+        public function tasksByProject($id)
         {
             $project = Project::find($id);
         
@@ -95,7 +95,7 @@ class TaskController
 
         
             return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
-             'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays'));
+            'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays'));
         }
         
         

@@ -74,7 +74,7 @@ class Project extends Model
         5 => 'success',   // Billing
         6 => 'danger',  // Closed
         7 => 'dark',     // On Hold
-        8 => 'light',    // Warranty
+        8 => 'dark',    // Warranty
     ];
 
     return $statusClasses[$this->status] ?? 'secondary';

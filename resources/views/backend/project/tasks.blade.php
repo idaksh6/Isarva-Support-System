@@ -1371,11 +1371,18 @@
                             contentType: false, // for the proper handling of file uploads, 
                             success: function (response) {
                             
-                                // If the form is successfully submitted, close the modal and redirect
-                                alert('Project added successfully!'); // Show success message
-                                $('#createproject').modal('hide');
-                                window.location.href = "{{ route('admin.project.index') }}";
-                            },
+                            // If the form is successfully submitted, close the modal and redirect
+                           
+                            $('#createproject').modal('hide');
+                            Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Project added successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.href.reload();
+                                });
+                         },
                             error: function (xhr) {
                                 // If there are validation errors, display them below each field
                                 // var errors = xhr.responseJSON.errors;
@@ -1798,14 +1805,6 @@
                     });
                 });
 
-
-
-    
-  
-
-
-
-   
      
                 //----- AJAX for Task Add Modal form to show validation error---
                 $(document).ready(function () {
@@ -1827,14 +1826,25 @@
                             processData: false, // Prevent jQuery from processing the data
                             contentType: false, // Prevent jQuery from setting content type
                             success: function (response) {
-                                alert('Task added successfully!');
+                              
                                 $('#createtask').modal('hide');
+
+                                  // Show success message with SweetAlert
+                                  Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Task added successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        // Redirect using Laravel's route() helper
+                                        window.location.href = "{{ route('admin.tasks.byProject', ':id') }}".replace(':id', projectId);
+                                    });
 
                                 // Get project ID from form input
                                 var projectId = $('#createtaskform').find('input[name="project_id"]').val();
 
-                                // Redirect using Laravel's route() helper
-                                window.location.href = "{{ route('admin.tasks.byProject', ':id') }}".replace(':id', projectId);
+                                // // Redirect using Laravel's route() helper
+                                // window.location.href = "{{ route('admin.tasks.byProject', ':id') }}".replace(':id', projectId);
                             },
                             error: function (xhr) {
                                 // Handle validation errors

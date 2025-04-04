@@ -93,6 +93,16 @@ Route::group([
     ->breadcrumbs(function (Trail $trail) {
         $trail->push(__('Home'), route('export.billable.pdf'));
     });
+
+     // Consolidated Report   ROUTE
+     Route::get('consolidated_daily_reports', [BillableNonBillableController::class, 'getconsolidatedreport'])
+     ->name('consolidated_dailyreport')
+     ->breadcrumbs(function (Trail $trail) {
+         $trail->push(__('Home'), route('admin.consolidated_dailyreport'));
+     });
+       
+     // Consolidated Report PDF ROUTE
+     Route::get('/admin/report/consolidated_daily_reports/export', [BillableNonBillableController::class, 'exportconsolidatedreportToPdf'])->name('consolidated_report.export');
       
 });
 

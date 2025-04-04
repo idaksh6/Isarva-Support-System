@@ -9,6 +9,8 @@ use App\Helpers\ProjectHelper;
 use App\Models\Backend\DailyReportField;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\TicketHelper;
+use App\Models\Backend\User;
+use Carbon\Carbon;
 
 
 class BillableNonBillableController extends Controller
@@ -41,15 +43,16 @@ class BillableNonBillableController extends Controller
         $query = DailyReportField::query()->with('user');
     
         // Set default dates if not provided
-    $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
-    $endDate = $request->filled('end_date') ? $request->end_date : now()->toDateString();
-          // Only apply date filter if dates are different from defaults or explicitly set
-    if ($request->has('start_date') || $request->has('end_date')) {
-        $query->whereBetween('created_at', [
-            $request->filled('start_date') ? $request->start_date : '1970-01-01',
-            $request->filled('end_date') ? $request->end_date : now()->addYear()->toDateString()
-        ]);
-    }
+        $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay()
+        ->toDateTimeString(): Carbon::now()->endOfDay()->toDateTimeString();
+
+        // Only apply date filter if dates are different from defaults or explicitly set
+  
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $query->where('created_at', '>=', $request->filled('start_date') ? $request->start_date : '1970-01-01')
+                ->where('created_at', '<=', $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : Carbon::now()->endOfDay());
+        }
     
         // Employee filter
         if (!empty($filters['employee'])) {
@@ -121,16 +124,15 @@ class BillableNonBillableController extends Controller
         // Build query (same as index method)
         $query = DailyReportField::query()->with('user');
     
-            // Same logic as index method
-    $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
-    $endDate = $request->filled('end_date') ? $request->end_date : now()->toDateString();
+        // Same logic as index method
+        $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay()
+            ->toDateTimeString(): Carbon::now()->endOfDay()->toDateTimeString();
 
-    if ($request->has('start_date') || $request->has('end_date')) {
-        $query->whereBetween('created_at', [
-            $request->filled('start_date') ? $request->start_date : '1970-01-01',
-            $request->filled('end_date') ? $request->end_date : now()->addYear()->toDateString()
-        ]);
-    }
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $query->where('created_at', '>=', $request->filled('start_date') ? $request->start_date : '1970-01-01')
+                ->where('created_at', '<=', $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : Carbon::now()->endOfDay());
+        }
     
         // Employee filter
         if (!empty($filters['employee'])) {
@@ -191,4 +193,295 @@ class BillableNonBillableController extends Controller
     }
 
 
+    //  public function getconsolidatedreport(){
+ 
+    //    return view('backend.reports.consolidatedreports.consolidated_dailyreport')  ;     
+     
+        
+    // }
+    // app/Http/Controllers/YourController.php
+
+    // public function getconsolidatedreport(Request $request)
+    // {
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
+    //     $reportData = [];
+    
+    //     if ($startDate && $endDate) {
+    //         $result = DailyReportField::getConsolidatedReportData($startDate, $endDate);
+    //         $reportData = $result['report_data'];
+    //         $totals = $result['totals'];
+    
+    //         // Add totals row if there's data (corrected version)
+    //         if (count($reportData) > 0) {
+    //             $grandTotal = array_sum($totals);
+    //             $reportData[] = $this->createTotalRow($totals, $grandTotal);
+    //         }
+    //     }
+    
+    //     return view('backend.reports.consolidatedreports.consolidated_dailyreport', [
+    //         'reportData' => $reportData,
+    //         'startDate' => $startDate,
+    //         'endDate' => $endDate
+    //     ]);
+    // }
+
+    // WORKS FINE BEFORE TOTAL PROJECCT AND TICKET CALCU
+
+    // public function getconsolidatedreport(Request $request)
+    // {
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
+    
+    //     // If both dates are empty, set them to null
+    //     if (empty($startDate) || empty($endDate)) {
+    //         $startDate = null;
+    //         $endDate = null;
+    //     }
+    
+    //     $result = DailyReportField::getConsolidatedReportData($startDate, $endDate);
+    //     $reportData = $result['report_data'];
+    //     $totals = $result['totals'];
+    
+    //     if (count($reportData) > 0) {
+    //         $grandTotal = array_sum($totals);
+    //         $reportData[] = $this->createTotalRow($totals, $grandTotal);
+    //     }
+    
+    //     return view('backend.reports.consolidatedreports.consolidated_dailyreport', [
+    //         'reportData' => $reportData,
+    //         'startDate' => $startDate,
+    //         'endDate' => $endDate
+    //     ]);
+    // }
+    
+
+        // protected function createTotalRow($totals, $grandTotal)
+        // {
+        //     $base = $grandTotal > 0 ? $grandTotal : 1;
+            
+        //     return [
+        //         'si_no' => '',
+        //         'employee_name' => 'Total',
+        //         'billable_hrs' => $totals['billable'],
+        //         'billable_percent' => ($totals['billable'] / $base) * 100,
+        //         'non_billable_hrs' => $totals['non_billable'],
+        //         'non_billable_percent' => ($totals['non_billable'] / $base) * 100,
+        //         'internal_hrs' => $totals['internal'],
+        //         'internal_percent' => ($totals['internal'] / $base) * 100,
+        //         'is_total' => true
+        //     ];
+        // }
+
+
+
+        // WORKS FINE BEFORE ADDING DEPARTMENT SECTION
+//         public function getconsolidatedreport(Request $request)
+// {
+//     $startDate = $request->input('start_date');
+//     $endDate = $request->input('end_date');
+
+//     // Initialize totals with default values
+//     $totals = [
+//         'billable' => 0,
+//         'non_billable' => 0,
+//         'internal' => 0,
+//         'project_billable' => 0,
+//         'project_non_billable' => 0,
+//         'project_internal' => 0,
+//         'ticket_billable' => 0,
+//         'ticket_non_billable' => 0,
+//         'ticket_internal' => 0,
+//         'project_total' => 0,
+//         'ticket_total' => 0,
+//     ];
+
+//     $result = DailyReportField::getConsolidatedReportData($startDate, $endDate);
+//     $reportData = $result['report_data'];
+//     $totals = $result['totals']; // This will override the initialized totals
+
+//     if (count($reportData) > 0) {
+//         $grandTotal = array_sum([$totals['billable'], $totals['non_billable'], $totals['internal']]);
+//         $reportData[] = $this->createTotalRow($totals, $grandTotal);
+//     }
+
+//     return view('backend.reports.consolidatedreports.consolidated_dailyreport', [
+//         'departmentData' => $result['department_data'],
+//         'reportData' => $reportData,
+//         'startDate' => $startDate,
+//         'endDate' => $endDate,
+//         'totals' => $totals // Make sure to pass totals to the view
+//     ]);
+// }
+
+//         protected function createTotalRow($totals, $grandTotal)
+//         {
+//             $base = $grandTotal > 0 ? $grandTotal : 1;
+            
+//             // Calculate project and ticket totals
+//             $projectTotal = $totals['project_billable'] + $totals['project_non_billable'] + $totals['project_internal'];
+//             $ticketTotal = $totals['ticket_billable'] + $totals['ticket_non_billable'] + $totals['ticket_internal'];
+            
+//             return [
+//                 'si_no' => '',
+//                 'employee_name' => 'Total',
+//                 'billable_hrs' => $totals['billable'],
+//                 'billable_percent' => ($totals['billable'] / $base) * 100,
+//                 'non_billable_hrs' => $totals['non_billable'],
+//                 'non_billable_percent' => ($totals['non_billable'] / $base) * 100,
+//                 'internal_hrs' => $totals['internal'],
+//                 'internal_percent' => ($totals['internal'] / $base) * 100,
+//                 'project_billable' => $totals['project_billable'],
+//                 'project_non_billable' => $totals['project_non_billable'],
+//                 'project_internal' => $totals['project_internal'],
+//                 'ticket_billable' => $totals['ticket_billable'],
+//                 'ticket_non_billable' => $totals['ticket_non_billable'],
+//                 'ticket_internal' => $totals['ticket_internal'],
+//                 'project_total' => $projectTotal,
+//                 'ticket_total' => $ticketTotal,
+//                 'is_total' => true
+//             ];
+//         }
+    
+        public function getconsolidatedreport(Request $request)
+        {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+
+            //  // Adjust end date to include the entire day
+            // if ($endDate) {
+            //     $endDate = Carbon::parse($endDate)->endOfDay()->toDateTimeString();
+            // }
+
+            // Get the report data organized by department
+            $result = DailyReportField::getConsolidatedReportData($startDate, $endDate);
+            
+            // Calculate grand totals for the global total row
+            $grandTotal = array_sum([
+                $result['totals']['billable'],
+                $result['totals']['non_billable'],
+                $result['totals']['internal']
+            ]);
+            
+            // Create the global total row
+            $globalTotalRow = $this->createTotalRow($result['totals'], $grandTotal);
+            
+            // Add the global total row to each department's data
+            foreach ($result['department_data'] as &$department) {
+                // Calculate department base for percentages
+                $departmentBase = array_sum([
+                    $department['totals']['billable'],
+                    $department['totals']['non_billable'],
+                    $department['totals']['internal']
+                ]);
+                
+                // Add department total row
+                $department['total_row'] = [
+                    'si_no' => '',
+                    'employee_name' => 'Department Total',
+                    'billable_hrs' => $department['totals']['billable'],
+                    'billable_percent' => $departmentBase > 0 ? ($department['totals']['billable'] / $departmentBase) * 100 : 0,
+                    'non_billable_hrs' => $department['totals']['non_billable'],
+                    'non_billable_percent' => $departmentBase > 0 ? ($department['totals']['non_billable'] / $departmentBase) * 100 : 0,
+                    'internal_hrs' => $department['totals']['internal'],
+                    'internal_percent' => $departmentBase > 0 ? ($department['totals']['internal'] / $departmentBase) * 100 : 0,
+                    'is_total' => true
+                ];
+            }
+
+            return view('backend.reports.consolidatedreports.consolidated_dailyreport', [
+                'departmentData' => $result['department_data'],
+                'globalTotalRow' => $globalTotalRow,
+                'totals' => $result['totals'],
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ]);
+        }
+
+        protected function createTotalRow($totals, $grandTotal)
+        {
+            $base = $grandTotal > 0 ? $grandTotal : 1;
+            
+            return [
+                'si_no' => '',
+                'employee_name' => 'Grand Total',
+                'billable_hrs' => $totals['billable'],
+                'billable_percent' => ($totals['billable'] / $base) * 100,
+                'non_billable_hrs' => $totals['non_billable'],
+                'non_billable_percent' => ($totals['non_billable'] / $base) * 100,
+                'internal_hrs' => $totals['internal'],
+                'internal_percent' => ($totals['internal'] / $base) * 100,
+                'project_billable' => $totals['project_billable'],
+                'project_non_billable' => $totals['project_non_billable'],
+                'project_internal' => $totals['project_internal'],
+                'ticket_billable' => $totals['ticket_billable'],
+                'ticket_non_billable' => $totals['ticket_non_billable'],
+                'ticket_internal' => $totals['ticket_internal'],
+                'project_total' => $totals['project_total'],
+                'ticket_total' => $totals['ticket_total'],
+                'is_total' => true
+            ];
+        }
+
+
+        public function exportconsolidatedreportToPdf(Request $request)
+        {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+
+            // Get the report data (same as your getconsolidatedreport method)
+            $result = DailyReportField::getConsolidatedReportData($startDate, $endDate);
+            
+            $grandTotal = array_sum([
+                $result['totals']['billable'],
+                $result['totals']['non_billable'],
+                $result['totals']['internal']
+            ]);
+            
+            $globalTotalRow = $this->createTotalRow($result['totals'], $grandTotal);
+            
+            foreach ($result['department_data'] as &$department) {
+                $departmentBase = array_sum([
+                    $department['totals']['billable'],
+                    $department['totals']['non_billable'],
+                    $department['totals']['internal']
+                ]);
+                
+                $department['total_row'] = [
+                    'si_no' => '',
+                    'employee_name' => 'Department Total',
+                    'billable_hrs' => $department['totals']['billable'],
+                    'billable_percent' => $departmentBase > 0 ? ($department['totals']['billable'] / $departmentBase) * 100 : 0,
+                    'non_billable_hrs' => $department['totals']['non_billable'],
+                    'non_billable_percent' => $departmentBase > 0 ? ($department['totals']['non_billable'] / $departmentBase) * 100 : 0,
+                    'internal_hrs' => $department['totals']['internal'],
+                    'internal_percent' => $departmentBase > 0 ? ($department['totals']['internal'] / $departmentBase) * 100 : 0,
+                    'is_total' => true
+                ];
+            }
+
+            // Generate HTML for PDF
+            $html = view('backend.reports.consolidatedreports.consolidated_report-pdf', [
+                'departmentData' => $result['department_data'],
+                'globalTotalRow' => $globalTotalRow,
+                'totals' => $result['totals'],
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ])->render();
+
+            // PDF options
+            $options = new \Dompdf\Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', true);
+
+            // Generate PDF
+            $pdf = PDF::loadHTML($html);
+            // $pdf->setOptions($options);
+            $pdf->setPaper('A4', 'landscape');
+
+            // Download the PDF
+            return $pdf->download('consolidated_report_'.now()->format('Y-m-d').'.pdf');
+        }
+            
+    
 }

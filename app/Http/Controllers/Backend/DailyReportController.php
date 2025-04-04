@@ -27,104 +27,128 @@ class DailyReportController extends Controller
     }
 
   
-     // Works fine
+     // Project name search field
+    //  public function search($term = null)
+    //  {
+    //      $userId = Auth::id(); // Get logged-in user ID
+     
+    //      if ($term) {
+    //          $projects = Project::where('project_name', 'like', '%' . $term . '%')
+    //              ->where(function($query) use ($userId) {
+    //                  $query->where('manager', $userId) // User is manager
+    //                      ->orWhere('team_leader', $userId) // User is team leader
+    //                      ->orWhereJsonContains('team_members', $userId); // User is in team members
+    //              })
+    //              ->select('id', 'project_name as label')
+    //              ->get();
+    //      } else {
+    //          $projects = []; // Return an empty array if no term is provided
+    //      }
+     
+    //      return response()->json($projects);
+    //  }
+
     public function search($term = null)
     {
+        $userId = Auth::id(); // Get logged-in user ID
+
         if ($term) {
             $projects = Project::where('project_name', 'like', '%' . $term . '%')
-                              ->select('id', 'project_name as label') // Select id and project_name (aliased as label)
-                              ->get();
+                ->where(function($query) use ($userId) {
+                    $query->where('manager', $userId) // User is manager
+                        ->orWhere('team_leader', $userId) // User is team leader
+                        ->orWhere(function($q) use ($userId) {
+                            // Handle comma-separated team members
+                            $q->where('team_members', 'like', $userId.',%') // Starts with user ID
+                            ->orWhere('team_members', 'like', '%,'.$userId.',%') // User ID in middle
+                            ->orWhere('team_members', 'like', '%,'.$userId) // Ends with user ID
+                            ->orWhere('team_members', $userId); // Only user ID
+                        });
+                })
+                ->select('id', 'project_name as label')
+                ->get();
         } else {
             $projects = []; // Return an empty array if no term is provided
         }
 
         return response()->json($projects);
     }
-
        
-        // public function search($term = null)
-        // {
-        //     $userId = Auth::id(); // Get logged-in user ID
-
-        //     if ($term) {
-        //         $projects = Project::where('project_name', 'like', '%' . $term . '%')
-        //                         ->where(function ($query) use ($userId) {
-        //                             $query->where('created_by', $userId) // Projects created by user
-        //                                     ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // Projects where user is a team member
-        //                         })
-        //                         ->select('id', 'project_name as label')
-        //                         ->get();
-        //     } else {
-        //         $projects = [];
-        //     }
-
-        //     return response()->json($projects);
-        // }
-
-
-    // New task search method
-    public function searchTasks(Request $request)
-    {
-        $term = $request->input('term');
-        $projectId = $request->input('project_id'); // Get the selected project ID
-
-        if ($term && $projectId) {
-            $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-                         ->where('project_id', $projectId) // Filter tasks by project ID
-                         ->select('id', 'task_name as label')
-                         ->get();
-        } else {
-            $tasks = [];
+   
+        public function searchTasks(Request $request)
+        {
+            $term = $request->input('term');
+            $projectId = $request->input('project_id');
+            $userId = Auth::id(); // Get logged-in user ID
+        
+            if ($term && $projectId) {
+                $tasks = Task::where('task_name', 'like', '%' . $term . '%')
+                    ->where('project_id', $projectId)
+                    ->where('assigned_to', $userId) // Only tasks assigned to current user
+                    ->select('id', 'task_name as label')
+                    ->get();
+            } else {
+                $tasks = [];
+            }
+        
+            return response()->json($tasks);
         }
-
-        return response()->json($tasks);
-    }
-            
-
+        
+    // New task search method
     // public function searchTasks(Request $request)
     // {
-    //     $userId = Auth::id();
     //     $term = $request->input('term');
-    //     $projectId = $request->input('project_id');
+    //     $projectId = $request->input('project_id'); // Get the selected project ID
 
     //     if ($term && $projectId) {
     //         $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-    //                     ->where('project_id', $projectId)
-    //                     ->where(function ($query) use ($userId) {
-    //                         $query->where('assigned_to', $userId) // Task assigned to logged-in user
-    //                             ->orWhereHas('project', function ($subQuery) use ($userId) {
-    //                                 $subQuery->where('created_by', $userId) // Project created by user
-    //                                             ->orWhereRaw("JSON_CONTAINS(team_members, ?)", [$userId]); // User is a team member
-    //                             });
-    //                     })
-    //                     ->select('id', 'task_name as label')
-    //                     ->get();
+    //                      ->where('project_id', $projectId) // Filter tasks by project ID
+    //                      ->select('id', 'task_name as label')
+    //                      ->get();
     //     } else {
     //         $tasks = [];
     //     }
 
     //     return response()->json($tasks);
     // }
+            
 
 
-   
-
+    // public function searchTickets(Request $request)
+    // {
+    //     $term = $request->input('term');
+        
+    //     if ($term) {
+    //         $tickets = Ticket::where('title', 'like', '%' . $term . '%')
+    //                            ->select('id', 'title as label')
+    //                            ->get()
+    //                            ->toArray();
+    //     } else {
+    //         $tickets = [];
+    //     }
+    
+    //     return response()->json($tickets);
+    // }
     public function searchTickets(Request $request)
     {
         $term = $request->input('term');
-        
+        $userId = Auth::id(); // Get logged-in user ID
+
         if ($term) {
             $tickets = Ticket::where('title', 'like', '%' . $term . '%')
-                               ->select('id', 'title as label')
-                               ->get()
-                               ->toArray();
+                ->where(function($query) use ($userId) {
+                    $query->where('flag_to', $userId) // Ticket is flagged to current user
+                        ->orWhereNull('flag_to'); // Or ticket isn't flagged to anyone
+                })
+                ->select('id', 'title as label')
+                ->get()
+                ->toArray();
         } else {
             $tickets = [];
         }
-    
+
         return response()->json($tickets);
     }
-    
  
       
     public function store(Request $request)

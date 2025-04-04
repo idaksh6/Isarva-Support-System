@@ -91,6 +91,8 @@
                 <ul class="sub-menu  {{ Request::segment(2)=='report' ? 'collapsed show' : 'collapse' }}" id="report-Components">
                     <li><a class="ms-link {{ Request::segment(3) == 'billable_non_billable_reports' ? 'active' : '' }}" href="{{ route('admin.billable_nonbillable_report') }}"> <span>Billable NonBillable Reports</span></a></li>
                     <li><a class="ms-link {{ Request::segment(3) == 'Active-ticket' ? 'active' : '' }}" href="{{ route('admin.reports.active-tickets') }}"> <span>Active Ticket Reports</span></a></li>
+                    <li><a class="ms-link {{ Request::segment(3) == 'consolidated_daily_reports' ? 'active' : '' }}" href="{{ route('admin.consolidated_dailyreport') }}"> <span>Consolidated Daily Report</span></a></li>
+
                     {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
                     <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
                     <li><a class="ms-link {{ Request::segment(3) == 'attendance-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance-employee') }}"> <span>Attendance Employees </span></a></li>
