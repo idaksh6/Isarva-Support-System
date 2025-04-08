@@ -17,67 +17,136 @@ class TicketController
 {
     //
 
-    public function ticketView(Request $request)
-    {
-        // Retrieve query parameters
-        $query = Ticket::query();
+    // public function ticketView(Request $request)
+    // {
+    //     // Retrieve query parameters
+    //     $query = Ticket::query();
 
-        if ($request->filled('q')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->q . '%')
-                ->orWhere('id', 'like', '%' . $request->q . '%')
-                ->orWhere('domain', 'like', '%' . $request->q . '%');
-            });
-        }
+    //     if ($request->filled('q')) {
+    //         $query->where(function ($q) use ($request) {
+    //             $q->where('title', 'like', '%' . $request->q . '%')
+    //             ->orWhere('id', 'like', '%' . $request->q . '%')
+    //             ->orWhere('domain', 'like', '%' . $request->q . '%');
+    //         });
+    //     }
 
-        if ($request->filled('month_year')) {
-            $monthYear = explode('-', $request->month_year); // Splitting into [YYYY, MM]
-            if (count($monthYear) == 2) {
-                $query->whereYear('created_at', $monthYear[0])
-                    ->whereMonth('created_at', $monthYear[1]);
-            }
-        }
+    //     if ($request->filled('month_year')) {
+    //         $monthYear = explode('-', $request->month_year); // Splitting into [YYYY, MM]
+    //         if (count($monthYear) == 2) {
+    //             $query->whereYear('created_at', $monthYear[0])
+    //                 ->whereMonth('created_at', $monthYear[1]);
+    //         }
+    //     }
 
-        if ($request->filled('assignedTo')) {
-            $query->where('flag_to', $request->assignedTo);
-        }
+    //     if ($request->filled('assignedTo')) {
+    //         $query->where('flag_to', $request->assignedTo);
+    //     }
 
-        if ($request->filled('department')) {
-            $query->where('department', $request->department);
-        }
+    //     if ($request->filled('department')) {
+    //         $query->where('department', $request->department);
+    //     }
 
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
-        }
+    //     if ($request->filled('priority')) {
+    //         $query->where('priority', $request->priority);
+    //     }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->status);
+    //     }
 
-        // Fetch filtered tickets
-        $tickets = $query->get();
+    //     // Fetch filtered tickets
+    //     $tickets = $query->get();
 
-        // Get supporting data
-        $clients = ClientHelper::getClientNames();
-        $projects = ClientHelper::getProjects();
-        $employees = ClientHelper::getEmployees();
-        $status = ClientHelper::TicketStatus();
-        $department=ClientHelper::Departments();
-        $priority=ClientHelper::Priority();
+    //     // Get supporting data
+    //     $clients = ClientHelper::getClientNames();
+    //     $projects = ClientHelper::getProjects();
+    //     $employees = ClientHelper::getEmployees();
+    //     $status = ClientHelper::TicketStatus();
+    //     $department=ClientHelper::Departments();
+    //     $priority=ClientHelper::Priority();
         
 
-        // Pass the filtered tickets to the view
-        return view('backend.tickets.ticket-view', [
-            'tickets' => $tickets,
-            'clients' => $clients,
-            'projects' => $projects,
-            'employees' => $employees,
-            'status' => $status,
-            'department'=>$department,
-            'priority'=>$priority,
+    //     // Pass the filtered tickets to the view
+    //     return view('backend.tickets.ticket-view', [
+    //         'tickets' => $tickets,
+    //         'clients' => $clients,
+    //         'projects' => $projects,
+    //         'employees' => $employees,
+    //         'status' => $status,
+    //         'department'=>$department,
+    //         'priority'=>$priority,
             
-        ]);
+    //     ]);
+    // }
+
+    public function ticketView(Request $request)
+{
+    // Start with base query
+    $query = Ticket::query();
+    
+    // Get current user info
+    $user = Auth::user();
+    $userId = $user->id;
+    
+    // Apply role-based filtering
+    if ($user->role != 1) { // If not admin
+        $query->where('flag_to', $userId);
     }
+
+    // Apply search filters
+    if ($request->filled('q')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->q . '%')
+              ->orWhere('id', 'like', '%' . $request->q . '%')
+              ->orWhere('domain', 'like', '%' . $request->q . '%');
+        });
+    }
+
+    if ($request->filled('month_year')) {
+        $monthYear = explode('-', $request->month_year);
+        if (count($monthYear) == 2) {
+            $query->whereYear('created_at', $monthYear[0])
+                  ->whereMonth('created_at', $monthYear[1]);
+        }
+    }
+
+    if ($request->filled('assignedTo')) {
+        $query->where('flag_to', $request->assignedTo);
+    }
+
+    if ($request->filled('department')) {
+        $query->where('department', $request->department);
+    }
+
+    if ($request->filled('priority')) {
+        $query->where('priority', $request->priority);
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // Fetch filtered tickets
+    $tickets = $query->get();
+
+    // Get supporting data
+    $clients = ClientHelper::getClientNames();
+    $projects = ClientHelper::getProjects();
+    $employees = ClientHelper::getEmployees();
+    $status = ClientHelper::TicketStatus();
+    $department = ClientHelper::Departments();
+    $priority = ClientHelper::Priority();
+
+    return view('backend.tickets.ticket-view', [
+        'tickets' => $tickets,
+        'clients' => $clients,
+        'projects' => $projects,
+        'employees' => $employees,
+        'status' => $status,
+        'department' => $department,
+        'priority' => $priority,
+    ]);
+}
 
 
 

@@ -6,14 +6,8 @@
     box-sizing: border-box;
 }
 
-
-
-/* body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-  } */
   
-  .main-container {
+.main-container {
     max-width: 800px;
     margin: 0 auto;
     /* border: 1px solid black; */
@@ -146,12 +140,12 @@
 
   background-color: #007B9E !important;
 
-
 }
 
 .error-message{
 
   color: red;
+  margin-top: 0.25rem;
 }
 
 .ticket-results {
@@ -220,11 +214,7 @@
   border-color: #dc3545 !important; /* Red border for invalid fields */
 }
 
-.error-message {
-  color: #dc3545;
-  font-size: 0.875em;
-  margin-top: 0.25rem;
-}
+
 
 .ticket-search-container {
   position: relative; /* For proper error message positioning */

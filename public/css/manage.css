@@ -8,6 +8,12 @@
 }
 
 
+label {
+    /* display: block; */
+    /* margin-bottom: 0px !important; */
+    font-weight: bold !important;
+}
+
 .priority-low {
     background-color: green; /* Green for Low */
 }
@@ -180,7 +186,7 @@
     position: relative; /* Ensure it's positioned correctly */
 }
 
-/* Days Left Indicator */
+
 /* Days Left Indicator */
 .days-left {
     margin-top: 5px;

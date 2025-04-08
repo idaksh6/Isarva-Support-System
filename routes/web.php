@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name("frontend.auth.login");
 
+
 // GOOGLE ROUTE 
 // Route::get('auth/google', [GoogleController::class, 'googleLogin'])->name('auth.google');
 // Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);

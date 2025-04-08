@@ -43,8 +43,8 @@ class ClientController
             'company_name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'password' => 'nullable|string|min:6',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'email' => 'nullable|email',
+            'phone' => 'required|unique:isar_clients,phone',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'client_name.required' => 'The client name is required.',
@@ -65,10 +65,11 @@ class ClientController
             'password.string' => 'The password must be a string.',
             'password.min' => 'The password must be at least 6 characters.',
             
-            'email.required' => 'The email address is required.',
+           
             'email.email' => 'The email must be a valid email address.',
             
             'phone.required' => 'The phone number is required.',
+            'phone.unique' => 'The Phone number entered already Exist',
             
             'profile_image.image' => 'The profile image must be an image.',
             'profile_image.mimes' => 'The profile image must be a file of type: jpeg, png, jpg.',
@@ -130,7 +131,7 @@ class ClientController
             'company_name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'password' => 'nullable|string|min:6',
-            'email' => 'required|email',
+            'email' => 'nullable|email',
             'phone' => 'required',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
@@ -152,7 +153,6 @@ class ClientController
             'password.string' => 'The password must be a string.',
             'password.min' => 'The password must be at least 6 characters.',
             
-            'email.required' => 'The email address is required.',
             'email.email' => 'The email must be a valid email address.',
             
             'phone.required' => 'The phone number is required.',

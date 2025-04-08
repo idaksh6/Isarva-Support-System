@@ -13,103 +13,212 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectController
 {
-    // Index page main method
-    public function index(){
+  
+    // Index page main method , Card view controller method
+    public function index()
+    {
+        $user = auth()->user();
+        $baseQuery = Project::query();
 
-        $projects = Project::all();
-        $activeProjects = Project::where('status', '!=', 6)->get(); // Fetch only active projects
-        $onBoardProjects = Project::where('status', 1)->get(); // onboard projects (status = 1)
-        $openProjects = Project::where('status', 2)->get(); 
-        $progressProjects = Project::where('status', 3)->get(); 
-        $monitorProjects = Project::where('status', 4)->get(); 
-        $billingProjects = Project::where('status', 5)->get(); 
-        $onHoldProjects = Project::where('status', 7)->get(); 
-        $warrantyProjects = Project::where('status', 8)->get();
-        $closedProjects = Project::where('status', 6)->get(); 
+        // For non-admin users
+        if ($user->role != 1) {
+            $userId = $user->id;
+            
+            $baseQuery->where(function($q) use ($userId) {
+                $q->where('manager', $userId)
+                ->orWhere('team_leader', $userId)
+                ->orWhere(function($q) use ($userId) {
+                    $q->where('team_members', 'like', $userId.',%')
+                        ->orWhere('team_members', 'like', '%,'.$userId.',%')
+                        ->orWhere('team_members', 'like', '%,'.$userId)
+                        ->orWhere('team_members', $userId);
+                });
+            });
+        }
 
-        // Department tab
-        $webApplicationProjects = Project::where('department', 1)
-        ->where('status', '!=', 6)->get(); 
-    
-        $websiteProjects = Project::where('department', 2)
-        ->where('status', '!=', 6)->get();
-        
-        $graphicsProjects = Project::where('department', 3)
-        ->where('status', '!=', 6)->get();
+        // Now create all your filtered queries from the base query
+        $projects = $baseQuery->get();
+        $activeProjects = $baseQuery->clone()->where('status', '!=', 6)->get();
+        $onBoardProjects = $baseQuery->clone()->where('status', 1)->get();
+        $openProjects = $baseQuery->clone()->where('status', 2)->get();
+        $progressProjects = $baseQuery->clone()->where('status', 3)->get();
+        $monitorProjects = $baseQuery->clone()->where('status', 4)->get();
+        $billingProjects = $baseQuery->clone()->where('status', 5)->get();
+        $onHoldProjects = $baseQuery->clone()->where('status', 7)->get();
+        $warrantyProjects = $baseQuery->clone()->where('status', 8)->get();
+        $closedProjects = $baseQuery->clone()->where('status', 6)->get();
 
-        // Project Count
-        $totalProjects = Project::getTotalProjects(); // Call model method
-    
-        
+        // Department tab queries
+        $webApplicationProjects = $baseQuery->clone()->where('department', 1)->where('status', '!=', 6)->get();
+        $websiteProjects = $baseQuery->clone()->where('department', 2)->where('status', '!=', 6)->get();
+        $graphicsProjects = $baseQuery->clone()->where('department', 3)->where('status', '!=', 6)->get();
+
+        $totalProjects = $projects->count();
 
         return view('backend.project.index', 
-        compact('projects', 'activeProjects','onBoardProjects','openProjects', 
-        'progressProjects', 'monitorProjects', 'billingProjects', 'onHoldProjects', 'warrantyProjects',
-        'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects'));
+            compact('projects', 'activeProjects','onBoardProjects','openProjects', 
+            'progressProjects', 'monitorProjects', 'billingProjects', 'onHoldProjects', 'warrantyProjects',
+            'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects'));
     }
-
    
+   
+    // public function manage(Request $request)
+    // {
+    //     $query = Project::query();
+
+    //     // Global project name search (from header)
+    //     if ($request->has('global_project_name') && $request->global_project_name != '') {
+    //         $query->where('si_projects.project_name', 'like', '%' . $request->global_project_name . '%');
+    //     }
+        
+    //     // Manage page project name search
+    //     elseif ($request->has('project_name') && $request->project_name != '') {
+    //         $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+    //     }
+    
+    //     // Global project ID search (from header)
+    //     if ($request->has('global_project_id') && $request->global_project_id != '') {
+    //         $query->where('si_projects.id', $request->global_project_id);
+    //     }
+
+    //         // Apply filters based on search parameters
+    //         if ($request->has('status') && $request->status != 'None') {
+    //             $query->where('si_projects.status', $request->status);
+    //         }
+
+    //         if ($request->has('assigned_to') && $request->assigned_to != '') {
+    //             $query->where('si_projects.manager', $request->assigned_to);
+    //         }
+
+    //         if ($request->has('department') && $request->department != 'None') {
+    //             $query->where('si_projects.department', $request->department);
+    //         }
+
+    //         // Month filter
+    //         if ($request->has('month') && $request->month != 'None') {
+    //             $query->whereMonth('si_projects.start_date', $request->month);
+    //         }
+
+    //         // Year filter
+    //         if ($request->has('year') && $request->year != 'None') {
+    //             $query->whereYear('si_projects.start_date', $request->year);
+    //                 }
+
+          
+    //             $viewType = $request->input('view', 'table');
+                
+    //             $projects = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
+    //                     ->leftJoin('users', 'si_projects.manager', '=', 'users.id')
+    //                     ->select(
+    //                         'si_projects.*',
+    //                         'isar_clients.client_name as client_name',
+    //                         'users.name as manager_name'
+    //                     );
+                        
+    //             $perPage = $request->input('per_page', $viewType === 'table' ? 10 : 12);
+    //             $projectsmanage = $projects->paginate($perPage);
+                    
+    //             $totalProjectscount = $projectsmanage->total();
+                
+    //             return view('backend.project.manage', [
+    //                 'projectsmanage' => $projectsmanage,
+    //                 'totalProjectscount' => $totalProjectscount,
+    //                 'viewType' => $viewType,
+    //                 'projects' => $projectsmanage->items()
+    //             ]);
+
+    // }
+
+    
     public function manage(Request $request)
     {
-            $query = Project::query();
-
-            // Project name search
-            if ($request->has('project_name') && $request->project_name != '') {
-                $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
-            }
-
-            // Project ID search
-            if ($request->has('project_id') && $request->project_id != '') {
-                $query->where('si_projects.id', $request->project_id);
-            }
-
-            // Apply filters based on search parameters
-            if ($request->has('status') && $request->status != 'None') {
+        $user = auth()->user();
+        $query = Project::query();
+    
+        // For non-admin users (role != 1)
+        if ($user->role != 1) {
+            $userId = $user->id;
+            
+            $query->where(function($q) use ($userId) {
+                $q->where('manager', $userId) // User is manager
+                  ->orWhere('team_leader', $userId) // User is team leader
+                  ->orWhere(function($q) use ($userId) {
+                      // Handle comma-separated team members
+                      $q->where('team_members', 'like', $userId.',%') // Starts with user ID
+                        ->orWhere('team_members', 'like', '%,'.$userId.',%') // User ID in middle
+                        ->orWhere('team_members', 'like', '%,'.$userId) // Ends with user ID
+                        ->orWhere('team_members', $userId); // Only user ID
+                  });
+            });
+        }
+    
+        // Global project name search (from header)
+        if ($request->has('global_project_name') && $request->global_project_name != '') {
+            $query->where('si_projects.project_name', 'like', '%' . $request->global_project_name . '%');
+        }
+        
+        // Manage page project name search
+        elseif ($request->has('project_name') && $request->project_name != '') {
+            $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
+        }
+    
+        // Global project ID search (from header)
+        if ($request->has('global_project_id') && $request->global_project_id != '') {
+            $query->where('si_projects.id', $request->global_project_id);
+        }
+    
+        // Status filter
+        if ($request->has('status') && $request->status != 'None') {
+            if ($request->status == '9') { // Active status (9)
+                $query->whereNotIn('si_projects.status', [6, 7]); // Not Closed (6) or On Hold (7)
+            } else {
                 $query->where('si_projects.status', $request->status);
             }
-
-            if ($request->has('assigned_to') && $request->assigned_to != '') {
-                $query->where('si_projects.manager', $request->assigned_to);
-            }
-
-            if ($request->has('department') && $request->department != 'None') {
-                $query->where('si_projects.department', $request->department);
-            }
-
-            // Month filter
-            if ($request->has('month') && $request->month != 'None') {
-                $query->whereMonth('si_projects.start_date', $request->month);
-            }
-
-            // Year filter
-            if ($request->has('year') && $request->year != 'None') {
-                $query->whereYear('si_projects.start_date', $request->year);
-                    }
-
-            $viewType = $request->input('view', 'table');
+        }
     
-            $projects = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
-                     ->leftJoin('users', 'si_projects.manager', '=', 'users.id')
-                    ->select(
-                         'si_projects.*',
-                        'isar_clients.client_name as client_name',
-                        'users.name as manager_name'
-                    );
-                    
-                // Always paginate, but with different items per page
-                $perPage = $request->input('per_page', $viewType === 'table' ? 10 : 12); // 12 cards fit better in grid
-                $projectsmanage = $projects->paginate($perPage);
-                    
-                $totalProjectscount = $projectsmanage->total();
+        // Other filters
+        if ($request->has('assigned_to') && $request->assigned_to != '') {
+            $query->where('si_projects.manager', $request->assigned_to);
+        }
+    
+        if ($request->has('department') && $request->department != 'None') {
+            $query->where('si_projects.department', $request->department);
+        }
+    
+        // Month filter
+        if ($request->has('month') && $request->month != 'None') {
+            $query->whereMonth('si_projects.start_date', $request->month);
+        }
+    
+        // Year filter
+        if ($request->has('year') && $request->year != 'None') {
+            $query->whereYear('si_projects.start_date', $request->year);
+        }
+    
+        $viewType = $request->input('view', 'table');
+    
+        $projects = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
+                 ->leftJoin('users', 'si_projects.manager', '=', 'users.id')
+                ->select(
+                     'si_projects.*',
+                    'isar_clients.client_name as client_name',
+                    'users.name as manager_name'
+                );
                 
-                return view('backend.project.manage', [
-                    'projectsmanage' => $projectsmanage,
-                    'totalProjectscount' => $totalProjectscount,
-                    'viewType' => $viewType,
-                    'projects' => $projectsmanage->items() // Use paginated items for both views
-                ]);
-    }
-                
+        $perPage = $request->input('per_page', $viewType === 'table' ? 10 : 12);
+
+           // Get all query parameters except page
+          $queryParams = $request->except('page');
+    
+        $projectsmanage = $projects->paginate($perPage);
+        
+        return view('backend.project.manage', [
+            'projectsmanage' => $projectsmanage,
+            'totalProjectscount' => $projectsmanage->total(),
+            'viewType' => $viewType,
+            'projects' => $projectsmanage->items()
+        ]);
+    }    
    
 
     public function store(Request $request)

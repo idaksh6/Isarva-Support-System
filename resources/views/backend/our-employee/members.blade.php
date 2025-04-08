@@ -64,12 +64,12 @@
                         <!-- Email ID and Phone -->
                         <div class="row g-3 mb-3">
                             <div class="col">
-                                <label class="form-label">Email ID</label>
+                                <label class="form-label">Email ID<span class="required">*</span></label>
                                 <input type="email" class="form-control" name="email_id" value="{{ old('email_id') }}" placeholder="User Name">
                                 <div class="text-danger" id="error-email_id"></div> <!-- Error container for "email_id" -->
                             </div>
                             <div class="col">
-                                <label class="form-label">Phone</label>
+                                <label class="form-label">Phone<span class="required">*</span></label>
                                 <input type="text" class="form-control" name="phone" value="{{ old('phone') }}" placeholder="">
                                 <div class="text-danger" id="error-phone"></div> <!-- Error container for "phone" -->
                             </div>
@@ -220,7 +220,7 @@
                             <div class="text-danger" id="edit-error-email_id"></div> <!-- Error container for "email_id" -->
                         </div>
                         <div class="col">
-                            <label class="form-label">Phone</label>
+                            <label class="form-label">Phone<span class="required">*</span></label>
                             <input type="text" class="form-control" name="phone" id="phone_no" placeholder="">
                             <div class="text-danger" id="edit-error-phone"></div> <!-- Error container for "phone" -->
                         </div>
@@ -445,7 +445,8 @@
                                     </div>
 
                                     {{-- <a href="{{ route('admin.project.tasks') }}" class="btn btn-dark btn-sm mt-1"><i class="icofont-plus-circle me-2 fs-6"></i>Add Task</a> --}}
-                                    <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-2"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
+                                    {{-- <a href="{{ route('admin.our-employee.members-profile') }}" class="btn btn-dark btn-sm mt-2"><i class="icofont-invisible me-2 fs-6"></i>Profile</a> --}}
+                                    <a href="#" class="btn btn-dark btn-sm mt-2"><i class="icofont-invisible me-2 fs-6"></i>Profile</a>
                                 </div>
 
                                

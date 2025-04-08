@@ -3,6 +3,7 @@
 <html class="no-js " lang="en">
 
 <head>
+ 
     <meta charset="utf-8">
     {{-- for TASk Drag and drop status  --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use LangleyFoxall\LaravelNISTPasswordRules\PasswordRules;
+use App\Models\Backend\User;
 
 /**
  * Class LoginController.
@@ -55,13 +56,33 @@ class LoginController
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+    // protected function validateLogin(Request $request)
+    // {
+    //     $request->validate([
+    //         $this->username() => ['required', 'max:255', 'string'],
+    //         'password' => array_merge(['max:100'], PasswordRules::login()),
+    //         'g-recaptcha-response' => ['required_if:captcha_status,true', new Captcha],
+    //     ], [
+    //         'g-recaptcha-response.required_if' => __('validation.required', ['attribute' => 'captcha']),
+    //     ]);
+    // }
+
+
     protected function validateLogin(Request $request)
     {
         $request->validate([
-            $this->username() => ['required', 'max:255', 'string'],
-            'password' => array_merge(['max:100'], PasswordRules::login()),
+            $this->username() => [
+                'required',
+                'max:255',
+                'string',
+                'email',
+                'exists:users,email' // Check if email exists in users table
+            ],
+            'password' => array_merge(['required', 'max:100'], PasswordRules::login()),
             'g-recaptcha-response' => ['required_if:captcha_status,true', new Captcha],
         ], [
+            $this->username().'.exists' => 'The provided email has no access',
+            'password.required' => 'The password field is required.',
             'g-recaptcha-response.required_if' => __('validation.required', ['attribute' => 'captcha']),
         ]);
     }
@@ -111,4 +132,37 @@ class LoginController
             auth()->logoutOtherDevices($request->password);
         }
     }
+
+
+
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return redirect()->back()
+                ->withInput($request->only($this->username(), 'remember'))
+                ->withErrors([
+                    $this->username() => 'The provided email has no access.',
+                ]);
+        }
+
+        if (!\Hash::check($request->password, $user->password)) {
+            return redirect()->back()
+                ->withInput($request->only($this->username(), 'remember'))
+                ->withErrors([
+                    'password' => 'The provided password is incorrect.',
+                ]);
+        }
+
+        return redirect()->back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors([
+                $this->username() => 'These credentials do not match our records.',
+            ]);
+    }
+
+ 
+    
+
 }

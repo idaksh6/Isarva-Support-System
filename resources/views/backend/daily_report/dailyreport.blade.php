@@ -220,15 +220,13 @@
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script>
-
     <script src="{{ asset('js/template.js') }}"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src= {{ asset('js/jquery-3.6.0.min.js')}}></script>
 
 <script>
 
 
-
+        // JS to handle the dailyreport project,task,ticket search
         function handleReportTypeChange(selectElement) {
         const container = selectElement.closest('.report-container');
         const projectFields = container.querySelector('.project-fields');
@@ -288,7 +286,7 @@
       }
 
 
-    
+        // To remove the triggered container 
         function removeContainer(button) {
           const container = button.closest('.report-container');
           if (document.querySelectorAll('.report-container').length > 1) {

@@ -48,30 +48,80 @@ class DashboardController
         return view('backend.dashboard');
     }
 
+    // public function project()
+    // {
+
+    //     $userId = Auth::id(); // Get logged-in user ID
+
+    //     $totalProjects = Project::getTotalProjects(); // Get total project count
+    //     $openProjects = Project::getOpenProjectCount(); // Count of open projects
+    //     $closedProjects = Project::getClosedProjectCount(); // Closed projects count
+    //     $OnHoldProjects = Project::getOnHoldProjectCount(); // OnHold Count
+
+    //     $openTickets = Ticket::countOpenTickets(); // Get active tickets count
+    //     $onHoldTickets = Ticket::countOnHoldTickets();
+    //     $flaggedTickets = Ticket::countFlaggedTickets(); // Get flagged tickets count
+    //     $activeTickets = Ticket::getActiveTicketCount(); // Other than closed ticket
+
+    //     // Count projects where the logged-in user is assigned (as Manager, Team Leader, or Team Member)
+    //     $totalProjectsCount = Project::where('manager', $userId)
+    //         ->orWhere('team_leader', $userId)
+    //         ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId])
+    //         ->count();
+
+    //     return view('backend.project_dashboard', compact('totalProjectsCount','totalProjects','openProjects','closedProjects','OnHoldProjects',
+    //     'openTickets','onHoldTickets','flaggedTickets', 'activeTickets'));
+    // }
+
     public function project()
-    {
+{
+    $user = Auth::user();
+    $userId = $user->id;
+    $isAdmin = ($user->role == 1);
 
-        $userId = Auth::id(); // Get logged-in user ID
-
-        $totalProjects = Project::getTotalProjects(); // Get total project count
-        $openProjects = Project::getOpenProjectCount(); // Count of open projects
-        $closedProjects = Project::getClosedProjectCount(); // Closed projects count
-        $OnHoldProjects = Project::getOnHoldProjectCount(); // OnHold Count
-
-        $openTickets = Ticket::countOpenTickets(); // Get active tickets count
-        $onHoldTickets = Ticket::countOnHoldTickets();
-        $flaggedTickets = Ticket::countFlaggedTickets(); // Get flagged tickets count
-        $activeTickets = Ticket::getActiveTicketCount(); // Other than closed ticket
-
-        // Count projects where the logged-in user is assigned (as Manager, Team Leader, or Team Member)
-        $totalProjectsCount = Project::where('manager', $userId)
-            ->orWhere('team_leader', $userId)
-            ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId])
-            ->count();
-
-        return view('backend.project_dashboard', compact('totalProjectsCount','totalProjects','openProjects','closedProjects','OnHoldProjects',
-        'openTickets','onHoldTickets','flaggedTickets', 'activeTickets'));
+    // Project counts
+    $projectQuery = Project::query();
+    if (!$isAdmin) {
+        $projectQuery->where(function($query) use ($userId) {
+            $query->where('manager', $userId)
+                ->orWhere('team_leader', $userId)
+                ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId]);
+        });
     }
+
+    $totalProjects = $isAdmin ? Project::getTotalProjects() : $projectQuery->count();
+    $openProjects = $isAdmin ? Project::getOpenProjectCount() : $projectQuery->clone()->where('status', 2)->count();
+    $closedProjects = $isAdmin ? Project::getClosedProjectCount() : $projectQuery->clone()->where('status', 6)->count();
+    $OnHoldProjects = $isAdmin ? Project::getOnHoldProjectCount() : $projectQuery->clone()->where('status', 7)->count();
+
+    // Ticket counts
+    $ticketQuery = Ticket::query();
+    if (!$isAdmin) {
+        $ticketQuery->where('flag_to', $userId);
+    }
+
+    $openTickets = $isAdmin ? Ticket::countOpenTickets() : $ticketQuery->clone()->where('status', 1)->count();
+    $onHoldTickets = $isAdmin ? Ticket::countOnHoldTickets() : $ticketQuery->clone()->where('status', 3)->count();
+    $flaggedTickets = $isAdmin ? Ticket::countFlaggedTickets() : $ticketQuery->clone()
+                                ->whereNotNull('flag_to')
+                                ->where('flag_to', '!=', '')
+                                ->count();
+    $activeTickets = $isAdmin ? Ticket::getActiveTicketCount() : $ticketQuery->clone()->where('status', '!=', 7)->count();
+
+    // Count of projects assigned to user (regardless of role)
+    $totalProjectsCount = Project::where('manager', $userId)
+        ->orWhere('team_leader', $userId)
+        ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId])
+        ->count();
+
+    return view('backend.project_dashboard', compact(
+        'totalProjectsCount', 'totalProjects', 'openProjects', 
+        'closedProjects', 'OnHoldProjects', 'openTickets',
+        'onHoldTickets', 'flaggedTickets', 'activeTickets'
+    ));
+}
+
+   
     
     public function help()
     {

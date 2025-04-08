@@ -41,6 +41,14 @@
         background-color: #f2f2f2;
     }
 
+    thead{
+        color: white;
+    }
+
+    table thead tr th{
+
+        background-color: green !important;
+    }
 
 </style>
 

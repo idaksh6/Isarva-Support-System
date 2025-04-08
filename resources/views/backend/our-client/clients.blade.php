@@ -47,7 +47,7 @@
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col">
-                            <label class="form-label">User Name</label>
+                            <label class="form-label">User Name<span class="required">*</span></label>
                             <input type="text" class="form-control" name="username" placeholder="User Name" >
                             <div class="text-danger" id="clientadd_error-username"></div>
                         </div>
@@ -59,7 +59,7 @@
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col">
-                            <label class="form-label">Email ID<span class="required">*</span></label>
+                            <label class="form-label">Email ID</label>
                             <input type="email" class="form-control" name="email" placeholder="Email ID" >
                             <div class="text-danger" id="clientadd_error-email"></div>
                         </div>
@@ -105,7 +105,7 @@
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
-                        <label for="client_name" class="form-label">Client Name</label>
+                        <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
                         <input type="text" class="form-control" id="client_name" name="client_name">
                         <div class="text-danger" id="client-edit-error-client_name"></div>
                     </div>
@@ -122,7 +122,7 @@
                     <div class="deadline-form">
                         <div class="row g-3 mb-3">
                             <div class="col">
-                                <label for="username" class="form-label">User Name</label>
+                                <label for="username" class="form-label">User Name<span class="required">*</span></label>
                                 <input type="text" class="form-control" id="username" name="username">
                                 <div class="text-danger" id="client-edit-error-username"></div>
                             </div>
@@ -134,7 +134,7 @@
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col">
-                                <label for="email" class="form-label">Email ID <span class="required">*</span></label>
+                                <label for="email" class="form-label">Email ID</label>
                                 <input type="email" class="form-control" id="email" name="email">
                                 <div class="text-danger" id="client-edit-error-email"></div>
                             </div>

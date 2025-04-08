@@ -56,6 +56,7 @@ class GoogleController extends Controller
             }
 
           
+          
             // Log in the user
             Auth::login($user, true); // Now $user is an Authenticatable instance
 

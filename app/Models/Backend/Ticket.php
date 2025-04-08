@@ -23,6 +23,7 @@ class Ticket extends Model
         'type',
         'source',
         'priority',
+
         'project',
         'description',
         'privacy',
@@ -69,24 +70,39 @@ class Ticket extends Model
     }
 
    
-    public static function countOpenTickets()
+    public static function countOpenTickets($userId = null)
     {
-        return self::where('status', 1)->count();
-    }
-
-    public static function countOnHoldTickets()
-    {
-        return self::where('status', 3)->count();
-    }
-
-    public static function countFlaggedTickets()
-    {
-        return self::whereNotNull('flag_to')->where('flag_to', '!=', '')->count();
-    }
-
-    public static function getActiveTicketCount()
-    {
-        return self::where('status', '!=', 7)->count();
+        $query = self::where('status', 1);
+        if ($userId) {
+            $query->where('flag_to', $userId);
+        }
+        return $query->count();
     }
     
+    public static function countOnHoldTickets($userId = null)
+    {
+        $query = self::where('status', 3);
+        if ($userId) {
+            $query->where('flag_to', $userId);
+        }
+        return $query->count();
+    }
+    
+    public static function countFlaggedTickets($userId = null)
+    {
+        $query = self::whereNotNull('flag_to')->where('flag_to', '!=', '');
+        if ($userId) {
+            $query->where('flag_to', $userId);
+        }
+        return $query->count();
+    }
+    
+    public static function getActiveTicketCount($userId = null)
+    {
+        $query = self::where('status', '!=', 7);
+        if ($userId) {
+            $query->where('flag_to', $userId);
+        }
+        return $query->count();
+    }
 }

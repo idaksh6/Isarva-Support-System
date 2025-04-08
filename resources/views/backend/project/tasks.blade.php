@@ -10,6 +10,29 @@
     $internalDocs = $internalDocs ?? collect(); // Ensures $internalDocs is always defined
 @endphp
 
+<style>
+    /* Css for select2 */
+    .select2-container .select2-selection--single {
+        height: 38px;
+        padding: 5px 10px;
+        border-radius: 4px;
+      
+    }
+    .select2-selection__clear{
+    
+        border: 0px; 
+        padding-right: 20px; 
+        /* background: none; */
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 26px;
+        position: absolute;
+        top: 4px !important;
+        right: 1px;
+        width: 20px;
+    }
+</style>
 
 @if (session()->has('flash_success_project'))
     <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
@@ -517,7 +540,7 @@
                    
                     <div class="mb-3">
                         <label class="form-label">Task Category</label>
-                        <select class="form-select" name="task_category" aria-label="Default select Project Category">
+                        <select class="form-select select2" name="task_category" aria-label="Default select Project Category" style="width: 100%; ">
                             <option selected>None</option>
                             <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Website Design</option>
                             <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>App Development</option>
@@ -535,7 +558,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Description<span class="required">*</span></label>
-                        <textarea class="form-control" name="task_description" value="{{ old('task_description') }}" rows="3" placeholder="Enter the details about project"></textarea>
+                        <textarea class="form-control " name="task_description" value="{{ old('task_description') }}" rows="3" placeholder="Enter the details about project"></textarea>
                         <div class="text-danger" id="task-error-task_description"></div>
                     </div>
 
@@ -553,7 +576,7 @@
                         
                     <div class="mb-3 mt-4">
                         <label for="assigned_for" class="form-label">Assigned For <span class="required">*</span></label>
-                        <select class="form-select" name="task_assigned_for">
+                        <select class="form-select select2 " name="task_assigned_for" style="width: 100%; ">
                             <option value="">Select Member</option>
                             @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -606,7 +629,7 @@
                      <!-- Project Category -->
                     <div class="mb-3">
                         <label class="form-label">Task Category</label>
-                        <select class="form-select" name="task_category" id="edit_task_category">
+                        <select class="form-select select2" name="task_category" id="edit_task_category" style="width: 100%; ">
                             <option value="">None</option>
                             <option value="1">Website Design</option>
                             <option value="2">App Development</option>
@@ -641,7 +664,7 @@
 
                         <div class="mb-3">
                             <label for="edit_assigned_to" class="form-label">Assigned For <span class="text-danger">*</span></label>
-                            <select class="form-select" name="task_assigned_for" id="edit_task_assigned_for">
+                            <select class="form-select select2" name="task_assigned_for" id="edit_task_assigned_for" style="width: 100%; ">
                                 <option value="">Select Employee</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                     <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -999,9 +1022,6 @@
                     </div>
 
                   
-
-                    
-       
                         
                 <div id="taskSection" class="tab-content shadow-sm p-3 rounded bg-white">
                     <h5 class="fw-bold mb-3">Project Task section</h5>
@@ -1024,7 +1044,8 @@
                                                          data-id="{{ $task->id }}" 
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
-                                                         data-bs-target="#edittask">
+                                                         data-bs-target="#edittask"
+                                                         style=" border-bottom: 2px solid #ffc107 !important;">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
                                                                 {{ $task->task_name }}
@@ -1073,11 +1094,12 @@
                                         @if(isset($tasksByStatus[2]) && count($tasksByStatus[2]) > 0)
                                             @foreach ($tasksByStatus[2] as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
-                                                    <div class="dd-handle edit-taskreview-btn" 
+                                                    <div class="dd-handle  edit-task-btn" 
                                                          data-id="{{ $task->id }}" 
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
-                                                         data-bs-target="#edittask">
+                                                         data-bs-target="#edittask"
+                                                         style="border-bottom: 2px solid #FFAA8A !important">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
                                                                 {{ $task->task_name }}
@@ -1127,11 +1149,12 @@
                                         @if(isset($tasksByStatus[3]) && count($tasksByStatus[3]) > 0)
                                             @foreach ($tasksByStatus[3] as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
-                                                    <div class="dd-handle edit-taskcompleted-btn" 
+                                                    <div class="dd-handle  edit-task-btn" 
                                                          data-id="{{ $task->id }}" 
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
-                                                         data-bs-target="#edittask">
+                                                         data-bs-target="#edittask"
+                                                         style="border-bottom: 2px solid #28a745 !important">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
                                                                 {{ $task->task_name }}
@@ -1174,65 +1197,7 @@
                                 </div>
                             </div>
                         </div>
-
-
-                            {{-- <div class="task-card">
-                                <div class="row taskboard g-3 py-xxl-4">
-                                    <!-- In Progress -->
-                                    <div class="col-xxl-4" data-status="1">
-                                        <h6 class="fw-bold py-3 mb-0">In Progress</h6>
-                                        <ol class="dd-list">
-                                            @if(isset($tasksByStatus[1]) && count($tasksByStatus[1]) > 0)
-                                                @foreach ($tasksByStatus[1] as $task)
-                                                    <li class="task-item" data-id="{{ $task->id }}">
-                                                        @include('backend.includes.partials.task_item', ['task' => $task])
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <li class="task-placeholder">No Tasks Available</li>
-                                            @endif
-                                        </ol>
-                                    </div>
-                            
-                                    <!-- Needs Review -->
-                                    <div class="col-xxl-4" data-status="2">
-                                        <h6 class="fw-bold py-3 mb-0">Needs Review</h6>
-                                        <ol class="dd-list">
-                                            @if(isset($tasksByStatus[2]) && count($tasksByStatus[2]) > 0)
-                                                @foreach ($tasksByStatus[2] as $task)
-                                                    <li class="task-item" data-id="{{ $task->id }}">
-                                                        @include('backend.includes.partials.task_item', ['task' => $task])
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <li class="task-placeholder">No tasks available</li>
-                                            @endif
-                                        </ol>
-                                    </div>
-                            
-                                    <!-- Completed -->
-                                    <div class="col-xxl-4" data-status="3">
-                                        <h6 class="fw-bold py-3 mb-0">Completed</h6>
-                                        <ol class="dd-list">
-                                            @if(isset($tasksByStatus[3]) && count($tasksByStatus[3]) > 0)
-                                                @foreach ($tasksByStatus[3] as $task)
-                                                    <li class="task-item" data-id="{{ $task->id }}">
-                                                        @include('backend.includes.partials.task_item', ['task' => $task])
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <li class="task-placeholder">No tasks available</li>
-                                            @endif
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div> --}}
-
-
-                            
-                            
-                             
-                          
+       
                     </div>
                 </div>
             
@@ -1241,16 +1206,14 @@
     </div>
 
          <!-- SCRIPT for working of edit and create task model -->
-           <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-    
-          <script src="{{ asset('js/template.js') }}"></script>
-          <script src = "{{ asset('js/jquery-3.6.0.min.js')}}"> </script> <!-- jQuery  -->
-
-            {{-- jQuery UI (Required for Sortable)  --}}
-            <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-            
-           <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-           <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
+        <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
+        <script src="{{ asset('js/template.js') }}"></script>
+        <script src = "{{ asset('js/jquery-3.6.0.min.js')}}"> </script> <!-- jQuery  -->
+        <script src="{{ asset('js/jquery-ui.min.js')}}"></script>  <!-- jQuery UI (Required for Sortable)  -->
+        <link rel="stylesheet" href="{{ asset('css/jquery-ui.css')}}"> <!-- jQuery UI (Required for Sortable)  --> 
+        <script src = " {{ asset('js/sweetalert2@11.js')}}"></script>
+ 
+        <script src ="{{ asset('js/select2.min.js')}}"></script>
 
           
 
@@ -1277,11 +1240,24 @@
 
 <script>
     var editTaskRoute = "{{ route('admin.task.edit', ':id') }}"; // id is the placeholder for emplyoee id which is replaced further
+    $(document).ready(function () {
+        $('#createtask').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $('#createtask')
+            });
+        });
+    });
+
+    $('#edittask').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $('#edittask')
+            });
+        });
 </script>
 
 
 <script>
-
+                    
 
                //  Script to edit and update the Project values
                var editProjectRoute = "{{ route('admin.project.edit-project', ':id') }}"; // id is the placeholder for Project id which is replaced further
@@ -1456,7 +1432,7 @@
                     });
                 });
 
-                // Handle form submission
+                // Handle task edit form submission validation section
                 $('#editTaskForm').on('submit', function (e) {
                     e.preventDefault(); // Prevent default form submission
 
@@ -1508,7 +1484,7 @@
 
 
 
-        // JS to Display selected file
+        // JS to Display selected file under assets
         document.getElementById('fileInput').addEventListener('change', function(event) {
                 const fileList = event.target.files;
                 const fileDisplay = document.getElementById('selectedFiles');
@@ -1527,81 +1503,10 @@
                     fileDisplay.innerHTML = '<p class="text-muted">No files selected</p>';
                 }
             });
+            
+            console.log(jQuery.fn.jquery);
 
-
-
-
-
-
-
-       console.log(jQuery.fn.jquery);
-
-         
-
-            // document.addEventListener("DOMContentLoaded", function () {
-            //     let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
-
-            //     let taskBtn = document.getElementById("showTasks");
-            //     let internalDocsBtn = document.getElementById("showInternalDocs");
-            //     let assetsBtn = document.getElementById("showAssets");
-            //     let workedhrsbtn = document.getElementById("showWorkedHrs");
-            //     let additionalhrbtn = document.getElementById("showAdditionHr");
-
-            //     let taskSection = document.getElementById("taskSection");
-            //     let internalDocsSection = document.getElementById("internalDocsSection");
-            //     let assetsSection = document.getElementById("assetsSection");
-            //     let workedHrsSection = document.getElementById("workedHrsSection");
-            //     let additionHrSection =document.getElementById("additionHrSection");
-
-            //     // Ensure Task section is visible by default
-            //     taskSection.style.display = "block";
-            //     internalDocsSection.style.display = "none";
-            //     assetsSection.style.display = "none";
-            //     workedHrsSection.style.display = "none";
-            //     additionHrSection.style.display = "none";
-
-            //     // Tab click event listeners
-            //     taskBtn.addEventListener("click", function () {
-            //         taskSection.style.display = "block";
-            //         internalDocsSection.style.display = "none";
-            //         assetsSection.style.display = "none";
-            //         workedHrsSection.style.display ="none";
-            //         additionHrSection.style.display = "none";
-            //     });
-
-            //     internalDocsBtn.addEventListener("click", function () {
-            //         internalDocsSection.style.display = "block";
-            //         taskSection.style.display = "none";
-            //         assetsSection.style.display = "none";
-            //         workedHrsSection.style.display ="none";
-            //         additionHrSection.style.display = "none";
-            //     });
-
-            //     assetsBtn.addEventListener("click", function () {
-            //         assetsSection.style.display = "block";
-            //         taskSection.style.display = "none";
-            //         internalDocsSection.style.display = "none";
-            //         workedHrsSection.style.display ="none";
-            //         additionHrSection.style.display = "none";
-            //     });
-
-            //     workedhrsbtn.addEventListener("click", function () {
-            //         workedHrsSection.style.display ="block";
-            //         taskSection.style.display = "none";
-            //         internalDocsSection.style.display = "none";
-            //         assetsSection.style.display = "none";
-            //         additionHrSection.style.display = "none";
-            //     });   
-            //     additionalhrbtn.addEventListener("click", function () {
-            //         additionHrSection.style.display= "block";
-            //         taskSection.style.display = "none";
-            //         internalDocsSection.style.display = "none";
-            //         assetsSection.style.display = "none";
-            //         workedHrsSection.style.display ="none";
-
-            //     });         
-            //  });
-
+            //  JS For tab switch for internal docs, assets etc section
             document.addEventListener("DOMContentLoaded", function () {
             let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
 

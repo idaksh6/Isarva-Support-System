@@ -4,7 +4,35 @@
 
 @section('content')
 
+<style>
+/* Css for select2 */
+.select2-container .select2-selection--single {
+    height: 38px;
+    padding: 5px 10px;
+    border-radius: 4px;
+  
+}
+.select2-selection__clear{
 
+    border: 0px; 
+    padding-right: 20px; 
+    background: none;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 4px !important;
+    right: 1px;
+    width: 20px;
+}
+
+#advancedSearchPanels label {
+
+    margin-bottom: 10px !important;
+}
+
+</style>
 
 @if (session()->has('flash_success_project'))
     <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
@@ -518,14 +546,23 @@
             <form action="{{ route('admin.project.manage') }}" method="GET">
                 <!-- Basic Search Row -->
                 <div class="row mb-3 mt-4">
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                     
                         <div class="input-group">
                             <input type="text" class="form-control project_search" name="project_name" id="project_name" 
                                 placeholder="Search by project name" value="{{ request('project_name') }}">
                             <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> </button>
                         </div>
+                    </div> --}}
+
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control project_search" name="project_name" id="project_name" 
+                                placeholder="Search by project name" value="{{ request('project_name') }}">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        </div>
                     </div>
+                    
                     <div class="col-md-4 d-flex  gap-4">
                         <button type="button" class="advancebtn" id="toggleAdvancedSearch">
                         Advanced Search
@@ -539,12 +576,12 @@
                 </div>
         
             
-            <!-- Advanced Search Panels (initially hidden) -->
+                <!-- Advanced Search Panels (initially hidden) -->
                 <div id="advancedSearchPanels" style="display: none;">
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <label for="status" class="form-label">Status</label>
-                            <select class="form-select" name="status" id="projectmanage_status">
+                            <select class="form-select select2" name="status" id="projectmanage_status"  style="width: 100%;">
                                 <option value="None">None</option>
                                 <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Onboard</option>
                                 <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Open</option>
@@ -554,9 +591,10 @@
                                 <option value="6" {{ request('status') == '6' ? 'selected' : '' }}>Closed</option>
                                 <option value="7" {{ request('status') == '7' ? 'selected' : '' }}>On Hold</option>
                                 <option value="8" {{ request('status') == '8' ? 'selected' : '' }}>Warranty</option>
+                                <option value="9" {{ request('status') == '9' ? 'selected' : '' }}>Active</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <label for="assigned_to" class="form-label">Assigned To</label>
                             <select class="form-control" name="assigned_to" id="assigned_to">
                                 <option value="">Select Manager</option>
@@ -564,10 +602,20 @@
                                     <option value="{{ $id }}" {{ request('assigned_to') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
                                 @endforeach
                             </select>
+                        </div> --}}
+                        <div class="col-md-3 mb-3">
+                            <label for="assigned_to" class="form-label">Assigned To Manager</label>
+                            <select class="form-control select2 " name="assigned_to" id="assigned_to" style="width: 100%; ">
+                                <option value="">Select Manager</option>
+                                @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                    <option value="{{ $id }}" {{ request('assigned_to') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
+                                @endforeach
+                            </select>
                         </div>
+                        
                         <div class="col-md-3">
                             <label for="department" class="form-label">Department</label>
-                            <select class="form-select" name="department" id="projectmanage_department">
+                            <select class="form-select select2" name="department" id="projectmanage_department"  style="width: 100%;">
                                 <option value="None">None</option>
                                 <option value="1" {{ request('department') == '1' ? 'selected' : '' }}>Web Application</option>
                                 <option value="2" {{ request('department') == '2' ? 'selected' : '' }}>Website</option>
@@ -576,7 +624,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="month" class="form-label">Month</label>
-                            <select class="form-select" name="month" id="month">
+                            <select class="form-select select2" name="month" id="month"  style="width: 100%;">
                                 <option value="None">None</option>
                                 <option value="1" {{ request('month') == '1' ? 'selected' : '' }}>January</option>
                                 <option value="2" {{ request('month') == '2' ? 'selected' : '' }}>February</option>
@@ -595,8 +643,8 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <label for="year" class="form-label">Year</label>
-                            <select class="form-select" name="year" id="year">
+                            <label for="year" class="form-label" >Year</label>
+                            <select class="form-select select2" name="year" id="year"  style="width: 100%;">
                                 <option value="None">None</option>
                                 @php
                                     $currentYear = date('Y');
@@ -659,8 +707,9 @@
         
         </div>
 
+        <!-- Project under Table View -->
         <div id="tableView" class="{{ $viewType === 'table' ? '' : 'd-none' }}">
-            <!-- Project Table -->
+        
             <div class="">
                 @if($projectsmanage->isEmpty())
                     <div class="col-12 text-center py-5">
@@ -757,7 +806,8 @@
                     </div> --}}
                     <!-- Pagination - Table View -->
                     <div class="d-flex justify-content-center mt-4 ">
-                        {{ $projectsmanage->appends(['view' => 'table'])->links() }}
+                        {{-- {{ $projectsmanage->appends(['view' => 'table'])->links() }} --}}
+                        {{ $projectsmanage->appends(request()->query())->links() }}
                     </div>
 
                 
@@ -765,6 +815,7 @@
             </div>
         </div>
         
+        <!-- Project Display in Card View-->
         <div id="cardsView" class="{{ $viewType === 'cards' ? '' : 'd-none' }}">
             <div class="row align-items-center">
                 <div class="col-lg-12 col-md-12 flex-column">
@@ -877,14 +928,31 @@
             </div>
             <!-- Pagination - Card View -->
             <div class="d-flex justify-content-center mt-4">
-                {{ $projectsmanage->appends(['view' => 'cards'])->links() }}
+                {{-- {{ $projectsmanage->appends(['view' => 'cards'])->links() }} --}}
+                {{ $projectsmanage->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
     <!-- Jquery Page Js -->
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('assets/bundles/dataTables.bundle.js') }}"></script>
-    {{-- <script src="{{ asset("js/jquery-3.6.0.min.js")}}"></script> --}}
+    <script src=" {{ asset('js/jquery-3.6.0.min.js')}}"></script>
+    <script src ="{{ asset('js/select2.min.js')}}"></script>
+
+<!-- Select2 JS -->
+{{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
+
+<!-- Init Select2 -->
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: 'resolve'
+        });
+    });
+</script>
+
 
     <script src="{{ asset('js/template.js') }}"></script>
 

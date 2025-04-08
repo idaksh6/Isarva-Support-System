@@ -29,14 +29,13 @@
                     <!-- Global Project Search Form -->
                     <form action="{{ route('admin.project.manage') }}" method="GET" class="d-flex align-items-center" id="globalProjectSearch">
                         <div class="input-group me-2" style="width: 180px;">
-                            <input type="text" class="" style="font-size: small;" name="project_name" id="headerProjectName" 
-                                placeholder="Search by project name" value="{{ request('project_name') }}">
+                            <input type="text" class="" style="font-size: small;" name="global_project_name" id="headerProjectName" 
+                                placeholder="Search by project name" value="{{ request('global_project_name') }}">
                         </div>
                         <div class="input-group me-2" style="width: 180px;">
-                            <input type="text" class="" style="font-size: small;" name="project_id" id="headerProjectId" 
-                                placeholder="Search by project ID" value="{{ request('project_id') }}">
+                            <input type="text" class="" style="font-size: small;" name="global_project_id" id="headerProjectId" 
+                                placeholder="Search by project ID" value="{{ request('global_project_id') }}">
                         </div>
-                      
                     </form>
                      
                     <!-- Ticket ID Search Form -->
@@ -205,6 +204,9 @@
                                 <div><hr class="dropdown-divider border-dark"></div>
                                 {{-- <a href="{{route('admin.authentication.signup')}}" class="list-group-item list-group-item-action border-0 "><i class="icofont-contact-add fs-5 me-3"></i>Add personal account</a> --}}
                                 <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a>
+                                <!-- In your dropdown -->
+                               
+
                             </div>
                         </div>
                     </div>

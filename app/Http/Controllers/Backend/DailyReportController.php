@@ -27,27 +27,7 @@ class DailyReportController extends Controller
     }
 
   
-     // Project name search field
-    //  public function search($term = null)
-    //  {
-    //      $userId = Auth::id(); // Get logged-in user ID
-     
-    //      if ($term) {
-    //          $projects = Project::where('project_name', 'like', '%' . $term . '%')
-    //              ->where(function($query) use ($userId) {
-    //                  $query->where('manager', $userId) // User is manager
-    //                      ->orWhere('team_leader', $userId) // User is team leader
-    //                      ->orWhereJsonContains('team_members', $userId); // User is in team members
-    //              })
-    //              ->select('id', 'project_name as label')
-    //              ->get();
-    //      } else {
-    //          $projects = []; // Return an empty array if no term is provided
-    //      }
-     
-    //      return response()->json($projects);
-    //  }
-
+    // Project Name search function
     public function search($term = null)
     {
         $userId = Auth::id(); // Get logged-in user ID
@@ -74,7 +54,7 @@ class DailyReportController extends Controller
         return response()->json($projects);
     }
        
-   
+        // Task name search function
         public function searchTasks(Request $request)
         {
             $term = $request->input('term');
@@ -93,42 +73,8 @@ class DailyReportController extends Controller
         
             return response()->json($tasks);
         }
-        
-    // New task search method
-    // public function searchTasks(Request $request)
-    // {
-    //     $term = $request->input('term');
-    //     $projectId = $request->input('project_id'); // Get the selected project ID
-
-    //     if ($term && $projectId) {
-    //         $tasks = Task::where('task_name', 'like', '%' . $term . '%')
-    //                      ->where('project_id', $projectId) // Filter tasks by project ID
-    //                      ->select('id', 'task_name as label')
-    //                      ->get();
-    //     } else {
-    //         $tasks = [];
-    //     }
-
-    //     return response()->json($tasks);
-    // }
-            
-
-
-    // public function searchTickets(Request $request)
-    // {
-    //     $term = $request->input('term');
-        
-    //     if ($term) {
-    //         $tickets = Ticket::where('title', 'like', '%' . $term . '%')
-    //                            ->select('id', 'title as label')
-    //                            ->get()
-    //                            ->toArray();
-    //     } else {
-    //         $tickets = [];
-    //     }
-    
-    //     return response()->json($tickets);
-    // }
+   
+    //Ticket name search function
     public function searchTickets(Request $request)
     {
         $term = $request->input('term');
@@ -153,6 +99,13 @@ class DailyReportController extends Controller
       
     public function store(Request $request)
     {
+
+       // Get user data
+        $user = Auth::user();
+        $userEmail = $user->email;
+        $userName = $user->name;
+        $mainRecipient = 'saikiran@idaksh.in';
+
         // Base validation rules
         $request->validate([
             'type' => 'required|array|min:1',
@@ -318,8 +271,11 @@ class DailyReportController extends Controller
             'totalTime' => $dailyReport->total_time
         ];
     
-        Mail::to('web.b4@isarva.in')->send(new DailyReportMail($emailData));
-    
+       // Send email to main recipient with user as CC
+        Mail::to($mainRecipient)
+        ->cc($userEmail)
+        ->send(new DailyReportMail($emailData, $userName));
+            
         return redirect()->back()->with('flash_success_dailyreport', 'Daily Report added successfully.');
     }
 }

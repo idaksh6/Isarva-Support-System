@@ -243,7 +243,7 @@
                     <form action="{{ route('admin.ticket.ticket-store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
-                            <label for="client" class="form-label">Client*</label>
+                            <label for="client" class="form-label">Client<span class="required">*</span></label>
                             <select class="form-select" name="client" id="client" required>
                                 <option value="">Select Client</option>
                                 @foreach($clients as $id => $client_name)
@@ -253,7 +253,7 @@
                             {{-- <input type="text" class="form-control" id="client" name="client" required> --}}
                         </div>
                         <div class="mb-3">
-                            <label for="title" class="form-label">Title*</label>
+                            <label for="title" class="form-label">Title<span class="required">*</span></label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
                         <div class="mb-3">
@@ -284,7 +284,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="priority" class="form-label">Priority*</label>
+                            <label for="priority" class="form-label">Priority<span class="required">*</span></label>
                             <select class="form-select" id="priority" name="priority" required>
                                 <option value="1">Low</option>
                                 <option value="2">Medium</option>
@@ -301,18 +301,18 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description*</label>
+                            <label for="description" class="form-label">Description<span class="required">*</span></label>
                             <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="privacy" class="form-label">Privacy*</label>
+                            <label for="privacy" class="form-label">Privacy<span class="required">*</span></label>
                             <select class="form-select" id="privacy" name="privacy" required>
                                 <option value="1">Private</option>
                                 <option value="2">Public</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="assignedTo" class="form-label">Assigned To*</label>
+                            <label for="assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select" name="assignedTo" id="assignedTo" required>
                                 <option value="">Select Employee</option>
                                 @foreach($employees as $id => $name)
@@ -321,11 +321,11 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="dueDate" class="form-label">Due Date*</label>
+                            <label for="dueDate" class="form-label">Due Date<span class="required">*</span></label>
                             <input type="date" class="form-control" id="dueDate" name="dueDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="department" class="form-label">Department*</label>
+                            <label for="department" class="form-label">Department<span class="required">*</span></label>
                             <select class="form-select" id="department" name="department" required>
                                 <option value="1">Development</option>
                                 <option value="2">Billing</option>
@@ -363,7 +363,7 @@
                         <input type="hidden" name="t_id" id="t_id">
                         
                         <div class="mb-3">
-                            <label for="t_client" class="form-label">Client*</label>
+                            <label for="t_client" class="form-label">Client<span class="required">*</span></label>
                             <select class="form-select" name="t_client" id="t_client" required>
                                 <option value="">Select Client</option>
                                 @foreach($clients as $id => $client_name)
@@ -372,7 +372,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="t_title" class="form-label">Title*</label>
+                            <label for="t_title" class="form-label">Title<span class="required">*</span></label>
                             <input type="text" class="form-control" id="t_title" name="t_title" required>
                         </div>
                         <div class="mb-3">
@@ -403,7 +403,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="t_priority" class="form-label">Priority*</label>
+                            <label for="t_priority" class="form-label">Priority<span class="required">*</span></label>
                             <select class="form-select" id="t_priority" name="t_priority" required>
                                 <option value="1">Low</option>
                                 <option value="2">Medium</option>
@@ -420,18 +420,18 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="t_description" class="form-label">Description*</label>
+                            <label for="t_description" class="form-label">Description<span class="required">*</span></label>
                             <textarea class="form-control" id="t_description" name="t_description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="t_privacy" class="form-label">Privacy*</label>
+                            <label for="t_privacy" class="form-label">Privacy<span class="required">*</span></label>
                             <select class="form-select" id="t_privacy" name="t_privacy" required>
                                 <option value="1">Private</option>
                                 <option value="2">Public</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="t_assignedTo" class="form-label">Assigned To*</label>
+                            <label for="t_assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select" name="t_assignedTo" id="t_assignedTo" required>
                                 <option value="">Select Assigned To</option>
                                 @foreach($employees as $id => $name)
@@ -441,11 +441,11 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="t_dueDate" class="form-label">Due Date*</label>
+                            <label for="t_dueDate" class="form-label">Due Date<span class="required">*</span></label>
                             <input type="date" class="form-control" id="t_dueDate" name="t_dueDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="t_department" class="form-label">Department*</label>
+                            <label for="t_department" class="form-label">Department<span class="required">*</span></label>
                             <select class="form-select" id="t_department" name="t_department" required>
                                 <option value="1">Development</option>
                                 <option value="2">Billing</option>
