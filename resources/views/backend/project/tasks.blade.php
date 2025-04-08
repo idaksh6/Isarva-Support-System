@@ -57,7 +57,7 @@
                     <!-- Client Name Dropdown -->
                     <div class="mb-3">
                         <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
-                        <select class="form-control"  name="client" placeholder="Select Client Name" >
+                        <select class="form-control select2"  name="client" placeholder="Select Client Name" >
                           <option value="">Select Client</option>
                             @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
                               <option value="{{ $id }}" {{ old('client') == $id ? 'selected' : '' }}>{{ $clientName }}</option>
@@ -99,7 +99,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col">
                            <label for="manager_id" class="form-label">Manager<span class="required">*</span></label>
-                            <select class="form-control"  name="manager" >
+                            <select class="form-control select2"  name="manager" >
                                 <option value="">Select Manager</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
@@ -109,7 +109,7 @@
                         </div>
                         <div class="col">
                             <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
-                            <select class="form-select" name="team_leader" aria-label="Default select Priority">
+                            <select class="form-select select2" name="team_leader" aria-label="Default select Priority">
                                 <option value="">Select Team Leader</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
@@ -271,7 +271,7 @@
                     <!-- Client Name Dropdown -->
                     <div class="mb-3">
                         <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
-                        <select class="form-control" name="client" id="proj_client">
+                        <select class="form-control select2" name="client" id="proj_client">
                             <option value="">Select Client</option>
                             @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
                                 <option value="{{ $id }}">{{ $clientName }}</option>
@@ -317,7 +317,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col">
                             <label for="manager" class="form-label">Manager<span class="required">*</span></label>
-                            <select class="form-control" name="manager" id="proj_manager">
+                            <select class="form-control select2" name="manager" id="proj_manager">
                                 <option value="">Select Manager</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                     <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -327,7 +327,7 @@
                         </div>
                         <div class="col">
                             <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
-                            <select class="form-select" name="team_leader" id="proj_team_leader">
+                            <select class="form-select select2" name="team_leader" id="proj_team_leader">
                                 <option value="">Select Team Leader</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                     <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -773,16 +773,10 @@
                 <!-- Sections (Initially Hidden) -->
                 <div class="mt-3">
 
-                  <!-- Internal Docs Section -->
+                   <!-- Internal Docs Section -->
                     <div id="internalDocsSection" class="tab-content shadow-sm p-3 rounded bg-white" style="display: none;">
                        <h5 class="fw-bold mb-3">Internal Docs</h5>
 
-                        <!-- Success Message -->
-                        {{-- @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                        @endif --}}
 
                     @if (session()->has('flash_success_docs'))
                         <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
@@ -864,7 +858,7 @@
 
               
                     <!-- Assets Section -->
-                    <div id="assetsSection" class="tab-content shadow-sm p-3 rounded bg-white">
+                    <div id="assetsSection" class="tab-content shadow-sm p-3 rounded bg-white"  style="display:none;">
                         @if (session()->has('flash_success_asset'))
                             <div class="alert alert-success alert-dismissible fade show d-flex align-items-center p-3 shadow-sm rounded-3" role="alert" style="border-left: 5px solid #198754; background: #e9f7ef;">
                                <i class="bi bi-check-circle-fill me-2 text-success"></i> 
@@ -928,7 +922,7 @@
 
 
                    <!-- Worked Hrs Section -->
-                    <div id="workedHrsSection" class="tab-content shadow-sm p-3 rounded bg-white">
+                    <div id="workedHrsSection" class="tab-content shadow-sm p-3 rounded bg-white"  style="display:none;">
                         <h5>Worked Hours</h5>
 
                         @if($workedHours->isNotEmpty())
@@ -1240,6 +1234,8 @@
 
 <script>
     var editTaskRoute = "{{ route('admin.task.edit', ':id') }}"; // id is the placeholder for emplyoee id which is replaced further
+    
+    // Select2 for task and Project
     $(document).ready(function () {
         $('#createtask').on('shown.bs.modal', function () {
             $(this).find('.select2').select2({
@@ -1253,6 +1249,20 @@
                 dropdownParent: $('#edittask')
             });
         });
+
+    $('#createproject').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $('#createproject')
+                    });
+            });
+             
+
+    $('#editproject').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                     dropdownParent: $('#editproject')
+                });
+            });
+
 </script>
 
 
@@ -1508,131 +1518,111 @@
 
             //  JS For tab switch for internal docs, assets etc section
             document.addEventListener("DOMContentLoaded", function () {
-            let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
+                let table = document.getElementById("internalDocsTable").getElementsByTagName("tbody")[0];
 
-            let taskBtn = document.getElementById("showTasks");
-            let internalDocsBtn = document.getElementById("showInternalDocs");
-            let assetsBtn = document.getElementById("showAssets");
-            let workedhrsbtn = document.getElementById("showWorkedHrs");
-            let additionalhrbtn = document.getElementById("showAdditionHr");  // Semicolon added here
+                let taskBtn = document.getElementById("showTasks");
+                let internalDocsBtn = document.getElementById("showInternalDocs");
+                let assetsBtn = document.getElementById("showAssets");
+                let workedhrsbtn = document.getElementById("showWorkedHrs");
+                let additionalhrbtn = document.getElementById("showAdditionHr");  // Semicolon added here
 
-            let taskSection = document.getElementById("taskSection");
-            let internalDocsSection = document.getElementById("internalDocsSection");
-            let assetsSection = document.getElementById("assetsSection");
-            let workedHrsSection = document.getElementById("workedHrsSection");
-            let additionHrSection = document.getElementById("additionHrSection");
+                let taskSection = document.getElementById("taskSection");
+                let internalDocsSection = document.getElementById("internalDocsSection");
+                let assetsSection = document.getElementById("assetsSection");
+                let workedHrsSection = document.getElementById("workedHrsSection");
+                let additionHrSection = document.getElementById("additionHrSection");
 
-            // Ensure Task section is visible by default
-            taskSection.style.display = "block";
-            internalDocsSection.style.display = "none";
-            assetsSection.style.display = "none";
-            workedHrsSection.style.display = "none";
-            additionHrSection.style.display = "none";
-
-            // Tab click event listeners
-            taskBtn.addEventListener("click", function () {
+                // Ensure Task section is visible by default
                 taskSection.style.display = "block";
                 internalDocsSection.style.display = "none";
                 assetsSection.style.display = "none";
                 workedHrsSection.style.display = "none";
                 additionHrSection.style.display = "none";
-            });
 
-            internalDocsBtn.addEventListener("click", function () {
-                internalDocsSection.style.display = "block";
-                taskSection.style.display = "none";
-                assetsSection.style.display = "none";
-                workedHrsSection.style.display = "none";
-                additionHrSection.style.display = "none";
-            });
+                // Tab click event listeners
+                taskBtn.addEventListener("click", function () {
+                    taskSection.style.display = "block";
+                    internalDocsSection.style.display = "none";
+                    assetsSection.style.display = "none";
+                    workedHrsSection.style.display = "none";
+                    additionHrSection.style.display = "none";
+                });
 
-            assetsBtn.addEventListener("click", function () {
-                assetsSection.style.display = "block";
-                taskSection.style.display = "none";
-                internalDocsSection.style.display = "none";
-                workedHrsSection.style.display = "none";
-                additionHrSection.style.display = "none";
-            });
+                internalDocsBtn.addEventListener("click", function () {
+                    internalDocsSection.style.display = "block";
+                    taskSection.style.display = "none";
+                    assetsSection.style.display = "none";
+                    workedHrsSection.style.display = "none";
+                    additionHrSection.style.display = "none";
+                });
 
-            workedhrsbtn.addEventListener("click", function () {
-                workedHrsSection.style.display = "block";
-                taskSection.style.display = "none";
-                internalDocsSection.style.display = "none";
-                assetsSection.style.display = "none";
-                additionHrSection.style.display = "none";
-            });   
-            
-            additionalhrbtn.addEventListener("click", function () {
-                additionHrSection.style.display = "block";
-                taskSection.style.display = "none";
-                internalDocsSection.style.display = "none";
-                assetsSection.style.display = "none";
-                workedHrsSection.style.display = "none";
-            });         
+                assetsBtn.addEventListener("click", function () {
+                    assetsSection.style.display = "block";
+                    taskSection.style.display = "none";
+                    internalDocsSection.style.display = "none";
+                    workedHrsSection.style.display = "none";
+                    additionHrSection.style.display = "none";
+                });
+
+                workedhrsbtn.addEventListener("click", function () {
+                    workedHrsSection.style.display = "block";
+                    taskSection.style.display = "none";
+                    internalDocsSection.style.display = "none";
+                    assetsSection.style.display = "none";
+                    additionHrSection.style.display = "none";
+                });   
+                
+                additionalhrbtn.addEventListener("click", function () {
+                    additionHrSection.style.display = "block";
+                    taskSection.style.display = "none";
+                    internalDocsSection.style.display = "none";
+                    assetsSection.style.display = "none";
+                    workedHrsSection.style.display = "none";
+                });         
         
-
                 // Function to get the next row index correctly
-                function getRowIndex() {
-                    return table.getElementsByTagName("tr").length + 1;
-                }
+                    function getRowIndex() {
+                        return table.getElementsByTagName("tr").length + 1;
+                    }
 
-                 // Function to add a new row dynamically
+                    // Function to add a new row dynamically
                     function addNewRow() {
-                        let newIndex = table.getElementsByTagName("tr").length + 1;
+                    const rowCount = table.getElementsByTagName("tr").length + 1;
 
-                        let newRow = document.createElement("tr");
-                        newRow.innerHTML = `
-                            <td>
-                                ${newIndex}
-                                <input type="hidden" name="id[]" value=""> <!-- Ensure id[] is always present -->
-                            </td>
-                            <td><input type="date" class="form-control" name="date[]"></td>
-                            <td><input type="text" class="form-control" name="title[]"></td>
-                            <td><input type="text" class="form-control" name="link[]"></td>
-                            <td><input type="text" class="form-control" name="comments[]"></td>
-                            <td>
-                                <button type="button" class="btn btn-success btn-sm add-row">+</button>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">-</button>
-                            </td>
-                        `;
-
-                        table.appendChild(newRow);
+                    const newRow = document.createElement("tr");
+                    newRow.innerHTML = `
+                        <td>
+                            ${rowCount}
+                            <input type="hidden" name="id[]" value="">
+                        </td>
+                        <td><input type="date" class="form-control" name="date[]"></td>
+                        <td><input type="text" class="form-control" name="title[]"></td>
+                        <td><input type="text" class="form-control" name="link[]"></td>
+                        <td><input type="text" class="form-control" name="comments[]"></td>
+                        <td>
+                            <button type="button" class="btn btn-success btn-sm add-row">+</button>
+                            <button type="button" class="btn btn-danger btn-sm remove-row">-</button>
+                        </td>
+                    `;
+                    table.appendChild(newRow);
+                    updateRowNumbers();
                     }
 
-                    // Function to remove a row
                     function removeRow(event) {
-                        let row = event.target.closest("tr");
-                        let rows = table.getElementsByTagName("tr");
-
-                        if (rows.length > 1) {
-                            // Add a hidden input to mark this row as deleted
-                            let idInput = row.querySelector("input[name='id[]']");
-                            if (idInput && idInput.value) {
-                                let deleteInput = document.createElement("input");
-                                deleteInput.type = "hidden";
-                                deleteInput.name = "deleted_ids[]";
-                                deleteInput.value = idInput.value; // Use the value of id[]
-                                row.appendChild(deleteInput);
-                            }
-
-                            // Hide the row instead of removing it immediately
-                            row.style.display = "none";
+                        const row = event.target.closest("tr");
+                        if (table.rows.length > 1) {
+                            row.remove();
+                            updateRowNumbers();
                         }
-
-                        updateRowNumbers();
                     }
 
-                    // Function to update row numbering after deletion
                     function updateRowNumbers() {
-                        let rows = table.getElementsByTagName("tr");
+                        const rows = table.getElementsByTagName("tr");
                         for (let i = 0; i < rows.length; i++) {
-                            if (rows[i].style.display !== "none") {
-                                rows[i].getElementsByTagName("td")[0].innerText = i + 1;
-                            }
+                            rows[i].getElementsByTagName("td")[0].childNodes[0].textContent = i + 1;
                         }
                     }
 
-                    // Event listener for add & remove row buttons
                     table.addEventListener("click", function (event) {
                         if (event.target.classList.contains("add-row")) {
                             addNewRow();
@@ -1642,29 +1632,6 @@
                     });
 
                 });
-
-
-          
-                // JS to download the asset
-                document.addEventListener('DOMContentLoaded', function () {
-                // Add event listeners to all download buttons
-                document.querySelectorAll('.download-btn').forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        // Get the file path from the data attribute
-                        const filePath = this.getAttribute('data-file-path');
-
-                        // Create a temporary anchor element to trigger the download
-                        const link = document.createElement('a');
-                        link.href = filePath;
-                        link.download = filePath.split('/').pop(); // Set the filename for the download
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    });
-                });
-            });
-
-          
 
 
                     //  Test Case Drag and DROP JS
@@ -1888,6 +1855,7 @@
                     });
                 });
             });
+         
 
         
         // Function to populate the Estimation Change Log table
@@ -2017,9 +1985,9 @@
 
               
                  
-
-                    // Load data when Additional Hours tab is clicked
-                        $('#showAdditionHr').click(function() {
+                   
+                      // Additional Hr js section
+                        $('#showAdditionHr').click(function() {  // Load data when Additional Hours tab is clicked
                         loadAdditionalHours();
                     });
 
@@ -2155,7 +2123,7 @@
                             });
                         });
                     }
-            });
+                });
 
            
   

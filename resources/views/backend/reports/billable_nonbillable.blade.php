@@ -6,7 +6,35 @@
 
 <style>
 
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 34px;
+    position: absolute;
+    top: 5px !important;
+    right: 1px;
+    width: 20px;
+}
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 33px !important;
+    /* height: 27px; */
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+    height: 32px !important;
+    margin-right: 20px;
+    padding-right: 0px;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    height: 38px !important;
+}
 
 
 </style>
@@ -57,8 +85,10 @@
 
               
 
-                <div class="row mt-3" id="select_project_field" style="display: none;">
-                    <div class="col-md-3">
+                <!-- Second Row - Dynamic Project/Ticket Selector and Billing Type -->
+                <div class="row mt-3">
+                    <!-- Dynamic Project/Ticket Selector (will appear in same row when visible) -->
+                    <div class="col-md-3" id="select_project_field" style="display: none;">
                         <label id="select_label" for="select_project">Select:</label>
                         <select id="select_project" name="select_project" class="form-control select2">
                             <option value="">Select</option>
@@ -73,11 +103,9 @@
                             @endif
                         </select>
                     </div>
-                </div>
 
-                <!-- Billing Type -->
-                <div class="row mt-3">
-                    <div class="col-md-3">
+                    <!-- Billing Type (always visible, moves left when project/ticket appears) -->
+                    <div class="col-md-3" id="billing_type_field">
                         <label for="billing_type">Billing Type:</label>
                         <select id="billing_type" name="billing_type" class="form-control select2">
                             <option value="none" {{ request('billing_type') == 'none' ? 'selected' : '' }}>None</option>
@@ -208,39 +236,38 @@
         });
            
 
-            // Handle dynamic change for Project/Ticket field
-            $('#project_ticket').change(function() {
-                var selectedValue = $(this).val();
-                var currentSelected = $('#select_project').val(); // Get current selected value
-                
-                if (selectedValue === 'project') {
-                    $('#select_label').text('Select Project:');
-                    var options = `<option value="">Select</option>
-                        @foreach($projects as $id => $name)
-                            <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $name }}</option>
-                        @endforeach`;
-                    $('#select_project').html(options);
-                    $('#select_project_field').show();
-                } else if (selectedValue === 'ticket') {
-                    $('#select_label').text('Select Ticket:');
-                    var options = `<option value="">Select</option>
-                        @foreach($tickets as $id => $title)
-                            <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $title }}</option>
-                        @endforeach`;
-                    $('#select_project').html(options);
-                    $('#select_project_field').show();
-                } else {
-                    $('#select_project_field').hide();
-                }
-                
-                // Reinitialize select2 and preserve the selected value
+      // Handle dynamic change for Project/Ticket field
+        $('#project_ticket').change(function() {
+            var selectedValue = $(this).val();
+            var currentSelected = $('#select_project').val();
+            
+            if (selectedValue === 'project') {
+                $('#select_label').text('Select Project:');
+                var options = `<option value="">Select</option>
+                    @foreach($projects as $id => $name)
+                        <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $name }}</option>
+                    @endforeach`;
+                $('#select_project').html(options);
+                $('#select_project_field').show();
+            } else if (selectedValue === 'ticket') {
+                $('#select_label').text('Select Ticket:');
+                var options = `<option value="">Select</option>
+                    @foreach($tickets as $id => $title)
+                        <option value="{{ $id }}" ${currentSelected == '{{ $id }}' ? 'selected' : ''}>{{ $title }}</option>
+                    @endforeach`;
+                $('#select_project').html(options);
+                $('#select_project_field').show();
+            } else {
+                $('#select_project_field').hide();
+            }
+            
                 $('#select_project').select2({ 
                     width: '100%',
                     placeholder: "Select an option",
                     allowClear: true
                 }).val(currentSelected).trigger('change');
             });
-
+            
             // Set initial values from request
             $('#project_ticket').val('{{ request("project_ticket", "none") }}').trigger('change');
             @if(request('select_project'))

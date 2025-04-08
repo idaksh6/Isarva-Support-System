@@ -174,7 +174,7 @@
                 <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
                     <div class="u-info me-2">
                         <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">  {{Auth::user()->name}}</span></p>
-                        <small>Admin Profile</small>
+                        <small> Profile</small>
                     </div>
                     {{-- <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button"  data-bs-toggle="dropdown" data-bs-display="static">
                         <img class="avatar lg rounded-circle img-thumbnail" src="{{ url('/').'/images/profile_av.png' }}" alt="profile">
@@ -188,7 +188,7 @@
                         <div class="card border-0 w280">
                             <div class="card-body pb-0">
                                 <div class="d-flex py-1">
-                                    <img class="avatar rounded-circle" src="{{ url('/').'/images/profile_av.png' }}" alt="profile">
+                                    {{-- <img class="avatar rounded-circle" src="{{ url('/').'/images/profile_av.png' }}" alt="profile"> --}}
                                     <div class="flex-fill ms-3">
                                         <p class="mb-0"><span class="font-weight-bold">ADMIN</span></p>
                                         <small class="">{{ Auth::check() ? Auth::user()->email : 'Guest' }}</small>

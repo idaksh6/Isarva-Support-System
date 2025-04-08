@@ -110,10 +110,10 @@ text-align: left;
 
 .consolreporttbl tr td{
 border-color: rgb(221, 221, 221) !important;
+/* border-color: brown !important; */
 font-size: 15px;
 
 }
-
 
 
 
@@ -146,6 +146,8 @@ font-size: 16px;
 
 
 }
+
+
 
 .timesheetbill{
 

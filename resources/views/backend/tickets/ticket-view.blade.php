@@ -5,6 +5,30 @@
 
 @section('content')
 
+<style>
+    /* Css for select2 */
+    .select2-container .select2-selection--single {
+        height: 38px;
+        padding: 5px 10px;
+        border-radius: 4px;
+      
+    }
+    .select2-selection__clear{
+    
+        border: 0px; 
+        padding-right: 20px; 
+        /* background: none; */
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 26px;
+        position: absolute;
+        top: 4px !important;
+        right: 1px;
+        width: 20px;
+    }
+</style>
+
     @if (session('flash_success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('flash_success') }}
@@ -244,7 +268,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="client" class="form-label">Client<span class="required">*</span></label>
-                            <select class="form-select" name="client" id="client" required>
+                            <select class="form-select select2" name="client" id="client" required>
                                 <option value="">Select Client</option>
                                 @foreach($clients as $id => $client_name)
                                     <option value="{{ $id }}" {{ request('client') == $id ? 'selected' : '' }}>{{ $client_name }}</option>
@@ -262,7 +286,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tag" class="form-label">Tag</label>
-                            <select class="form-select" id="tag" name="tag">
+                            <select class="form-select " id="tag" name="tag">
                                 <option value="1">Bug Report</option>
                                 <option value="2">Question</option>
                                 <option value="3">Reminder</option>
@@ -293,7 +317,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="project" class="form-label">Project</label>
-                            <select class="form-select" name="project" id="project">
+                            <select class="form-select select2" name="project" id="project">
                                 <option value="">Select Project</option>
                                 @foreach($projects as $id => $project_name)
                                     <option value="{{ $id }}" {{ request('project') == $id ? 'selected' : '' }}>{{ $project_name }}</option>
@@ -313,7 +337,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
-                            <select class="form-select" name="assignedTo" id="assignedTo" required>
+                            <select class="form-select select2" name="assignedTo" id="assignedTo" required>
                                 <option value="">Select Employee</option>
                                 @foreach($employees as $id => $name)
                                     <option value="{{ $id }}" {{ request('assignedTo') == $id ? 'selected' : '' }}>{{ $name }}</option>
@@ -364,7 +388,7 @@
                         
                         <div class="mb-3">
                             <label for="t_client" class="form-label">Client<span class="required">*</span></label>
-                            <select class="form-select" name="t_client" id="t_client" required>
+                            <select class="form-select select2" name="t_client" id="t_client" required>
                                 <option value="">Select Client</option>
                                 @foreach($clients as $id => $client_name)
                                     <option value="{{ $id }}" {{ request('t_client') == $id ? 'selected' : '' }}>{{ $client_name }}</option>
@@ -412,7 +436,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="t_project" class="form-label">Project</label>
-                            <select class="form-select" name="t_project" id="t_project">
+                            <select class="form-select select2" name="t_project" id="t_project">
                                 <option value="">Select Project</option>
                                 @foreach($projects as $id => $project_name)
                                     <option value="{{ $id }}" {{ request('t_project') == $id ? 'selected' : '' }}>{{ $project_name }}</option>
@@ -432,7 +456,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="t_assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
-                            <select class="form-select" name="t_assignedTo" id="t_assignedTo" required>
+                            <select class="form-select select2" name="t_assignedTo" id="t_assignedTo" required>
                                 <option value="">Select Assigned To</option>
                                 @foreach($employees as $id => $name)
                                 
@@ -520,7 +544,27 @@
         var editTicketRoute = "{{ route('admin.ticket.edit-ticket', ':id') }}";
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+   
+
     <script>
+
+            $(document).ready(function () {
+                    $('#tickadd').on('shown.bs.modal', function () {
+                        $(this).find('.select2').select2({
+                            dropdownParent: $('#tickadd')
+                        });
+                    });
+                });
+
+                $('#editticket').on('shown.bs.modal', function () {
+                        $(this).find('.select2').select2({
+                            dropdownParent: $('#editticket')
+                        });
+                    });
+
+
+
         $(document).ready(function () {
             
             // When the edit button is clicked

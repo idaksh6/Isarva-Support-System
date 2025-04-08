@@ -351,7 +351,8 @@ public function getDepartmentNameAttribute()
             return 'Not Started';
         } elseif ($today->gt($endDate)) {
             $daysExceeded = $today->diffInDays($endDate);
-            return 'Exceeded by ' . $daysExceeded . ' day' . ($daysExceeded > 1 ? 's' : '');
+            // return 'Exceeded by ' . $daysExceeded . ' day' . ($daysExceeded > 1 ? 's' : '');
+            return  $daysExceeded . ' Days' . ' After Due';
         } else {
             $daysLeft = $today->diffInDays($endDate);
             return $daysLeft . ' day' . ($daysLeft > 1 ? 's' : '') . ' left';

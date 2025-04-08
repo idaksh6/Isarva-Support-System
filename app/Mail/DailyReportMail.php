@@ -42,16 +42,35 @@ class DailyReportMail extends Mailable
         $this->userName = $userName; // Store the username
     }
 
+    // public function build()
+    // {
+    //     return $this->from('web.b4@isarva.in', 'Isarva Support') // Must match the verified sender
+    //                 ->view('emails.daily_report_email')
+    //                 ->with([
+    //                     'reportData' => $this->emailData['reportData'],
+    //                     'overallStatus' => $this->emailData['overallStatus'],
+    //                     'totalTime' => $this->emailData['totalTime']
+    //                 ])
+    //                 ->subject('Daily Report Submission - ' . $this->userName);
+    // }
+
     public function build()
-    {
-        return $this->from('web.b4@isarva.in', 'Isarva Support') // Must match the verified sender
-                    ->view('emails.daily_report_email')
-                    ->with([
-                        'reportData' => $this->emailData['reportData'],
-                        'overallStatus' => $this->emailData['overallStatus'],
-                        'totalTime' => $this->emailData['totalTime']
-                    ])
-                    ->subject('Daily Report Submission - ' . $this->userName);
-    }
+        {
+              // Get current date in desired format (08-Apr-2025)
+            $currentDate = now()->format('d-M-Y');
+
+            return $this->from('web.b4@isarva.in', 'Isarva Support')
+                        ->view('emails.daily_report_email')
+                        ->with([
+                            'reportData' => $this->emailData['reportData'],
+                            'overallStatus' => $this->emailData['overallStatus'],
+                            'totalTime' => $this->emailData['totalTime'],
+                            'billableHrs' => $this->emailData['billableHrs'],
+                            'nonBillableHrs' => $this->emailData['nonBillableHrs'],
+                            'internalBillableHrs' => $this->emailData['internalBillableHrs'],
+                            'submissionDate' => $currentDate // Pass date to view if needed
+                ])
+                ->subject('Daily Report Submission By - ' . $this->userName . ' (' . $currentDate . ')');
+        }
 
 }

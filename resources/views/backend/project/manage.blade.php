@@ -56,7 +56,7 @@
                     <!-- Client Name Dropdown -->
                     <div class="mb-3">
                         <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
-                        <select class="form-control"  name="client" placeholder="Select Client Name" >
+                        <select class="form-control select2"  name="client" placeholder="Select Client Name" >
                           <option value="">Select Client</option>
                             @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
                               <option value="{{ $id }}" {{ old('client') == $id ? 'selected' : '' }}>{{ $clientName }}</option>
@@ -98,7 +98,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col">
                            <label for="manager_id" class="form-label">Manager<span class="required">*</span></label>
-                            <select class="form-control"  name="manager" >
+                            <select class="form-control select2"  name="manager" >
                                 <option value="">Select Manager</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
@@ -108,7 +108,7 @@
                         </div>
                         <div class="col">
                             <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
-                            <select class="form-select" name="team_leader" aria-label="Default select Priority">
+                            <select class="form-select select2" name="team_leader" aria-label="Default select Priority">
                                 <option value="">Select Team Leader</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
@@ -121,7 +121,7 @@
                     <div class="mb-3">
                         <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
                         <div class="dropdown">
-                            <button class="form-select text-start dropdown-toggle" type="button" id="teamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="form-select text-start dropdown-toggle  " type="button" id="teamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                Select Team Members
                             </button>
                             <ul class="dropdown-menu w-100" aria-labelledby="teamMembersDropdown">
@@ -262,7 +262,7 @@
                     <!-- Client Name Dropdown -->
                     <div class="mb-3">
                         <label for="client_name" class="form-label">Client Name<span class="required">*</span></label>
-                        <select class="form-control" name="client" id="proj_client">
+                        <select class="form-control select2" name="client" id="proj_client">
                             <option value="">Select Client</option>
                             @foreach(App\Helpers\ClientHelper::getClientNames() as $id => $clientName)
                                 <option value="{{ $id }}">{{ $clientName }}</option>
@@ -308,7 +308,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col">
                             <label for="manager" class="form-label">Manager<span class="required">*</span></label>
-                            <select class="form-control" name="manager" id="proj_manager">
+                            <select class="form-control select2" name="manager" id="proj_manager">
                                 <option value="">Select Manager</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                     <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -318,7 +318,7 @@
                         </div>
                         <div class="col">
                             <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
-                            <select class="form-select" name="team_leader" id="proj_team_leader">
+                            <select class="form-select select2" name="team_leader" id="proj_team_leader">
                                 <option value="">Select Team Leader</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                     <option value="{{ $id }}">{{ $employeeName }}</option>
@@ -564,7 +564,7 @@
                     </div>
                     
                     <div class="col-md-4 d-flex  gap-4">
-                        <button type="button" class="advancebtn" id="toggleAdvancedSearch">
+                        <button type="button" class="advancebtn " id="toggleAdvancedSearch">
                         Advanced Search
                         </button>
 
@@ -671,7 +671,7 @@
 
         <!-- Total Projects Card -->
         <div class=" mb-3 d-flex justify-content-between align-items-center">
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-light">
                     <div class="card-body d-flex align-items-center p-3">
                         <div class="icon-box bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
@@ -683,20 +683,35 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-md-2.8">
+    <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #4e73df, #6f42c1); color: white;">
+        <div class="card-body d-flex align-items-center p-3">
+            <div class="icon-box bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                <i class="icofont-dashboard-web fs-5"></i>
             </div>
+            <div>
+                <h6 class="mb-1" style="opacity: 0.85;">Total Projects</h6>
+                <h5 class="fw-bold mb-0" id="totalProjects">{{ $totalProjectscount }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
             
             <!--  toggle buttons for table and card view -->
     
             <div class="view-toggle-container">
                 <div class="toggle-switch">
                     <input type="radio" id="table-view" name="view-toggle" class="toggle-input" value="table" checked>
-                    <label for="table-view" class="toggle-label">
+                    <label for="table-view" class="toggle-label toggletablcrdsview">
                         <i class="icofont-table"></i>
                         <span>Table View</span>
                     </label>
             
                     <input type="radio" id="card-view" name="view-toggle" class="toggle-input" value="cards">
-                    <label for="card-view" class="toggle-label">
+                    <label for="card-view" class="toggle-label toggletablcrdsview">
                         <i class="icofont-card"></i>
                         <span>Card View</span>
                     </label>
@@ -754,12 +769,15 @@
                                         #{{ $project->id }} - {{ $project->project_name }}
                                     </a>
                                 </td>
+
                                 <td>{{ $project->client_name ?? 'N/A' }}</td>
+
                                 <td>{{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }} </br>
                                     <span class="badge bg-secondary">
                                         +{{ \Carbon\Carbon::parse($project->start_date)->diffInDays(today()) }} days
                                     </span>
                                 </td>
+
                                 <td class="text-center">
                                     <span class="status-box status-{{ strtolower(str_replace(' ', '_', $project->status_name)) }}">
                                         {{ $project->status_name }}
@@ -769,12 +787,14 @@
                                         {{ strtoupper($project->priority_name) }}
                                     </span>
                                 </td>
+
                                 <td>
                                     <span class="department-box department-{{ strtolower(str_replace(' ', '_', $project->department_name)) }}">
                                         {{ strtoupper($project->department_name) }}
                                     </span>
                                     {{-- {{ $project->department_name }} --}}
                                 </td>
+
                                 <td>{{ $project->manager_name ?? 'N/A' }}</td>
 
                                 <td>
@@ -905,14 +925,14 @@
                                             </div>
                                             <div class="dividers-block"></div>
                                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                                <h4 class="small fw-bold mb-0">Progress</h4>
+                                                {{-- <h4 class="small fw-bold mb-0">Progress</h4> --}}
                                                 <span class="small light-danger-bg  p-1 rounded"><i class="icofont-ui-clock"></i> {!! $project->days_left !!}</span>
                                             </div>
-                                            <div class="progress" style="height: 8px;">
+                                            {{-- <div class="progress" style="height: 8px;">
                                                 <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
                                                 <div class="progress-bar bg-secondary ms-1" role="progressbar" style="width: 25%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                                                 <div class="progress-bar bg-secondary ms-1" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         {{-- </a> --}}
                                     </div>
@@ -942,15 +962,31 @@
 <!-- Select2 JS -->
 {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 
-<!-- Init Select2 -->
+
 <script>
-    $(document).ready(function() {
-        $('.select2').select2({
-            placeholder: "Select an option",
-            allowClear: true,
-            width: 'resolve'
-        });
-    });
+            // Init Select2
+            $(document).ready(function() {
+                $('.select2').select2({
+                    placeholder: "Select an option",
+                    allowClear: true,
+                    width: 'resolve'
+                });
+            });
+
+         
+            $('#createproject').on('shown.bs.modal', function () {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $('#createproject')
+                            });
+                    });
+             
+
+            $('#editproject').on('shown.bs.modal', function () {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $('#editproject')
+                    });
+                });
+
 </script>
 
 

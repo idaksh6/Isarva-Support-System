@@ -241,41 +241,95 @@ class TaskController
 
 
     // Internal Docs store method
-    public function storeInternalDoc(Request $request)
-        {
-            $request->validate([
-                'project_id' => 'required|integer|exists:si_projects,id',
-                'id' => 'nullable|array',
-                'id.*' => 'nullable|integer|exists:si_project_internal_documents,id',
-                'date' => 'required|array',
-                'date.*' => 'required|date',
-                'title' => 'required|array',
-                'title.*' => 'required|string|max:255',
-                'link' => 'nullable|array',
-                'link.*' => 'nullable|string|max:255',
-                'comments' => 'nullable|array',
-                'comments.*' => 'nullable|string|max:255',
-                'deleted_ids' => 'nullable|array',
-                'deleted_ids.*' => 'nullable|integer|exists:si_project_internal_documents,id',
-            ]);
+    // public function storeInternalDoc(Request $request)
+    //     {
+    //         $request->validate([
+    //             'project_id' => 'required|integer|exists:si_projects,id',
+    //             'id' => 'nullable|array',
+    //             'id.*' => 'nullable|integer|exists:si_project_internal_documents,id',
+    //             'date' => 'required|array',
+    //             'date.*' => 'required|date',
+    //             'title' => 'required|array',
+    //             'title.*' => 'required|string|max:255',
+    //             'link' => 'nullable|array',
+    //             'link.*' => 'nullable|string|max:255',
+    //             'comments' => 'nullable|array',
+    //             'comments.*' => 'nullable|string|max:255',
+    //             'deleted_ids' => 'nullable|array',
+    //             'deleted_ids.*' => 'nullable|integer|exists:si_project_internal_documents,id',
+    //         ]);
 
+    //         $projectId = $request->input('project_id');
+    //         $ids = $request->input('id', []);
+    //         $dates = $request->input('date');
+    //         $titles = $request->input('title');
+    //         $links = $request->input('link', []);
+    //         $comments = $request->input('comments', []);
+    //         $deletedIds = $request->input('deleted_ids', []);
+    //         $createdBy = Auth::id();
+    //         $updatedBy = Auth::id();
+
+    //         // Delete rows that have been marked as deleted
+    //         if (!empty($deletedIds)) {
+    //             ProjectInternalDocument::whereIn('id', $deletedIds)->delete();
+    //         }
+
+    //         // Update or create remaining rows
+    //         foreach ($dates as $index => $date) {
+    //             $data = [
+    //                 'project_id' => $projectId,
+    //                 'date' => $date,
+    //                 'title' => $titles[$index],
+    //                 'link' => $links[$index] ?? null,
+    //                 'comments' => $comments[$index] ?? null,
+    //                 'raw_index' => $index + 1,
+    //                 'updated_by' => $updatedBy,
+    //             ];
+
+    //             if (!empty($ids[$index])) {
+    //                 // Update existing row
+    //                 ProjectInternalDocument::where('id', $ids[$index])->update($data);
+    //             } else {
+    //                 // Insert new row
+    //                 $data['created_by'] = $createdBy;
+    //                 ProjectInternalDocument::create($data);
+    //             }
+    //         }
+
+    //         return redirect()->back()->with('flash_success_docs', 'Internal documents saved successfully.');
+    //     }
+    public function storeInternalDoc(Request $request)
+    {
+        $request->validate([
+            'project_id' => 'required|integer|exists:si_projects,id',
+            'id' => 'nullable|array',
+            'id.*' => 'nullable|integer|exists:si_project_internal_documents,id',
+            'date' => 'required|array',
+            'date.*' => 'required|date',
+            'title' => 'required|array',
+            'title.*' => 'required|string|max:255',
+            'link' => 'nullable|array',
+            'link.*' => 'nullable|string|max:255',
+            'comments' => 'nullable|array',
+            'comments.*' => 'nullable|string|max:255',
+        ]);
+    
+        DB::beginTransaction();
+        try {
             $projectId = $request->input('project_id');
             $ids = $request->input('id', []);
             $dates = $request->input('date');
             $titles = $request->input('title');
             $links = $request->input('link', []);
             $comments = $request->input('comments', []);
-            $deletedIds = $request->input('deleted_ids', []);
             $createdBy = Auth::id();
             $updatedBy = Auth::id();
-
-            // Delete rows that have been marked as deleted
-            if (!empty($deletedIds)) {
-                ProjectInternalDocument::whereIn('id', $deletedIds)->delete();
-            }
-
-            // Update or create remaining rows
+    
+            $idsToKeep = [];
+    
             foreach ($dates as $index => $date) {
+                $currentId = $ids[$index] ?? null;
+    
                 $data = [
                     'project_id' => $projectId,
                     'date' => $date,
@@ -285,20 +339,32 @@ class TaskController
                     'raw_index' => $index + 1,
                     'updated_by' => $updatedBy,
                 ];
-
-                if (!empty($ids[$index])) {
+    
+                if ($currentId) {
                     // Update existing row
-                    ProjectInternalDocument::where('id', $ids[$index])->update($data);
+                    ProjectInternalDocument::where('id', $currentId)->update($data);
+                    $idsToKeep[] = $currentId;
                 } else {
                     // Insert new row
                     $data['created_by'] = $createdBy;
-                    ProjectInternalDocument::create($data);
+                    $newDoc = ProjectInternalDocument::create($data);
+                    $idsToKeep[] = $newDoc->id;
                 }
             }
-
+    
+            // Delete removed rows
+            ProjectInternalDocument::where('project_id', $projectId)
+                ->whereNotIn('id', $idsToKeep)
+                ->delete();
+    
+            DB::commit();
             return redirect()->back()->with('flash_success_docs', 'Internal documents saved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('flash_error_docs', 'Failed to save internal documents: ' . $e->getMessage());
         }
-
+    }
+    
   
 
 

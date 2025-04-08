@@ -22,15 +22,18 @@
          }
 
         .billable_color { 
-            color: #4CAF50; 
+            color: green; 
+            font-weight: bold
         }
 
         .non_billable_color { 
-            color: #f44336;
+            color: red;
+            font-weight: bold
          }
 
         .internal_billable_color { 
-            color: #2196F3; 
+            color: blue; 
+            font-weight: bold
         }
 
         table {
@@ -44,6 +47,21 @@
         .timesheethead th { 
             background-color: #f2f2f2; font-weight: bold; 
         }
+
+        .consolreporttbl tbody tr td{
+            /* border-color: rgb(221, 221, 221) !important; */
+            border-color: brown !important;
+            font-size: 15px;
+
+            }
+
+            .consolreporttbl tr th{
+                /* border-color: rgb(221, 221, 221) !important; */
+                border-color: brown !important;
+            
+                
+            }
+
         
         .timesheetbill { 
             color: #4CAF50; 
@@ -79,7 +97,7 @@
             font-weight: 700 !important;
         }
 
-            .timesheetnonbill{
+        .timesheetnonbill{
 
             font-size: 18px;
             color: red !important; 
@@ -117,7 +135,7 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align: center;">Consolidated Daily Report</h2>
+    <h2 style="text-align: center; font-weight: bold;">Consolidated Daily Report</h2>
 
         <p style="text-align: center; font-size: 15px; color: #2196F3;">
             @if($startDate && $endDate)

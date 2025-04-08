@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Backend\Ticket; // Assuming you have a Ticket model
 use App\Models\Backend\TicketComment; // Assuming you have a Ticket model
+use App\Mail\TicketAssignedNotification;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Backend\User;
 
 class TicketController
 {
@@ -184,54 +187,117 @@ class TicketController
     }
 
       /** Store the Ticket Information - Author SK - 11-03-2025 */
-      public function store(Request $request)
-    {
+    //   public function store(Request $request)
+    // {
         
-        // Validate the request data
-        // $request->validate([
-        //     'client' => 'required|string|max:200',
-        //     'title' => 'required|string|max:500',
-        //     'domain' => 'nullable|string',
-        //     'type' => 'required|string',
-        //     'source' => 'required|string',
-        //     'priority' => 'required|integer',
-        //     'project' => 'nullable|string',
-        //     'description' => 'required|string',
-        //     'privacy' => 'required|integer',
-        //     'assignedTo' => 'required|string',
-        //     'dueDate' => 'required|date',
-        //     'department' => 'required|string',
-        //     'attachment' => 'nullable|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:2048',
-        // ]);
+    //     // Validate the request data
+    //     // $request->validate([
+    //     //     'client' => 'required|string|max:200',
+    //     //     'title' => 'required|string|max:500',
+    //     //     'domain' => 'nullable|string',
+    //     //     'type' => 'required|string',
+    //     //     'source' => 'required|string',
+    //     //     'priority' => 'required|integer',
+    //     //     'project' => 'nullable|string',
+    //     //     'description' => 'required|string',
+    //     //     'privacy' => 'required|integer',
+    //     //     'assignedTo' => 'required|string',
+    //     //     'dueDate' => 'required|date',
+    //     //     'department' => 'required|string',
+    //     //     'attachment' => 'nullable|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:2048',
+    //     // ]);
 
+    //     // Create a new Ticket instance
+    //     $ticket = new Ticket();
+
+    //     if ($request->hasFile('attachment')) {
+    //         $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
+        
+    //         // Ensure the folder exists, create if not
+    //         if (!File::exists($folderPath)) {
+    //             File::makeDirectory($folderPath, 0775, true, true);
+    //         }
+        
+    //         // Generate a unique file name
+    //         $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+        
+    //         // Move the file to the target folder
+    //         $request->file('attachment')->move($folderPath, $fileName);
+        
+    //         // Delete old file if exists
+    //         if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
+    //             File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
+    //         }
+        
+    //         // Store the new file path in the database
+    //         $ticket->attachment = 'images/ticket_attachments/' . $fileName;
+    //     }else{
+    //         $fileName="";
+    //     }
+
+    //     $ticket->client = $request->client;
+    //     $ticket->title = $request->title;
+    //     $ticket->domain = $request->domain;
+    //     $ticket->type = $request->tag;
+    //     $ticket->source = $request->source;
+    //     $ticket->priority = $request->priority;
+    //     $ticket->project = $request->project;
+    //     $ticket->comments = $request->description;
+    //     $ticket->privacy = $request->privacy;
+    //     $ticket->comments = $request->assignedTo;
+    //     $ticket->end_date = $request->dueDate;
+    //     $ticket->department = $request->department;
+    //     $ticket->created_by = Auth::id();
+    //     $ticket->last_updated_by = Auth::id();
+    //     $ticket->last_modified_on = now();
+    //     $ticket->team_members = "";
+    //     $ticket->flag_to = "";
+    //     $ticket->status =  $request->status;
+    //     $ticket->status =  1;
+    //     $ticket->start_date =  now();
+    //     $ticket->created_on =  now();
+    //     $ticket->is_client =  0;
+    //     $ticket->email_cc_list =  "";
+    //     $ticket->ip_address =  "";
+    //     $ticket->flag_to = $request->assignedTo;
+    //     $ticket->attachment=$fileName;
+        
+
+    //     // Handle file upload for attachment
+    //     // if ($request->hasFile('attachment')) {
+    //     //     $fileName = time() . '_' . $request->attachment->getClientOriginalName();
+    //     //     $filePath = $request->attachment->storeAs('images/ticket_attachments', $fileName, 'public');
+
+    //     //     // Store the file path in the database
+    //     //     $ticket->attachment = $filePath;
+    //     // }
+
+    //     // Save the ticket
+    //     $ticket->save();
+
+    //     // Redirect back with a success message
+    //     return redirect()->back()->withFlashSuccess(__('The ticket was successfully created.'));
+    // }
+
+    public function store(Request $request)
+    {
         // Create a new Ticket instance
         $ticket = new Ticket();
 
+        // Handle file upload
+        $fileName = null;
         if ($request->hasFile('attachment')) {
-            $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
-        
-            // Ensure the folder exists, create if not
+            $folderPath = public_path('images/ticket_attachments');
+            
             if (!File::exists($folderPath)) {
                 File::makeDirectory($folderPath, 0775, true, true);
             }
-        
-            // Generate a unique file name
+            
             $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
-        
-            // Move the file to the target folder
             $request->file('attachment')->move($folderPath, $fileName);
-        
-            // Delete old file if exists
-            if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
-                File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
-            }
-        
-            // Store the new file path in the database
-            $ticket->attachment = 'images/ticket_attachments/' . $fileName;
-        }else{
-            $fileName="";
         }
 
+        // Set ticket properties
         $ticket->client = $request->client;
         $ticket->title = $request->title;
         $ticket->domain = $request->domain;
@@ -241,36 +307,39 @@ class TicketController
         $ticket->project = $request->project;
         $ticket->comments = $request->description;
         $ticket->privacy = $request->privacy;
-        $ticket->comments = $request->assignedTo;
         $ticket->end_date = $request->dueDate;
         $ticket->department = $request->department;
         $ticket->created_by = Auth::id();
         $ticket->last_updated_by = Auth::id();
         $ticket->last_modified_on = now();
         $ticket->team_members = "";
-        $ticket->flag_to = "";
-        $ticket->status =  $request->status;
-        $ticket->status =  1;
-        $ticket->start_date =  now();
-        $ticket->created_on =  now();
-        $ticket->is_client =  0;
-        $ticket->email_cc_list =  "";
-        $ticket->ip_address =  "";
-        $ticket->flag_to = $request->assignedTo;
-        $ticket->attachment=$fileName;
-        
-
-        // Handle file upload for attachment
-        // if ($request->hasFile('attachment')) {
-        //     $fileName = time() . '_' . $request->attachment->getClientOriginalName();
-        //     $filePath = $request->attachment->storeAs('images/ticket_attachments', $fileName, 'public');
-
-        //     // Store the file path in the database
-        //     $ticket->attachment = $filePath;
-        // }
+        $ticket->flag_to = $request->assignedTo; // This is the assigned user ID
+        $ticket->status = 1;
+        $ticket->start_date = now();
+        $ticket->created_on = now();
+        $ticket->is_client = 0;
+        $ticket->email_cc_list = "";
+        $ticket->ip_address = "";
+        $ticket->attachment = $fileName;
 
         // Save the ticket
         $ticket->save();
+
+        // Get the logged in user and assigned user
+        $loggedInUser = Auth::user();
+        $assignedUser = User::find($request->assignedTo);
+
+        // Send email notification to assigned user
+        if ($assignedUser) {
+            Mail::to($assignedUser->email)->send(
+                new TicketAssignedNotification(
+                    $ticket->id,
+                    $ticket->title,
+                    $loggedInUser->name,
+                    $assignedUser->email
+                )
+            );
+        }
 
         // Redirect back with a success message
         return redirect()->back()->withFlashSuccess(__('The ticket was successfully created.'));
@@ -367,79 +436,152 @@ class TicketController
     }
 
 
-    // SAVE SINGLE TICKET DISCUSSION  - AUTH - SK  14-03-2025
-    public function storeTicketDiscussion(Request $request)
-    {
-        //dd($request->all());
-        // Uncomment and fix validation
-        $validated = $request->validate([
-            'comments' => 'required|string',
-            'ticket_id' => 'required|exists:isar_tickets,id',
-            'attachment' => 'nullable|file|max:2048',
-        ]);
+    // public function storeTicketDiscussion(Request $request)
+    // {
+    //     //dd($request->all());
+    //     // Uncomment and fix validation
+    //     $validated = $request->validate([
+    //         'comments' => 'required|string',
+    //         'ticket_id' => 'required|exists:isar_tickets,id',
+    //         'attachment' => 'nullable|file|max:2048',
+    //     ]);
     
-        // Handle file upload
-        $attachmentPath = null;
-        if ($request->hasFile('attachment')) {
-            $attachmentPath = $request->file('attachment')->store('attachments', 'public');
-        }
+    //     // Handle file upload
+    //     $attachmentPath = null;
+    //     if ($request->hasFile('attachment')) {
+    //         $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+    //     }
 
-        if(!empty($request->assignedTo))
-        {
-            $ticket = Ticket::findOrFail($validated['ticket_id']);
-            $ticket->flag_to = $request->assignedTo;
+    //     if(!empty($request->assignedTo))
+    //     {
+    //         $ticket = Ticket::findOrFail($validated['ticket_id']);
+    //         $ticket->flag_to = $request->assignedTo;
     
-            // Save the updated ticket
-            $ticket->save();
-        }
+    //         // Save the updated ticket
+    //         $ticket->save();
+    //     }
 
-        if(!empty($request->status))
-        {
-            $ticket = Ticket::findOrFail($validated['ticket_id']);
-            $ticket->status = $request->status;
+    //     if(!empty($request->status))
+    //     {
+    //         $ticket = Ticket::findOrFail($validated['ticket_id']);
+    //         $ticket->status = $request->status;
     
-            // Save the updated ticket
-            $ticket->save();
-        }
+    //         // Save the updated ticket
+    //         $ticket->save();
+    //     }
 
-        if ($request->hasFile('attachment')) {
-            $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
+    //     if ($request->hasFile('attachment')) {
+    //         $folderPath = public_path('images/ticket_attachments'); // Path to store files in public folder
         
-            // Ensure the folder exists, create if not
-            if (!File::exists($folderPath)) {
-                File::makeDirectory($folderPath, 0775, true, true);
-            }
+    //         // Ensure the folder exists, create if not
+    //         if (!File::exists($folderPath)) {
+    //             File::makeDirectory($folderPath, 0775, true, true);
+    //         }
         
-            // Generate a unique file name
-            $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+    //         // Generate a unique file name
+    //         $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
         
-            // Move the file to the target folder
-            $request->file('attachment')->move($folderPath, $fileName);
+    //         // Move the file to the target folder
+    //         $request->file('attachment')->move($folderPath, $fileName);
         
-            // Delete old file if exists
-            if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
-                File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
-            }
+    //         // Delete old file if exists
+    //         if (!empty($ticket->attachment) && File::exists(public_path('images/ticket_attachments/'.$ticket->attachment))) {
+    //             File::delete(public_path('images/ticket_attachments/'.$ticket->attachment));
+    //         }
         
-            // Store the new file path in the database
-            $ticket->attachment = 'images/ticket_attachments/' . $fileName;
-        }else{
-            $fileName="";
-        }
+    //         // Store the new file path in the database
+    //         $ticket->attachment = 'images/ticket_attachments/' . $fileName;
+    //     }else{
+    //         $fileName="";
+    //     }
     
-        TicketComment::create([
-            'user_id' => Auth::id(),
-            'ticket_id' => $validated['ticket_id'],
-            'comments' => $validated['comments'],
-            'attahcement' => $fileName, // Match DB column name
-            'created_on' => now(),
-            'last_modified_on' => now(),
-            'ip_address' => $request->ip(),
-        ]);
+    //     TicketComment::create([
+    //         'user_id' => Auth::id(),
+    //         'ticket_id' => $validated['ticket_id'],
+    //         'comments' => $validated['comments'],
+    //         'attahcement' => $fileName, // Match DB column name
+    //         'created_on' => now(),
+    //         'last_modified_on' => now(),
+    //         'ip_address' => $request->ip(),
+    //     ]);
 
        
-        return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
+    //     return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
        
-    }
+    // }
+
+
+        
+        // SAVE SINGLE TICKET DISCUSSION  - AUTH - SK  14-03-2025
+        public function storeTicketDiscussion(Request $request)
+        {
+            $validated = $request->validate([
+                'comments' => 'required|string',
+                'ticket_id' => 'required|exists:isar_tickets,id',
+                'attachment' => 'nullable|file|max:2048',
+            ]);
+
+            // Handle file upload
+            $attachmentPath = null;
+            if ($request->hasFile('attachment')) {
+                $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+            }
+
+            $ticket = Ticket::findOrFail($validated['ticket_id']);
+            $loggedInUser = Auth::user();
+
+            // an email is only sent when a user is being assigned to the ticket. Update assignedTo if provided
+            if (!empty($request->assignedTo)) {
+                $ticket->flag_to = $request->assignedTo;  // retrieves the ID of the user being assigned to the ticket from the form data submitted in the request.
+                $ticket->save();
+
+                // Get assigned user details
+                $assignedUser = User::find($request->assignedTo); //object will contain all the information about the assigned user
+                
+                // Send email notification
+                if ($assignedUser) {
+                    Mail::to($assignedUser->email)->send(
+                        new TicketAssignedNotification(
+                            $ticket->id,
+                            $ticket->title,
+                            $loggedInUser->name,
+                            $assignedUser->email
+                        )
+                    );
+                }
+            }
+
+            // Update status if provided
+            if (!empty($request->status)) {
+                $ticket->status = $request->status;
+                $ticket->save();
+            }
+
+            // Handle attachment
+            $fileName = null;
+            if ($request->hasFile('attachment')) {
+                $folderPath = public_path('images/ticket_attachments');
+                
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0775, true, true);
+                }
+                
+                $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+                $request->file('attachment')->move($folderPath, $fileName);
+            }
+
+            // Create comment
+            TicketComment::create([
+                'user_id' => $loggedInUser->id,
+                'ticket_id' => $validated['ticket_id'],
+                'comments' => $validated['comments'],
+                'attahcement' => $fileName,
+                'created_on' => now(),
+                'last_modified_on' => now(),
+                'ip_address' => $request->ip(),
+            ]);
+
+            return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
+        }
 
 }

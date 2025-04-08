@@ -89,28 +89,30 @@
             </li> --}}
 
             <!-- Report adding section -->
-            <li class="collapsed">
-                <a class="m-link {{ Request::segment(2)=='report' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#report-Components" href="">
-                    <i class="icofont-chart-growth"></i> <span>Reports</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
-                <!-- Menu: Sub menu ul -->
-                <ul class="sub-menu  {{ Request::segment(2)=='report' ? 'collapsed show' : 'collapse' }}" id="report-Components">
-                    <li><a class="ms-link {{ Request::segment(3) == 'billable_non_billable_reports' ? 'active' : '' }}" href="{{ route('admin.billable_nonbillable_report') }}"> <span>Billable NonBillable Reports</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'Active-ticket' ? 'active' : '' }}" href="{{ route('admin.reports.active-tickets') }}"> <span>Active Ticket Reports</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'consolidated_daily_reports' ? 'active' : '' }}" href="{{ route('admin.consolidated_dailyreport') }}"> <span>Consolidated Daily Report</span></a></li>
+            @if(auth()->user()->role == 1)  <!-- Only show for admin users -->
+                <li class="collapsed">
+                    <a class="m-link {{ Request::segment(2)=='report' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#report-Components" href="">
+                        <i class="icofont-chart-growth"></i> <span>Reports</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
+                    <!-- Menu: Sub menu ul -->
+                    <ul class="sub-menu  {{ Request::segment(2)=='report' ? 'collapsed show' : 'collapse' }}" id="report-Components">
+                        <li><a class="ms-link {{ Request::segment(3) == 'billable_non_billable_reports' ? 'active' : '' }}" href="{{ route('admin.billable_nonbillable_report') }}"> <span>Billable NonBillable Reports</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'Active-ticket' ? 'active' : '' }}" href="{{ route('admin.reports.active-tickets') }}"> <span>Active Ticket Reports</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'consolidated_daily_reports' ? 'active' : '' }}" href="{{ route('admin.consolidated_dailyreport') }}"> <span>Consolidated Daily Report</span></a></li>
 
-                    {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'attendance-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance-employee') }}"> <span>Attendance Employees </span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'attendance' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance') }}"> <span>Attendance</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'leave-request' ? 'active' : '' }}" href="{{ route('admin.our-employee.leave-request') }}"> <span>Leave Request</span></a></li>
-                    <li><a class="ms-link {{ Request::segment(3) == 'department' ? 'active' : '' }}" href="{{ route('admin.our-employee.department') }}"> <span>Department</span></a></li> --}}
-                </ul>
-            </li>
-
+                        {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'attendance-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance-employee') }}"> <span>Attendance Employees </span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'attendance' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance') }}"> <span>Attendance</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'leave-request' ? 'active' : '' }}" href="{{ route('admin.our-employee.leave-request') }}"> <span>Leave Request</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'department' ? 'active' : '' }}" href="{{ route('admin.our-employee.department') }}"> <span>Department</span></a></li> --}}
+                    </ul>
+                </li>
+            @endif
             {{-- Clients side bar --}}
-            <li><a class="m-link {{ Request::segment(3) == 'our-client' ? 'active' : '' }}" href="{{ route('admin.our-client.clients') }}"><i
+            @if(auth()->user()->role == 1)  <!-- Only show for admin users -->
+              <li><a class="m-link {{ Request::segment(3) == 'our-client' ? 'active' : '' }}" href="{{ route('admin.our-client.clients') }}"><i
                 class="icofont-user-male"></i> <span>Clients</span></a></li>
-           
+            @endif
             {{-- <li class="collapsed">
                 <a class="m-link {{ Request::segment(2)=='our-client' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#client-Components" href=""><i
                         class="icofont-user-male"></i> <span>Our Clients</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a> --}}
@@ -123,9 +125,10 @@
 
 
             {{--  USERS SIDEBAR --}}
-            <li><a class="m-link {{ Request::segment(3) == 'our-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.members') }}">
-                <i class="icofont-users-alt-5"></i> <span>Members</span></a></li>
-            
+            @if(auth()->user()->role == 1)  <!-- Only show for admin users -->
+                <li><a class="m-link {{ Request::segment(3) == 'our-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.members') }}">
+                    <i class="icofont-users-alt-5"></i> <span>Members</span></a></li>
+            @endif
 
             {{-- <li class="collapsed">
                 <a class="m-link {{ Request::segment(2)=='our-employee' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#emp-Components" href=""><i
