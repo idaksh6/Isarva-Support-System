@@ -32,6 +32,31 @@
         right: 1px;
         width: 20px;
     }
+
+    .dd-handle[data-assigned-to-me="false"] {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Style for non-editable tasks */
+.dd-handle[data-assigned-to-me="false"] {
+    cursor: not-allowed;
+    opacity: 0.8;
+    position: relative;
+}
+
+/* Optional overlay for non-editable tasks */
+.dd-handle[data-assigned-to-me="false"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+    pointer-events: none;
+}
 </style>
 
 @if (session()->has('flash_success_project'))
@@ -1039,6 +1064,7 @@
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#edittask"
+                                                        data-assigned-to-me="{{ $task->isAssignedToMe ? 'true' : 'false' }}"
                                                          style=" border-bottom: 2px solid #ffc107 !important;">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
@@ -1093,6 +1119,7 @@
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#edittask"
+                                                        data-assigned-to-me="{{ $task->isAssignedToMe ? 'true' : 'false' }}"
                                                          style="border-bottom: 2px solid #FFAA8A !important">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
@@ -1148,6 +1175,7 @@
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#edittask"
+                                                        data-assigned-to-me="{{ $task->isAssignedToMe ? 'true' : 'false' }}"
                                                          style="border-bottom: 2px solid #28a745 !important">
                                                         <div class="task-info d-flex align-items-center gap-3 justify-content-between">
                                                             <h6 class="light-success-bg py-1 px-2 rounded-1 d-inline-block fw-bold small-14 mb-0">
@@ -1257,9 +1285,22 @@
             });
              
 
-    $('#editproject').on('shown.bs.modal', function () {
-            $(this).find('.select2').select2({
-                     dropdownParent: $('#editproject')
+            $(document).ready(function() {
+                // Initialize Select2 for elements outside modals
+                $('.select2:not(.modal .select2)').select2({
+                    placeholder: "Select an option",
+                    allowClear: true,
+                    width: 'resolve'
+                });
+                
+                // Initialize Select2 for modal elements when modal is shown
+                $(document).on('shown.bs.modal', '.modal', function() {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $(this),
+                        placeholder: "Select an option",
+                        allowClear: true,
+                        width: 'resolve'
+                    });
                 });
             });
 
@@ -1288,52 +1329,55 @@
 
                             url: url, // Use the dynamically generated URL
                             method: 'GET',
-                            success: function (response) {    // callback function that runs only if the request is successful.
-                                console.log(response);
-                                // Populate the modal form with the fetched data from db column
-                                $('#proj_client').val(response.client);
-                                $('#proj_name').val(response.project_name);
-                                $('#proj_category').val(response.category);
-                                $('#project_image').val(response.project_image);
-                                $('#proj_manager').val(response.manager);
-                                $('#proj_team_leader').val(response.team_leader);
-                                // $('#teamMembersInput').val(response.team_members);
-                                $('#proj_start_date').val(response.start_date);
-                                $('#proj_end_date').val(response.end_date);
-                                $('#proj_department').val(response.department);
-                                $('#proj_status').val(response.status);
-                                $('#proj_budget').val(response.budget);
-                                $('#proj_priority').val(response.priority);
-                                $('#proj_type').val(response.type);
-                                $('#proj_estimation').val(response.estimation);
-                                $('#proj_biiling_company').val(response.biiling_company);
-                                $('#proj_description').val(response.description);
-                                
-                                console.log("Team Members from Response:", response.team_members);
-                                prefillEditTeamMembers(response.team_members);
+                            success: function (response) {    
+                                    console.log(response);
+                                    // Populate the modal form with the fetched data from db column
+                                    $('#proj_client').val(response.client).trigger('change');
+                                    $('#proj_name').val(response.project_name);
+                                    $('#proj_category').val(response.category);
+                                    $('#project_image').val(response.project_image);
+                                    $('#proj_manager').val(response.manager).trigger('change');
+                                    $('#proj_team_leader').val(response.team_leader).trigger('change');
+                                    $('#proj_start_date').val(response.start_date);
+                                    $('#proj_end_date').val(response.end_date);
+                                    $('#proj_department').val(response.department);
+                                    $('#proj_status').val(response.status);
+                                    $('#proj_budget').val(response.budget);
+                                    $('#proj_priority').val(response.priority);
+                                    $('#proj_type').val(response.type);
+                                    $('#proj_estimation').val(response.estimation);
+                                    $('#proj_biiling_company').val(response.biiling_company);
+                                    $('#proj_description').val(response.description);
+                                    
+                                    console.log("Team Members from Response:", response.team_members);
+                                    prefillEditTeamMembers(response.team_members);
 
-                                // Set the form action URL for updating
-                                $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
-                                
-                                // Display the existing profile image
-                                if (response.profile_image) {
-                                    $('#proj_current-profile-image img')
-                                        .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
-                                        .show(); // Show the image
-                                } else {
-                                    $('#proj_current-profile-image img').hide(); // Hide the image if no profile image exists
+                                    // Set the form action URL for updating
+                                    $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
+                                    
+                                    // Display the existing profile image
+                                    if (response.profile_image) {
+                                        $('#proj_current-profile-image img')
+                                            .attr('src', "{{ asset('') }}" + response.profile_image)
+                                            .show();
+                                    } else {
+                                        $('#proj_current-profile-image img').hide();
+                                    }
+
+                                    // Dynamically populate the Estimation Change Log table
+                                    populateEstimationChangeLogTable(response.estimation_change_logs);
+
+                                    // Reinitialize Select2 after data is loaded
+                                    $('#editproject').find('.select2').select2({
+                                        dropdownParent: $('#editproject')
+                                    });
+                                },
+                                    error: function (xhr) {
+                                    console.error('Error fetching Project data:', xhr.responseText);
                                 }
 
-                                // Dynamically populate the Estimation Change Log table
-                                populateEstimationChangeLogTable(response.estimation_change_logs);
-
-                            },
-                            error: function (xhr) {
-                                console.error('Error fetching Project data:', xhr.responseText);
-                            }
-
+                            });
                         });
-                    });
                 });
 
                  
@@ -1390,29 +1434,33 @@
                     });
 
             // Task edit AJAX code
-            $(document).ready(function () {
-                // When edit button is clicked
-                $('.edit-task-btn').on('click', function () {
-                    var taskId = $(this).data('id');
-                    var url = editTaskRoute.replace(':id', taskId);
+           // Task edit AJAX code
+$(document).ready(function () {
+    // When edit button is clicked
+    $('.edit-task-btn').on('click', function () {
+        var taskId = $(this).data('id');
+        var url = editTaskRoute.replace(':id', taskId);
 
-                    // Fetch Task data via AJAX
-                    $.ajax({
-                        url: url,
-                        method: 'GET',
-                        success: function (response) {
-                            console.log('AJAX Response:', response); // Debugging
+        // Fetch Task data via AJAX
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (response) {
+                if (response.success === false) {
+                    // Show error message if unauthorized
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Access Denied',
+                        text: response.message || 'You can only edit tasks assigned to you',
+                        showConfirmButton: true
+                    });
+                    return;
+                }
 
-                            // Access the nested 'task' object in the response
-                            var task = response.task;
-
-                            // Debugging: Check the values of project_id and task_id
-                            console.log('Project ID:', task.project_id);
-                            console.log('Task ID:', task.id);
-
-                            // Set the hidden fields
-                            $('#edit_project_id').val(task.project_id);
-                            $('#edit_task_id').val(task.id);
+                // Existing success handling code...
+                var task = response.task;
+                $('#edit_project_id').val(task.project_id);
+                $('#edit_task_id').val(task.id);
 
                             // Debugging: Verify the hidden fields are set correctly
                             console.log('Form Project ID:', $('#edit_project_id').val());
@@ -1435,62 +1483,64 @@
 
                             // Ensure modal is shown after data is set
                             $('#edittask').modal('show');
-                        },
-                        error: function (xhr) {
-                            console.error('Error fetching task data:', xhr.responseText);
-                        }
-                    });
+            },
+            error: function (xhr) {
+                console.error('Error fetching task data:', xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to fetch task data',
+                    showConfirmButton: true
                 });
+            }
+        });
+    });
 
-                // Handle task edit form submission validation section
-                $('#editTaskForm').on('submit', function (e) {
-                    e.preventDefault(); // Prevent default form submission
 
-                    // Debugging: Log the form action URL
-                    console.log('Form Action URL:', $(this).attr('action'));
+              // Handle task edit form submission
+    $('#editTaskForm').on('submit', function (e) {
+        e.preventDefault();
 
-                    // Debugging: Log the form data
-                    var formData = $(this).serialize();
-                    console.log('Form Data:', formData);
-
-                    // Submit the form via AJAX
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        method: 'PUT',
-                        data: formData,
-                        success: function (response) {
-                            console.log('Task updated successfully:', response);
-                            // Handle success (e.g., close modal, show success message)
-
-                            
-                            // Show SweetAlert2 pop-up
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Task updated successfully!',
-                                showConfirmButton: false,
-                                timer: 2000 // Auto-close after 2 seconds
-                            });
-
-                            // Close the edit modal
-                            $('#edittask').modal('hide');
-
-                            // Optionally, reload the page to reflect changes
-                            setTimeout(function () {
-                                location.reload();
-                            }, 2000); // Reload after 2 seconds
-
-                            $('#edittask').modal('hide');
-                            // location.reload(); // Reload the page to reflect changes
-                        },
-                        error: function (xhr) {
-                            console.error('Error updating task:', xhr.responseText);
-                            // Handle error (e.g., show error message)
-                        }
-                    });
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'PUT',
+            data: $(this).serialize(),
+            success: function (response) {
+                // Existing success handling...
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Task updated successfully!',
+                    showConfirmButton: false,
+                    timer: 2000
                 });
-            });
-            
+                $('#edittask').modal('hide');
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            },
+            error: function (xhr) {
+                if (xhr.status === 403) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Access Denied',
+                        text: xhr.responseJSON.message || 'You can only edit tasks assigned to you',
+                        showConfirmButton: true
+                    });
+                    $('#edittask').modal('hide');
+                } else {
+                    console.error('Error updating task:', xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update task',
+                        showConfirmButton: true
+                    });
+                }
+            }
+        });
+    });
+});
 
 
 
@@ -1635,49 +1685,105 @@
 
 
                     //  Test Case Drag and DROP JS
-                    $(document).ready(function() {
-                    console.log("Script loaded!"); // Check if this appears in the console
+                //     $(document).ready(function() {
+                //     console.log("Script loaded!"); // Check if this appears in the console
 
-                    $('.dd-list').sortable({
-                        connectWith: '.dd-list',
-                        items: '> .task-item',
-                        update: function(event, ui) {
-                            var taskId = ui.item.data('id');
-                            var newStatus = ui.item.closest('.col-xxl-4').data('status');
+                //     $('.dd-list').sortable({
+                //         connectWith: '.dd-list',
+                //         items: '> .task-item',
+                //         update: function(event, ui) {
+                //             var taskId = ui.item.data('id');
+                //             var newStatus = ui.item.closest('.col-xxl-4').data('status');
 
-                            console.log('Task ID:', taskId);
-                            console.log('New Status:', newStatus);
+                //             console.log('Task ID:', taskId);
+                //             console.log('New Status:', newStatus);
 
-                            $.ajax({
-                                url: "{{ route('admin.task.updateStatus') }}",
-                                method: 'POST',
-                                data: {
-                                    task_id: taskId,
-                                    status: newStatus,
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(response) {
-                                    console.log('Task status updated successfully');
-                                    console.log(response);
+                //             $.ajax({
+                //                 url: "{{ route('admin.task.updateStatus') }}",
+                //                 method: 'POST',
+                //                 data: {
+                //                     task_id: taskId,
+                //                     status: newStatus,
+                //                     _token: '{{ csrf_token() }}'
+                //                 },
+                //                 success: function(response) {
+                //                     console.log('Task status updated successfully');
+                //                     console.log(response);
 
-                                    // Hide/show empty state message
-                                    var list = ui.item.closest('.dd-list');
-                                    if (list.find('.task-item').length > 0) {
-                                        list.find('.empty-state').hide();
-                                    } else {
-                                        list.find('.empty-state').show();
-                                    }
-                                },
-                                error: function(xhr) {
-                                    console.log('Error updating task status');
-                                    console.log(xhr.responseText);
-                                }
-                            });
+                //                     // Hide/show empty state message
+                //                     var list = ui.item.closest('.dd-list');
+                //                     if (list.find('.task-item').length > 0) {
+                //                         list.find('.empty-state').hide();
+                //                     } else {
+                //                         list.find('.empty-state').show();
+                //                     }
+                //                 },
+                //                 error: function(xhr) {
+                //                     console.log('Error updating task status');
+                //                     console.log(xhr.responseText);
+                //                 }
+                //             });
+                //         }
+                //     });
+                // });
+
+                $(document).ready(function () {
+                $('.dd-list').sortable({
+                    connectWith: '.dd-list',
+                    items: '> .task-item',
+                    cancel: '.not-allowed', // <-- Prevent drag for these
+                    start: function (event, ui) {
+                        var isAssignedToMe = ui.item.find('.dd-handle').data('assigned-to-me');
+                        if (!isAssignedToMe) {
+                            $(this).sortable('cancel');
                         }
-                    });
+                    },
+                    update: function (event, ui) {
+                        var taskId = ui.item.data('id');
+                        var newStatus = ui.item.closest('.col-xxl-4').data('status');
+                        var isAssignedToMe = ui.item.find('.dd-handle').data('assigned-to-me');
+
+                        if (!isAssignedToMe) {
+                            return false;
+                        }
+
+                        $.ajax({
+                            url: "{{ route('admin.task.updateStatus') }}",
+                            method: 'POST',
+                            data: {
+                                task_id: taskId,
+                                status: newStatus,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                console.log('Task status updated successfully');
+                                console.log(response);
+
+                                var list = ui.item.closest('.dd-list');
+                                if (list.find('.task-item').length > 0) {
+                                    list.find('.empty-state').hide();
+                                } else {
+                                    list.find('.empty-state').show();
+                                }
+                            },
+                            error: function (xhr) {
+                                console.log('Error updating task status');
+                                console.log(xhr.responseText);
+                            }
+                        });
+                    }
                 });
 
-     
+                // Add not-allowed class to unauthorized tasks
+                $('.task-item').each(function () {
+                    var isAssignedToMe = $(this).find('.dd-handle').data('assigned-to-me');
+                    if (!isAssignedToMe) {
+                        $(this).addClass('not-allowed');
+                    }
+                });
+            });
+
+                
                 //----- AJAX for Task Add Modal form to show validation error---
                 $(document).ready(function () {
                     // Handle form submission

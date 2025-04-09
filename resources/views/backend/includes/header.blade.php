@@ -199,9 +199,11 @@
                             </div>
                             <div class="list-group m-2 ">
                                 {{-- <a href="{{ route('admin.project.tasks') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-tasks fs-5 me-3"></i>My Task</a> --}}
-                                <a href="{{ route('admin.our-employee.members') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user-group fs-6 me-3"></i>Members</a>
-                                {{-- <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a> --}}
-                                <div><hr class="dropdown-divider border-dark"></div>
+                                @if(auth()->user()->role == 1)
+                                    <a href="{{ route('admin.our-employee.members') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user-group fs-6 me-3"></i>Members</a>
+                                    {{-- <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a> --}}
+                                    <div><hr class="dropdown-divider border-dark"></div>
+                                @endif
                                 {{-- <a href="{{route('admin.authentication.signup')}}" class="list-group-item list-group-item-action border-0 "><i class="icofont-contact-add fs-5 me-3"></i>Add personal account</a> --}}
                                 <a href="{{ route('frontend.auth.logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>Signout</a>
                                 <!-- In your dropdown -->

@@ -49,16 +49,73 @@ class TaskController
 
        
 
+        // public function tasksByProject($id)
+        // {
+        //     $project = Project::find($id);
+        
+        //     if (!$project) {
+        //         abort(404, 'Project not found');
+        //     }
+        
+        //     // Fetch only tasks related to the project
+        //     $tasks = Task::where('project_id', $id)->get();
+        
+        //     // Group tasks **by status** only for this project
+        //     $tasksByStatus = $tasks->groupBy('status');
+        
+        //     // Fetch related data
+        //     $internalDocs = ProjectInternalDocument::where('project_id', $id)->orderBy('raw_index')->get();
+        //     $assets = ProjectAsset::where('project_id', $id)->get();
+        
+        //     // Fetch uploaded files for the project
+        //     $uploadedFiles = ProjectAsset::where('project_id', $id)->get();
+
+        //      // Fetched Worked Hours directly from ProjectController
+        //     $workedHours = $this->projectController->getWorkedHours($id);
+
+        //      //  Calculate Total Worked Hours
+        //     $totalWorkedHours = $workedHours->sum('spent_hrs'); // Summing the spent hours
+
+        //     // Fetch Estimated Hours from `si_projects`
+        //     $estimatedHours = $project->estimation;
+
+        
+
+        //     // Calculate Remaining or Overflow Hours
+        //     $remainingHours = $estimatedHours - $totalWorkedHours;
+        //     $statusColor = ($remainingHours < 0) ? 'red' : 'blue';
+        //     $statusText = ($remainingHours < 0) ? 'overflow' : 'remaining';
+        //     $remainingHours = abs($remainingHours); // Convert negative to positive for display
+
+        //      //  Calculate Spent Days (Count of unique dates in `si_daily_report_fields`)
+        //     $spentDays = DB::table('si_daily_report_fields')
+        //     ->where('project_id', $id)
+        //     ->select(DB::raw('COUNT(DISTINCT DATE(created_at)) as spent_days'))
+        //     ->first()->spent_days ?? 0; // Default to 0 if no data found
+
+        
+        //     return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
+        //     'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays'));
+        // }
+
         public function tasksByProject($id)
         {
             $project = Project::find($id);
-        
+    
             if (!$project) {
                 abort(404, 'Project not found');
             }
-        
+            
+            // Get the current authenticated user's ID
+            $currentUserId = auth()->id();
+            
             // Fetch only tasks related to the project
             $tasks = Task::where('project_id', $id)->get();
+            
+            // Add a flag to each task indicating if it's assigned to the current user
+            $tasks->each(function ($task) use ($currentUserId) {
+                $task->isAssignedToMe = ($task->assigned_to == $currentUserId);
+            });
         
             // Group tasks **by status** only for this project
             $tasksByStatus = $tasks->groupBy('status');
@@ -87,7 +144,7 @@ class TaskController
             $statusText = ($remainingHours < 0) ? 'overflow' : 'remaining';
             $remainingHours = abs($remainingHours); // Convert negative to positive for display
 
-             // ✅ Calculate Spent Days (Count of unique dates in `si_daily_report_fields`)
+             //  Calculate Spent Days (Count of unique dates in `si_daily_report_fields`)
             $spentDays = DB::table('si_daily_report_fields')
             ->where('project_id', $id)
             ->select(DB::raw('COUNT(DISTINCT DATE(created_at)) as spent_days'))
@@ -157,37 +214,54 @@ class TaskController
     }
 
 
-        public function edit($id)
-        {
-            $task = Task::find($id);
-
-            if (!$task) {
-                return response()->json(['success' => false, 'message' => 'Task not found'], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'task' => [
-                    'id' => $task->id, // Include task ID
-                    'project_id' => $task->project_id, // Include project ID
-                    'task_name' => $task->task_name,
-                    'task_category' => $task->task_category,
-                    'description' => $task->description,
-                    'end_date' => $task->end_date,
-                    'task_assigned_for' => $task->assigned_to,
-                    'estimation_hrs' => $task->estimation_hrs,
-                ]
-            ]);
+    public function edit($id)
+    {
+        $task = Task::find($id);
+    
+        if (!$task) {
+            return response()->json(['success' => false, 'message' => 'Task not found'], 404);
         }
+    
+        // Check if the current user is assigned to this task
+        if ($task->assigned_to != auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized - You can only edit tasks assigned to you'
+            ], 403);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'task' => [
+                'id' => $task->id,
+                'project_id' => $task->project_id,
+                'task_name' => $task->task_name,
+                'task_category' => $task->task_category,
+                'description' => $task->description,
+                'end_date' => $task->end_date,
+                'task_assigned_for' => $task->assigned_to,
+                'estimation_hrs' => $task->estimation_hrs,
+            ]
+        ]);
+    }
   
 
 
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-        // Fetch the task by ID
         $task = Task::findOrFail($id);
-
+    
+        // Check if the current user is assigned to this task
+        if ($task->assigned_to != auth()->id()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized - You can only edit tasks assigned to you'
+                ], 403);
+            }
+            return redirect()->back()->with('error', 'Unauthorized - You can only edit tasks assigned to you');
+        }
+    
         // Validation
         $request->validate([
             'project_id' => 'required|integer|exists:si_projects,id', // Ensure project_id is required
@@ -240,64 +314,6 @@ class TaskController
 
 
 
-    // Internal Docs store method
-    // public function storeInternalDoc(Request $request)
-    //     {
-    //         $request->validate([
-    //             'project_id' => 'required|integer|exists:si_projects,id',
-    //             'id' => 'nullable|array',
-    //             'id.*' => 'nullable|integer|exists:si_project_internal_documents,id',
-    //             'date' => 'required|array',
-    //             'date.*' => 'required|date',
-    //             'title' => 'required|array',
-    //             'title.*' => 'required|string|max:255',
-    //             'link' => 'nullable|array',
-    //             'link.*' => 'nullable|string|max:255',
-    //             'comments' => 'nullable|array',
-    //             'comments.*' => 'nullable|string|max:255',
-    //             'deleted_ids' => 'nullable|array',
-    //             'deleted_ids.*' => 'nullable|integer|exists:si_project_internal_documents,id',
-    //         ]);
-
-    //         $projectId = $request->input('project_id');
-    //         $ids = $request->input('id', []);
-    //         $dates = $request->input('date');
-    //         $titles = $request->input('title');
-    //         $links = $request->input('link', []);
-    //         $comments = $request->input('comments', []);
-    //         $deletedIds = $request->input('deleted_ids', []);
-    //         $createdBy = Auth::id();
-    //         $updatedBy = Auth::id();
-
-    //         // Delete rows that have been marked as deleted
-    //         if (!empty($deletedIds)) {
-    //             ProjectInternalDocument::whereIn('id', $deletedIds)->delete();
-    //         }
-
-    //         // Update or create remaining rows
-    //         foreach ($dates as $index => $date) {
-    //             $data = [
-    //                 'project_id' => $projectId,
-    //                 'date' => $date,
-    //                 'title' => $titles[$index],
-    //                 'link' => $links[$index] ?? null,
-    //                 'comments' => $comments[$index] ?? null,
-    //                 'raw_index' => $index + 1,
-    //                 'updated_by' => $updatedBy,
-    //             ];
-
-    //             if (!empty($ids[$index])) {
-    //                 // Update existing row
-    //                 ProjectInternalDocument::where('id', $ids[$index])->update($data);
-    //             } else {
-    //                 // Insert new row
-    //                 $data['created_by'] = $createdBy;
-    //                 ProjectInternalDocument::create($data);
-    //             }
-    //         }
-
-    //         return redirect()->back()->with('flash_success_docs', 'Internal documents saved successfully.');
-    //     }
     public function storeInternalDoc(Request $request)
     {
         $request->validate([
@@ -370,11 +386,30 @@ class TaskController
 
 
         // Drag and Drop Status Update code
+        // public function updateStatus(Request $request)
+        // {
+        //     $task = Task::find($request->task_id);
+            
+        //     if ($task) {
+        //         $task->status = $request->status;
+        //         $task->save();
+            
+        //         return response()->json(['success' => true, 'message' => 'Task status updated!']);
+        //     } else {
+        //         return response()->json(['success' => false, 'message' => 'Task not found.'], 404);
+        //     }
+        // }
+
         public function updateStatus(Request $request)
         {
             $task = Task::find($request->task_id);
             
             if ($task) {
+                // Check if the task is assigned to the current user
+                if ($task->assigned_to != auth()->id()) {
+                    return response()->json(['success' => false, 'message' => 'You can only update tasks assigned to you.'], 403);
+                }
+                
                 $task->status = $request->status;
                 $task->save();
             
@@ -383,7 +418,7 @@ class TaskController
                 return response()->json(['success' => false, 'message' => 'Task not found.'], 404);
             }
         }
-                
+                        
 
 
     // Store function for task asset section

@@ -74,7 +74,7 @@
                     <div class="mb-3">
                         <label class="form-label">Project Category</label>
                         <select class="form-select" name="category" aria-label="Default select Project Category">
-                            <option selected>none</option>
+                            <option selected>None</option>
                             <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Website Design</option>
                             <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>App Development</option>
                             <option value="3" {{ old('category') == '3' ? 'selected' : '' }}>Quality Assurance</option>
@@ -981,11 +981,30 @@
                     });
              
 
-            $('#editproject').on('shown.bs.modal', function () {
+            // $('#editproject').on('shown.bs.modal', function () {
+            //         $(this).find('.select2').select2({
+            //             dropdownParent: $('#editproject')
+            //         });
+            //     });
+            // Replace with this initialization code:
+            $(document).ready(function() {
+                // Initialize Select2 for elements outside modals
+                $('.select2:not(.modal .select2)').select2({
+                    placeholder: "Select an option",
+                    allowClear: true,
+                    width: 'resolve'
+                });
+                
+                // Initialize Select2 for modal elements when modal is shown
+                $(document).on('shown.bs.modal', '.modal', function() {
                     $(this).find('.select2').select2({
-                        dropdownParent: $('#editproject')
+                        dropdownParent: $(this),
+                        placeholder: "Select an option",
+                        allowClear: true,
+                        width: 'resolve'
                     });
                 });
+            });
 
 </script>
 
@@ -1133,16 +1152,15 @@
 
                                 url: url, // Use the dynamically generated URL
                                 method: 'GET',
-                                success: function (response) {    // callback function that runs only if the request is successful.
+                                success: function (response) {    
                                     console.log(response);
                                     // Populate the modal form with the fetched data from db column
-                                    $('#proj_client').val(response.client);
+                                    $('#proj_client').val(response.client).trigger('change');
                                     $('#proj_name').val(response.project_name);
                                     $('#proj_category').val(response.category);
                                     $('#project_image').val(response.project_image);
-                                    $('#proj_manager').val(response.manager);
-                                    $('#proj_team_leader').val(response.team_leader);
-                                    // $('#teamMembersInput').val(response.team_members);
+                                    $('#proj_manager').val(response.manager).trigger('change');
+                                    $('#proj_team_leader').val(response.team_leader).trigger('change');
                                     $('#proj_start_date').val(response.start_date);
                                     $('#proj_end_date').val(response.end_date);
                                     $('#proj_department').val(response.department);
@@ -1157,23 +1175,27 @@
                                     console.log("Team Members from Response:", response.team_members);
                                     prefillEditTeamMembers(response.team_members);
 
-                                        // Set the form action URL for updating
-                                        $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
+                                    // Set the form action URL for updating
+                                    $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
                                     
-                                        // Display the existing profile image
+                                    // Display the existing profile image
                                     if (response.profile_image) {
                                         $('#proj_current-profile-image img')
-                                            .attr('src', "{{ asset('') }}" + response.profile_image) // Set the image source
-                                            .show(); // Show the image
+                                            .attr('src', "{{ asset('') }}" + response.profile_image)
+                                            .show();
                                     } else {
-                                        $('#proj_current-profile-image img').hide(); // Hide the image if no profile image exists
+                                        $('#proj_current-profile-image img').hide();
                                     }
 
                                     // Dynamically populate the Estimation Change Log table
-                                        populateEstimationChangeLogTable(response.estimation_change_logs);
+                                    populateEstimationChangeLogTable(response.estimation_change_logs);
 
+                                    // Reinitialize Select2 after data is loaded
+                                    $('#editproject').find('.select2').select2({
+                                        dropdownParent: $('#editproject')
+                                    });
                                 },
-                                error: function (xhr) {
+                                    error: function (xhr) {
                                     console.error('Error fetching Project data:', xhr.responseText);
                                 }
 
