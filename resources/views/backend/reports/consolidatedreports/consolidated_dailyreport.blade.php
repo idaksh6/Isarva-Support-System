@@ -32,7 +32,7 @@
     <div class="table-container" id="resultsContainer" style="{{ request()->has('start_date') ? '' : 'display: none;' }}">
         @if(request()->has('start_date'))
         <!-- Export PDF -->
-        <div class="container mt-4">
+        <div class="container mt-4 m-0">
         
             <div class="card-body ">
                 <button id="exportPdf" class="btn btn-success btn-lg">

@@ -226,6 +226,8 @@ label {
 .project_search {
 
     margin: 0;
+    background: white !important;
+    border: 1px solid #d3d3d3 !important;
 }
 
 .advancebtn{
@@ -253,6 +255,7 @@ label {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s ease-in-out;
 }
+
 .search-header {
     display: flex;
     justify-content: space-between;
@@ -262,11 +265,13 @@ label {
     padding-bottom: 10px;
     border-bottom: 2px solid #ddd;
 }
+
 .advanced-container {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
 }
+
 .advanced-container.show {
     max-height: 1000px;
 }
@@ -289,14 +294,30 @@ label {
 
     border-color: transparent !important;
 }
-/* .text-primary {
-    color: blue;
+
+
+.projectcountbox{
+
+    width: 122%;
 }
 
-.d-block {
-    display: block;
+
+.inputprojectbox{  
+
+    background: white;
+    border: 1px solid #aaa;
+
 }
 
-.text-decoration-none {
-    text-decoration: none;
-} */
+
+.tableView{
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+}
+
+@media(max-width:1024px){
+
+    .tableView{
+
+        overflow-x: scroll;
+    }
+}

@@ -135,7 +135,7 @@
                             style="border-radius: 12px !important;"></textarea>
                     </div>
 
-                    <div class="row mb-3">
+                    {{-- <div class="row mb-3">
                         <label for="assignedTo" class="col-sm-2 col-form-label">Assigned To</label>
                         <div class="col-sm-10">
                             <select class="form-select " name="assignedTo" id="assignedTo">
@@ -147,6 +147,19 @@
                         </div>
                     </div>
 
+                     --}}
+
+                     <div class="row mb-3">
+                        <label for="assignedTo" class="col-sm-2 col-form-label">Assigned To</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" name="assignedTo" id="assignedTo">
+                                <option value="">Select Employee</option>
+                                @foreach($employees as $id => $name)
+                                    <option value="{{ $id }}" {{ (isset($ticket) && $ticket->flag_to == $id) ? 'selected' : '' }}>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                     
                     <div class="row mb-3">
                         <label for="status" class="col-sm-2 col-form-label">Status</label>

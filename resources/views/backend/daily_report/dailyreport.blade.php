@@ -9,6 +9,7 @@
 
 
 
+
   <form id="dailyreportform" action="{{ route('admin.daily-reports.store') }}" method="POST">
       @csrf
       <input type="hidden" name="user_id" value="{{ Auth::id() }}">
@@ -40,154 +41,153 @@
 
         <div id="dynamic-containers">
           @foreach(old('type', [1]) as $index => $type)  <!-- $index is a variable that represents the unique identifier for each container.-->
-          <div class="report-container">
-            <div class="dropdown-section">
-              <label for="report-type">Report Type:</label>
-              <select id="report-type-{{ $index }}" class="report-type" name="type[{{ $index }}]" onchange="handleReportTypeChange(this)">
-                <option value="0" {{ old('type.' . $index) == '0' ? 'selected' : '' }}>None</option>
-                <option value="1" {{ old('type.' . $index) == '1' ? 'selected' : '' }}>Project</option>
-                <option value="2" {{ old('type.' . $index) == '2' ? 'selected' : '' }}>Ticket</option>
-              </select>
-              @if ($errors->has('type.' . $index))
-                <p class="error-message">{{ $errors->first('type.' . $index) }}</p>
-              @endif
-            </div>
-
-          <!-- Project and Task Fields -->
-            <div class="project-fields" style="{{ old('type.' . $index) == '1' ? 'display: block;' : 'display: none;' }}">
-              <!-- Project Name Field -->
-              <div class="project-search-container">
-                  <input 
-                      type="text" 
-                      class="project-name @error('project_name.'.$index) is-invalid @enderror" 
-                      name="project_name[{{ $index }}]" 
-                      placeholder="Project Name" 
-                      oninput="searchProjects(this)" 
-                      autocomplete="off" 
-                      value="{{ old('project_name.' . $index, '') }}"
-                  >
-                  <input type="hidden" id="project-id-{{ $index }}" name="project_id[{{ $index }}]" value="{{ old('project_id.' . $index, '') }}">
-                  <!-- Dropdown will appear below -->
-                  <div class="project-dropdown" style="display: none;"></div>
-                  
-                  @error('project_name.'.$index)
-                      <p class="error-message project-error">{{ $message }}</p>
-                  @enderror
-                  @error('project_id.'.$index)
-                      <p class="error-message project-error">{{ $message }}</p>
-                  @enderror
+            <div class="report-container">
+              <div class="dropdown-section">
+                <label for="report-type" style="color: white;">Report Type:</label>
+                <select id="report-type-{{ $index }}" class="report-type" name="type[{{ $index }}]" onchange="handleReportTypeChange(this)">
+                  <option value="0" {{ old('type.' . $index) == '0' ? 'selected' : '' }}>None</option>
+                  <option value="1" {{ old('type.' . $index) == '1' ? 'selected' : '' }}>Project</option>
+                  <option value="2" {{ old('type.' . $index) == '2' ? 'selected' : '' }}>Ticket</option>
+                </select>
+                @if ($errors->has('type.' . $index))
+                  <p class="error-message">{{ $errors->first('type.' . $index) }}</p>
+                @endif
               </div>
 
-              <!-- Task Name Field -->
-              <div class="task-search-container">
-                  <input 
-                      type="text" 
-                      class="task-name @error('task_name.'.$index) is-invalid @enderror" 
-                      name="task_name[{{ $index }}]" 
-                      placeholder="Task Name" 
-                      oninput="searchTasks(this)" 
-                      autocomplete="off" 
-                      value="{{ old('task_name.' . $index, '') }}"
-                  >
-                  <input type="hidden" id="task-id-{{ $index }}" name="task_id[{{ $index }}]" value="{{ old('task_id.' . $index, '') }}">
-                  <!-- Dropdown will appear below -->
-                  <div class="task-dropdown" style="display: none;"></div>
-                  
-                  @error('task_name.'.$index)
-                      <p class="error-message task-error">{{ $message }}</p>
-                  @enderror
-                  @error('task_id.'.$index)
-                      <p class="error-message task-error">{{ $message }}</p>
-                  @enderror
+            <!-- Project and Task Fields -->
+              <div class="project-fields" style="{{ old('type.' . $index) == '1' ? 'display: block;' : 'display: none;' }}">
+                <!-- Project Name Field -->
+                <div class="project-search-container">
+                    <input 
+                        type="text" 
+                        class="project-name @error('project_name.'.$index) is-invalid @enderror" 
+                        name="project_name[{{ $index }}]" 
+                        placeholder="Project Name" 
+                        oninput="searchProjects(this)" 
+                        autocomplete="off" 
+                        value="{{ old('project_name.' . $index, '') }}"
+                    >
+                    <input type="hidden" id="project-id-{{ $index }}" name="project_id[{{ $index }}]" value="{{ old('project_id.' . $index, '') }}">
+                    <!-- Dropdown will appear below -->
+                    <div class="project-dropdown" style="display: none;"></div>
+                    
+                    @error('project_name.'.$index)
+                        <p class="error-message project-error">{{ $message }}</p>
+                    @enderror
+                    @error('project_id.'.$index)
+                        <p class="error-message project-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Task Name Field -->
+                <div class="task-search-container">
+                    <input 
+                        type="text" 
+                        class="task-name @error('task_name.'.$index) is-invalid @enderror" 
+                        name="task_name[{{ $index }}]" 
+                        placeholder="Task Name" 
+                        oninput="searchTasks(this)" 
+                        autocomplete="off" 
+                        value="{{ old('task_name.' . $index, '') }}"
+                    >
+                    <input type="hidden" id="task-id-{{ $index }}" name="task_id[{{ $index }}]" value="{{ old('task_id.' . $index, '') }}">
+                    <!-- Dropdown will appear below -->
+                    <div class="task-dropdown" style="display: none;"></div>
+                    
+                    @error('task_name.'.$index)
+                        <p class="error-message task-error">{{ $message }}</p>
+                    @enderror
+                    @error('task_id.'.$index)
+                        <p class="error-message task-error">{{ $message }}</p>
+                    @enderror
+                </div>
               </div>
-            </div>
 
-            {{-- <!-- Ticket Field (Hidden by Default) -->
-            <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
-              <input type="text" class="ticket-name" name="ticket-name[{{ $index }}]" placeholder="Ticket Name" value="{{ old('ticket-name.' . $index, '') }}">
-            </div> --}}
 
-            {{-- <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
-              <div class="ticket-search-container">
-                  <input 
-                      type="text" 
-                      class="ticket-name" 
-                      name="ticket-name[{{ $index }}]" 
-                      placeholder="Search Ticket..." 
-                      oninput="searchTickets(this)" 
-                      autocomplete="off" 
-                      value="{{ old('ticket-name.' . $index, '') }}"
-                  >
-                  <input type="hidden" id="ticket-id-{{ $index }}" name="ticket_id[{{ $index }}]" value="{{ old('ticket_id.' . $index, '') }}">
-                  <!-- Dropdown will appear below -->
-                  <div class="ticket-dropdown" style="display: none;"></div>
-              </div>
-            </div> --}}
-
-            <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
-              <div class="ticket-search-container">
-                  <input 
-                      type="text" 
-                      class="ticket-name @error('ticket-name.'.$index) is-invalid @enderror" 
-                      name="ticket-name[{{ $index }}]" 
-                      placeholder="Search Ticket..." 
-                      oninput="searchTickets(this)" 
-                      autocomplete="off" 
-                      value="{{ old('ticket-name.' . $index, '') }}"
-                  >
-                  <input type="hidden" id="ticket-id-{{ $index }}" name="ticket_id[{{ $index }}]" value="{{ old('ticket_id.' . $index, '') }}">
-                  <!-- Dropdown will appear below -->
-                  <div class="ticket-dropdown" style="display: none;"></div>
-                  
-              <!-- In ticket fields section -->
-                @error('ticket-name.'.$index)
-                    <p class="error-message ticket-error">{{ $message }}</p>
-                @enderror
-                @error('ticket_id.'.$index)
+              <div class="ticket-field" style="{{ old('type.' . $index) == '2' ? 'display: block;' : 'display: none;' }}">
+                <div class="ticket-search-container">
+                    <input 
+                        type="text" 
+                        class="ticket-name @error('ticket-name.'.$index) is-invalid @enderror" 
+                        name="ticket-name[{{ $index }}]" 
+                        placeholder="Search Ticket..." 
+                        oninput="searchTickets(this)" 
+                        autocomplete="off" 
+                        value="{{ old('ticket-name.' . $index, '') }}"
+                    >
+                    <input type="hidden" id="ticket-id-{{ $index }}" name="ticket_id[{{ $index }}]" value="{{ old('ticket_id.' . $index, '') }}">
+                    <!-- Dropdown will appear below -->
+                    <div class="ticket-dropdown" style="display: none;"></div>
+                    
+                <!-- In ticket fields section -->
+                  @error('ticket-name.'.$index)
                       <p class="error-message ticket-error">{{ $message }}</p>
-                @enderror
+                  @enderror
+                  @error('ticket_id.'.$index)
+                        <p class="error-message ticket-error">{{ $message }}</p>
+                  @enderror
+
+                </div>
+            </div>
+
+              <!-- Common Fields -->
+              <div class="common-fields">
+                <textarea class="comments" name="comments[{{ $index }}]" placeholder="Comments">{{ old('comments.' . $index, '') }}</textarea>
+                @if ($errors->has('comments.' . $index))
+                  <p class="error-message">{{ $errors->first('comments.' . $index) }}</p>
+                @endif
+
+                <!-- Hours Field -->
+                <input type="number" class="hrs" name="hrs[{{ $index }}]" placeholder="Hrs" oninput="updateTotalHrs()" value="{{ old('hrs.' . $index, '') }}">
+                @if ($errors->has('hrs.' . $index))
+                  <p class="error-message">{{ $errors->first('hrs.' . $index) }}</p>
+                @endif
+
+                <input type="text" class="link" name="link[{{ $index }}]" placeholder="Link" value="{{ old('link.' . $index, '') }}">
+                @if ($errors->has('link.' . $index))
+                  <p class="error-message">{{ $errors->first('link.' . $index) }}</p>
+                @endif
+
+                <select class="billable" name="billable[{{ $index }}]">
+                  <option value="0" {{ old('billable.' . $index) == '0' ? 'selected' : '' }}>Non Billable</option>
+                  <option value="1" {{ old('billable.' . $index) == '1' ? 'selected' : '' }}>Billable</option>
+                  <option value="2" {{ old('billable.' . $index) == '2' ? 'selected' : '' }}>Internal Billable</option>
+                </select>
+                @if ($errors->has('billable.' . $index))
+                  <p class="error-message">{{ $errors->first('billable.' . $index) }}</p>
+                @endif
 
               </div>
-          </div>
+         
 
-            <!-- Common Fields -->
-            <div class="common-fields">
-              <textarea class="comments" name="comments[{{ $index }}]" placeholder="Comments">{{ old('comments.' . $index, '') }}</textarea>
-              @if ($errors->has('comments.' . $index))
-                <p class="error-message">{{ $errors->first('comments.' . $index) }}</p>
-              @endif
-
-              <!-- Hours Field -->
-              <input type="number" class="hrs" name="hrs[{{ $index }}]" placeholder="Hrs" oninput="updateTotalHrs()" value="{{ old('hrs.' . $index, '') }}">
-              @if ($errors->has('hrs.' . $index))
-                <p class="error-message">{{ $errors->first('hrs.' . $index) }}</p>
-              @endif
-
-              <input type="text" class="link" name="link[{{ $index }}]" placeholder="Link" value="{{ old('link.' . $index, '') }}">
-              @if ($errors->has('link.' . $index))
-                <p class="error-message">{{ $errors->first('link.' . $index) }}</p>
-              @endif
-
-              <select class="billable" name="billable[{{ $index }}]">
-                <option value="0" {{ old('billable.' . $index) == '0' ? 'selected' : '' }}>Non Billable</option>
-                <option value="1" {{ old('billable.' . $index) == '1' ? 'selected' : '' }}>Billable</option>
-                <option value="2" {{ old('billable.' . $index) == '2' ? 'selected' : '' }}>Internal Billable</option>
-              </select>
-              @if ($errors->has('billable.' . $index))
-                <p class="error-message">{{ $errors->first('billable.' . $index) }}</p>
-              @endif
+                <div class="action-buttons">
+                  <button type="button" class="btn-circle add-btn" onclick="addContainer()" title="Add">
+                    <i class="icofont-plus-circle"></i>
+                  <button type="button" class="btn-circle remove-btn" onclick="removeContainer(this)" title="Remove">
+                    <i class="icofont-minus-circle"></i>
+                  </button>
+                </div>
+                
             </div>
-
-            <div class="action-buttons">
-              <button type="button" class="add-btn" onclick="addContainer()">+</button>
-              <button type="button" class="remove-btn" onclick="removeContainer(this)">-</button>
-            </div>
-          </div>
           @endforeach
         </div>
 
         <!-- Summary Container -->
+
+        
+      
+
         <div class="summary-container">
+
+          {{-- <div class="form-group">
+            <label for="creation_date">Date of Creation:</label>
+            <input type="date" class="form-control" name="creation_date" id="creation_date" 
+                   value="{{ old('creation_date', date('Y-m-d')) }}">
+            @if ($errors->has('creation_date'))
+                <p class="error-message">{{ $errors->first('creation_date') }}</p>
+            @endif
+           </div> --}}
+           
           <div class="total-hrs">
             <label for="total-hrs">Total Hrs:</label>
             <input type="text" id="total-hrs" name="total_hrs" readonly value="{{ old('total_hrs', '') }}">
@@ -283,26 +283,26 @@
           // Append the new container to the dynamic-containers div
           dynamicContainers.appendChild(newContainer);
           updateTotalHrs();
-      }
+        }
 
 
-        // To remove the triggered container 
-        function removeContainer(button) {
-          const container = button.closest('.report-container');
-          if (document.querySelectorAll('.report-container').length > 1) {
-            container.remove();
-            updateTotalHrs();
+          // To remove the triggered container 
+          function removeContainer(button) {
+            const container = button.closest('.report-container');
+            if (document.querySelectorAll('.report-container').length > 1) {
+              container.remove();
+              updateTotalHrs();
+            }
           }
-        }
 
-        function updateTotalHrs() {
-          const hrsFields = document.querySelectorAll('.hrs');
-          let totalHrs = 0;
-          hrsFields.forEach(field => {
-            totalHrs += parseFloat(field.value) || 0;
-          });
-          document.getElementById('total-hrs').value = totalHrs;
-        }
+          function updateTotalHrs() {
+            const hrsFields = document.querySelectorAll('.hrs');
+            let totalHrs = 0;
+            hrsFields.forEach(field => {
+              totalHrs += parseFloat(field.value) || 0;
+            });
+            document.getElementById('total-hrs').value = totalHrs;
+          }
 
       
 

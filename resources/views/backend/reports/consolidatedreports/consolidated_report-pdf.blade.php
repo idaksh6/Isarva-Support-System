@@ -137,14 +137,20 @@
 <body>
     <h2 style="text-align: center; font-weight: bold;">Consolidated Daily Report</h2>
 
-        <p style="text-align: center; font-size: 15px; color: #2196F3;">
-            @if($startDate && $endDate)
-                Date Range: {{ date('d-m-Y', strtotime($startDate)) }} to {{ date('d-m-Y', strtotime($endDate)) }}
-            @else
-                All Records
-            @endif
-        </p>
-  
+    @php
+        use Carbon\Carbon;
+
+        $start = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
+    @endphp
+   <p style="text-align: center; font-size: 15px; color: #2196F3;">
+        @if($startDate && $endDate)
+            Date Range: {{ $start->format('d-m-Y') }} to {{ $end->format('d-m-Y') }}
+            ({{ $start->format('l') }}{{ $start->ne($end) ? ' to ' . $end->format('l') : '' }})
+        @else
+            All Records
+        @endif
+    </p>
 
     <table class="report-table consolreporttbl">
         <thead>

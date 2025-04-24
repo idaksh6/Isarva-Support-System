@@ -5,6 +5,7 @@ namespace App\Models\Backend;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 class DailyReportField extends Model
 {
     use HasFactory;
@@ -119,7 +120,7 @@ class DailyReportField extends Model
     }
 
    
-
+    // for consolidated report
     public static function getConsolidatedReportData($startDate, $endDate)
     {
         // Start query for users with reports - now including department
@@ -320,5 +321,32 @@ class DailyReportField extends Model
         ];
     }
         
+
+    //  Employee analytics report calculation
+    public function getEmployeeStats($startDate, $endDate)
+    {
+        return DB::table('si_daily_report_fields as d')
+            ->join('users as u', 'u.id', '=', 'd.user_id')
+            ->selectRaw("
+                d.user_id,
+                u.name as employee_name,
+                u.department,
+                SUM(CASE WHEN d.billable_type = 1 THEN d.hrs ELSE 0 END) as billable,
+                SUM(CASE WHEN d.billable_type = 0 THEN d.hrs ELSE 0 END) as non_billable,
+                SUM(CASE WHEN d.billable_type = 2 THEN d.hrs ELSE 0 END) as internal
+            ")
+            ->whereBetween('d.created_at', [$startDate, $endDate])
+            ->groupBy('d.user_id', 'u.name', 'u.department')
+            ->get()
+            // iterates over each employee object in the collection returned by the database query. For each employee ($item):
+            ->map(function ($item) {  
+                $total = $item->billable + $item->non_billable + $item->internal;
+                $item->total = $total;
+                $item->billable_percent = $total ? round(($item->billable / $total) * 100, 2) : 0;
+                $item->non_billable_percent = $total ? round(($item->non_billable / $total) * 100, 2) : 0;
+                $item->internal_percent = $total ? round(($item->internal / $total) * 100, 2) : 0;
+                return $item;
+            });
+    }
    
 }

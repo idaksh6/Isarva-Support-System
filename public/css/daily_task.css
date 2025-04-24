@@ -1,0 +1,122 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.taskbox{
+
+    max-width: 800px;
+    margin: auto;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+                rgba(0, 0, 0, 0.12) 0px -12px 30px, 
+                rgba(0, 0, 0, 0.12) 0px 4px 6px, 
+                rgba(0, 0, 0, 0.17) 0px 12px 13px, 
+                rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+
+.inputtaskbox{
+
+  
+        background: white;
+        border: 1px solid #aaa;
+  
+}
+
+.error{
+
+    color: red;
+}
+
+.addailytask{
+
+    background-color: rgb(72, 76, 127);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+table.dailytasktablecontainer tbody tr:hover {
+   cursor: pointer;
+   
+   --bs-table-accent-bg: var(--color-300);
+  }
+
+/* .dailytaskform{
+
+    border: 1px solid #d3d3d3;
+    padding: 20px;
+} */
+
+.taskformcontainer{
+
+    max-width: 835px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgb(72, 76, 127);
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05)
+}
+
+.dailytaskfield{
+
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgb(72, 76, 127);
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.taskbox{
+
+    background-color: whitesmoke;
+}
+
+.dailytsksybbtn{
+
+    background-color: #3644ff !important;
+    color: white !important;
+}
+
+
+
+.export-pdf-btn {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+}
+    
+.export-pdf-btn:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+}
+
+.bg-pink {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+}
+
+.dailytskexprtbtn{
+
+    background-color: #0012f4;
+    color: white;
+}
+
+
+@media(max-width:1024px){
+
+    .dailytasktable{
+
+        overflow-x: scroll;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .sidebar .sidebar-mini-btn {
+        display: block;
+    }
+}

@@ -58,9 +58,14 @@
       
     <!-- Consolidated Report CSS-->
     <link rel="stylesheet" href="{{ asset('css/consolidated_report.css')}}">
+
+     <link rel="stylesheet" href="{{ asset('css/dashboard.css')}}">
     
     <!-- Include jQuery UI JS -->
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ asset('css/daily_task.css')}}">
+
 
     
     {{-- select 2  --}}

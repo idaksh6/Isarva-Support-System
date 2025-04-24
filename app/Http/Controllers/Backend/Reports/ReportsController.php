@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Backend\Reports;
 
+use App\Models\Backend\DailyTask;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Helpers\ClientHelper;
 use App\Models\Backend\Ticket;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Backend\DailyReportField;
+use Carbon\Carbon;
 
 class ReportsController extends Controller
 {
@@ -144,4 +147,72 @@ class ReportsController extends Controller
         $pdf = PDF::loadView('backend.reports.tickets.active-ticket-pdf', $data);
         return $pdf->download('Active-ticket-report-'.now()->format('Y-m-d').'.pdf');
     }
+
+ 
+        // DailyTask Report
+        public function getdailytaskreport(Request $request)
+        {
+            $query = DailyTask::with('user');
+        
+            if ($request->has(['start_date', 'end_date'])) {
+                $start = $request->input('start_date');
+                $end = $request->input('end_date');
+        
+                $query->whereDate('created_at', '>=', $start)
+                      ->whereDate('created_at', '<=', $end);
+            }
+        
+            // Paginate 30 records per page and keep filters during pagination
+            $tasks = $query->paginate(30)->appends($request->all());
+        
+            // return view('admin.reports.dailytask_report', compact('tasks'));
+            return view('backend.reports.dailytaskreports.dailytask_report', compact('tasks'));
+        }
+        
+
+
+        // public function getemployeeanalytics(Request $request){
+        //     {
+        //         $start_date = $request->input('start_date', now()->subDay()->toDateString());
+        //         $end_date = $request->input('end_date', now()->toDateString());
+        
+        //         $reportModel = new DailyReportField();
+        //         $employeeData = $reportModel->getEmployeeStats($start_date, $end_date);
+        
+        //         // Group by department
+        //         $departments = [
+        //             1 => 'Frontend Team',
+        //             2 => 'Backend Team',
+        //             3 => 'Internship',
+        //         ];
+        
+        //         $grouped = $employeeData->groupBy('department');
+        
+        //         return view('backend.employee_analytic_reports.employee_analytics', compact('grouped', 'departments', 'start_date', 'end_date'));
+        //     }
+        // //    return view('backend.employee_analytic_reports.employee_analytics');
+           
+        // }
+
+        // Employee analytics report method
+        public function getemployeeanalytics(Request $request)
+        {
+            $start_date = $request->input('start_date');
+            $end_date = $request->input('end_date');
+        
+            $employeeData = null;
+        
+            if ($start_date && $end_date) {
+                   // Convert end date to include the full day
+                   $start_date = Carbon::parse($request->input('start_date'))->startOfDay();
+                   $end_date = Carbon::parse($request->input('end_date'))->endOfDay();
+
+                $reportModel = new DailyReportField();
+                $employeeData = $reportModel->getEmployeeStats($start_date, $end_date);
+            }
+        
+            return view('backend.employee_analytic_reports.employee_analytics', compact('employeeData', 'start_date', 'end_date'));
+        }
+        
+        
 }

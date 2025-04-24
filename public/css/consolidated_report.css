@@ -3,7 +3,7 @@
     border-radius: 5px;
     padding: 20px;
     margin: 20px auto;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
 }
 
@@ -33,7 +33,7 @@ input[type="date"] {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
- 
+
 }
 
 
@@ -44,7 +44,8 @@ input[type="date"] {
     margin-top: 20px;
 }
 
-.report-table th, .report-table td {
+.report-table th,
+.report-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
@@ -61,111 +62,114 @@ input[type="date"] {
 }
 
 th.heading_color {
-font-size: 15px !important;
+    font-size: 15px !important;
 }
 
 .heading_color {
-background-color: #CDCAE1 !important;
-font-weight: bold;
+    background-color: #CDCAE1 !important;
+    font-weight: bold;
 }
 
 .department-color {
-color: rgb(70, 69, 116) !important;
-background-color: rgb(240, 248, 255) !important;
-font-weight: bold;
-font-size: 20px;
-padding: 8px;
-text-align: center !important;
+    color: rgb(70, 69, 116) !important;
+    background-color: rgb(240, 248, 255) !important;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 8px;
+    text-align: center !important;
 }
 
 .total {
-font-weight: bold;
-background-color: #e6f7ff;
+    font-weight: bold;
+    background-color: #e6f7ff;
 }
 
 .billable_color {
-color: #4CAF50; /* Green for billable */
+    color: #4CAF50;
+    /* Green for billable */
 }
 
 .non_billable_color {
-color: #f44336; /* Red for non-billable */
+    color: #f44336;
+    /* Red for non-billable */
 }
 
 .internal_billable_color {
-color: #2196F3; /* Blue for internal */
+    color: #2196F3;
+    /* Blue for internal */
 }
 
 .report-table {
-width: 100%;
-margin-bottom: 20px;
-border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
 }
 
-.report-table th, 
+.report-table th,
 .report-table td {
-padding: 8px;
-border: 1px solid #ddd;
-text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
 }
 
-.consolreporttbl tr td{
-border-color: rgb(221, 221, 221) !important;
-/* border-color: brown !important; */
-font-size: 15px;
-
-}
-
-
-
-.totalconslrpt{
-
-text-align: center !important;
-color: rgb(70, 69, 116) !important;
-}
-
-.billable_color{
-color: rgb(0, 128, 0) !important;
-font-weight: 700;
-}
-
-.non_billable_color{
-
-color: red !important;
-font-weight: 700;
-}
-
-.internal_billable_color{
-
-color: blue !important;
-font-weight: 700;
-}
-
-.timesheet_table .timesheethead th{
-
-font-size: 16px;
-
+.consolreporttbl tr td {
+    border-color: rgb(221, 221, 221) !important;
+    /* border-color: brown !important; */
+    font-size: 15px;
 
 }
 
 
 
-.timesheetbill{
+.totalconslrpt {
 
-font-size: 22px !important; 
-color: green !important; 
-font-weight: 700 !important;
+    text-align: center !important;
+    color: rgb(70, 69, 116) !important;
 }
 
-.timesheetnonbill{
-
-font-size: 22px;
-color: red !important; 
-font-weight: 700 !important;
+.billable_color {
+    color: rgb(0, 128, 0) !important;
+    font-weight: 700;
 }
 
-.timesheetinternbill{
+.non_billable_color {
 
-font-size: 22px;
-color: blue !important; 
-font-weight: 700 !important;
+    color: red !important;
+    font-weight: 700;
+}
+
+.internal_billable_color {
+
+    color: blue !important;
+    font-weight: 700;
+}
+
+.timesheet_table .timesheethead th {
+
+    font-size: 16px;
+
+
+}
+
+
+
+.timesheetbill {
+
+    font-size: 22px !important;
+    color: green !important;
+    font-weight: 700 !important;
+}
+
+.timesheetnonbill {
+
+    font-size: 22px;
+    color: red !important;
+    font-weight: 700 !important;
+}
+
+.timesheetinternbill {
+
+    font-size: 22px;
+    color: blue !important;
+    font-weight: 700 !important;
 }

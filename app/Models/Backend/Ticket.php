@@ -4,10 +4,11 @@ namespace App\Models\Backend;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $table = 'isar_tickets';
 
@@ -23,6 +24,8 @@ class Ticket extends Model
         'type',
         'source',
         'priority',
+
+        'team_members',
 
         'project',
         'description',
@@ -44,7 +47,8 @@ class Ticket extends Model
         'due_date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-    ];
+    //     'team_members' => 'array',
+     ];
 
     /**
      * Get the user who created the ticket.

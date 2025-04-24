@@ -341,43 +341,103 @@ public function getDepartmentNameAttribute()
      *
      * @return string
      */
+    // public function getDaysLeftTextAttribute()
+    // {
+    //     $startDate = Carbon::parse($this->start_date);
+    //     $endDate = Carbon::parse($this->end_date);
+    //     $today = Carbon::now();
+
+    //     if ($today->lt($startDate)) {
+    //         return 'Not Started';
+    //     } elseif ($today->gt($endDate)) {
+    //         $daysExceeded = $today->diffInDays($endDate);
+    //         // return 'Exceeded by ' . $daysExceeded . ' day' . ($daysExceeded > 1 ? 's' : '');
+    //         return  $daysExceeded . ' Days' . ' After Due';
+    //     } else {
+    //         $daysLeft = $today->diffInDays($endDate);
+    //         return $daysLeft . ' day' . ($daysLeft > 1 ? 's' : '') . ' left';
+    //     }
+    // }
     public function getDaysLeftTextAttribute()
     {
         $startDate = Carbon::parse($this->start_date);
         $endDate = Carbon::parse($this->end_date);
         $today = Carbon::now();
-
+    
+        // If the project hasn't started yet
         if ($today->lt($startDate)) {
             return 'Not Started';
-        } elseif ($today->gt($endDate)) {
-            $daysExceeded = $today->diffInDays($endDate);
-            // return 'Exceeded by ' . $daysExceeded . ' day' . ($daysExceeded > 1 ? 's' : '');
-            return  $daysExceeded . ' Days' . ' After Due';
-        } else {
-            $daysLeft = $today->diffInDays($endDate);
-            return $daysLeft . ' day' . ($daysLeft > 1 ? 's' : '') . ' left';
         }
+    
+        // If project is Closed (6) or On Hold (7)
+        if (in_array($this->status, [6, 7])) {
+            return 'Completed';
+        }
+    
+        // If current date is after deadline but project is NOT closed/on hold
+        if ($today->gt($endDate)) {
+            $daysExceeded = $today->diffInDays($endDate);
+            return $daysExceeded . ' day' . ($daysExceeded > 1 ? 's' : '') . ' After Due';
+        }
+    
+        // If still within duration and active
+        $daysLeft = $today->diffInDays($endDate);
+        return $daysLeft . ' day' . ($daysLeft > 1 ? 's' : '') . ' left';
     }
+    
+
+   
+    
 
     /**
      * Get the color for the days left section.
      *
      * @return string
      */
+    // public function getDaysLeftColorAttribute()
+    // {
+    //     $startDate = Carbon::parse($this->start_date);
+    //     $endDate = Carbon::parse($this->end_date);
+    //     $today = Carbon::now();
+
+    //     if ($today->lt($startDate)) {
+    //         return 'orange'; // Not Started
+    //     } elseif ($today->gt($endDate)) {
+    //         return 'brown'; // Exceeded
+    //     } else {
+    //         return 'green'; // Days Left
+    //     }
+    // }
+
     public function getDaysLeftColorAttribute()
     {
         $startDate = Carbon::parse($this->start_date);
         $endDate = Carbon::parse($this->end_date);
         $today = Carbon::now();
-
-        if ($today->lt($startDate)) {
-            return 'orange'; // Not Started
-        } elseif ($today->gt($endDate)) {
-            return 'brown'; // Exceeded
-        } else {
-            return 'green'; // Days Left
+    
+        // Completed or On Hold
+        if (in_array($this->status, [6, 7])) {
+            return 'gray'; // You can change to 'green' if you prefer
         }
+    
+        // Not started yet
+        if ($today->lt($startDate)) {
+            return 'orange';
+        }
+    
+        // Exceeded deadline (but not completed)
+        if ($today->gt($endDate)) {
+            return 'brown';
+        }
+    
+        // Active and within duration
+        return 'green';
     }
+    
+    
+    
+   
+    
 
     public static function getMonthsList()
     {

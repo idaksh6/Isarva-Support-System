@@ -1,7 +1,7 @@
 <!-- Body: Header -->
 <div class="header">
     <nav class="navbar py-4">
-        <div class="container-xxl" style="
+        <div class="container-xxl mainhedercontainer" style="
     background-color: #484c7f;
     color: white;
     border-radius: 5px;

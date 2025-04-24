@@ -118,7 +118,15 @@ class TaskController
             });
         
             // Group tasks **by status** only for this project
-            $tasksByStatus = $tasks->groupBy('status');
+            // $tasksByStatus = $tasks->groupBy('status');
+            $tasksByStatus = $tasks->groupBy('status')->map(function ($statusGroup) use ($currentUserId) {
+                return $statusGroup->sortByDesc(function($task) use ($currentUserId) {
+                    return [
+                        $task->assigned_to == $currentUserId, // User's tasks first (true=1)
+                        $task->created_at                      // Then newest first
+                    ];
+                });
+            });
         
             // Fetch related data
             $internalDocs = ProjectInternalDocument::where('project_id', $id)->orderBy('raw_index')->get();
@@ -152,66 +160,78 @@ class TaskController
 
         
             return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
-            'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays'));
+            'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays',
+            'currentUserId'));
         }
         
         
 
   
-    public function store(Request $request)
-    {
+        public function store(Request $request)
+        {
+           
             $request->validate([
-             // name attribute => validation
-            'project_id' => 'required|integer|exists:si_projects,id', // hidden
-            'task_name' => 'required|string|max:255',
-            'task_description' => 'required|string',
-            'task_end_date' => 'required|date',
-            'task_assigned_for' => 'required|integer|exists:users,id',
-            'task_estimation_hr' => 'required|numeric|min:0',
-        ], [
-            // Custom error messages
-            'task_name.required' => 'The task name is required.',
-            'task_name.string' => 'The task name must be a valid string.',
-            'task_name.max' => 'The task name must not exceed 255 characters.',
-
-            'task_description.required' => 'The description is required.',
-            'task_description.string' => 'The description must be a valid string.',
-
-            'task_end_date.required' => 'The end date is required.',
-            'task_end_date.date' => 'The end date must be a valid date.',
-
-            'task_assigned_for.required' => 'Please select an assigned user.',
-            'task_assigned_for.integer' => 'The assigned user must be a valid ID.',
-            'task_assigned_for.exists' => 'The selected assigned user does not exist.',
-
-            'task_estimation_hr.required' => 'Estimation hours are required.',
-            'task_estimation_hr.numeric' => 'Estimation hours must be a valid number.',
-            'task_estimation_hr.min' => 'Estimation hours must be at least 0.',
-        ]);
-
-        $task = new Task();
-        // Column-name = name_attribute
-        $task->project_id = $request->project_id;
-        $task->task_name = $request->task_name;
-        $task->task_category = $request->task_category;
-        $task->description = $request->task_description;
-        $task->end_date = $request->task_end_date;
-        $task->status = $request->task_status ?? 1; // If null, default to 1
-        $task->assigned_to = $request->task_assigned_for;
-        $task->estimation_hrs = $request->task_estimation_hr;
-        $task->created_by = Auth::id();
-        $task->updated_by = Auth::id();
-
-        $task->save();
-
-          // Return a response
-          if ($request->ajax()) {
-            return response()->json(['success' => 'Task created successfully!']);
+                // name attribute => validation
+                'project_id' => 'required|integer|exists:si_projects,id', // hidden
+                'task_name' => 'required|string|max:255',
+                'task_description' => 'required|string',
+                'task_end_date' => 'required|date',
+                'task_assigned_for' => 'required|integer|exists:users,id',
+                // 'task_estimation_hr' => 'required|numeric|min:0|decimal:0,2', // Allows up to 2 decimal places
+                // ... other rules ...
+                'task_estimation_hr' => [
+                        'required',
+                        'numeric',
+                        'min:0',
+                        'regex:/^\d+(\.\d{1,2})?$/' // Allows 4, 4.5, 4.25, etc.
+                    ],
+            ], [
+                // Custom error messages
+                'task_name.required' => 'The task name is required.',
+                'task_name.string' => 'The task name must be a valid string.',
+                'task_name.max' => 'The task name must not exceed 255 characters.',
+        
+                'task_description.required' => 'The description is required.',
+                'task_description.string' => 'The description must be a valid string.',
+        
+                'task_end_date.required' => 'The end date is required.',
+                'task_end_date.date' => 'The end date must be a valid date.',
+        
+                'task_assigned_for.required' => 'Please select an assigned user.',
+                'task_assigned_for.integer' => 'The assigned user must be a valid ID.',
+                'task_assigned_for.exists' => 'The selected assigned user does not exist.',
+        
+                'task_estimation_hr.required' => 'Estimation hours are required.',
+                'task_estimation_hr.numeric' => 'Estimation hours must be a valid number.',
+                'task_estimation_hr.min' => 'Estimation hours must be at least 0.',
+                'task_estimation_hr.decimal' => 'Estimation hours must have up to 2 decimal places.',
+               'task_estimation_hr.regex' => 'Estimation must be a number (e.g., 4 or 4.5). Max 2 decimal places.',
+            ]);
+        
+            $task = new Task();
+            // Column-name = name_attribute
+            $task->project_id = $request->project_id;
+            $task->task_name = $request->task_name;
+            $task->task_category = $request->task_category;
+            $task->description = $request->task_description;
+            $task->end_date = $request->task_end_date;
+            $task->status = $request->task_status ?? 1; // If null, default to 1
+            $task->assigned_to = $request->task_assigned_for;
+            $task->estimation_hrs = floatval($request->task_estimation_hr); // Convert to float explicitly
+            $task->created_by = Auth::id();
+            $task->updated_by = Auth::id();
+        
+            $task->save();
+        
+            // Return a response
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Task created successfully!']);
+            }
         }
 
       
 
-    }
+    
 
 
     public function edit($id)

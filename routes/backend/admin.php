@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\AuthenticationController;
 use App\Http\Controllers\Backend\ProjectAdditionalHrController;
 use App\Http\Controllers\Backend\Reports\ReportsController;
 use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
+use App\Http\Controllers\Backend\DailyTaskController;
 
 
 // All route names are prefixed with 'admin.'.
@@ -104,6 +105,20 @@ Route::group([
      // Consolidated Report PDF ROUTE
      Route::get('/admin/report/consolidated_daily_reports/export', [BillableNonBillableController::class, 'exportconsolidatedreportToPdf'])->name('consolidated_report.export');
       
+        // DailyTask Report   ROUTE
+        Route::get('dailytask_reports', [ReportsController::class, 'getdailytaskreport'])
+        ->name('dailytask_reports')
+        ->breadcrumbs(function (Trail $trail) {
+            $trail->push(__('Home'), route('admin.dailytask_reports'));
+        });
+
+         // Employee analytics Report   ROUTE
+         Route::get('employee_analytics_report', [ReportsController::class, 'getemployeeanalytics'])
+         ->name('employee_analytics')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.employee_analytics'));
+         });
+          
 });
 
 
@@ -245,9 +260,39 @@ Route::group([
 
     // Store Route
     Route::post('/admin/daily-reports/store', [DailyReportController::class, 'store'])->name('daily-reports.store');
-
+   
 });
 
+
+// Daily Task Route 
+Route::group([
+    'prefix' => 'add_dailytasks'
+], function () {
+    Route::get('task_manage', [DailyTaskController::class, 'index'])
+    ->name('add_dailytask')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.add_dailytask'));
+    });
+
+    // Store Route
+    Route::post('/admin/dailytask/store', [DailyTaskController::class, 'store'])->name('daily-task.store');
+
+      // Form view
+      Route::get('create', [DailyTaskController::class, 'create'])->name('daily-task.create');
+
+      
+    // Route::get('daily-task/{id}/edit', [DailyTaskController::class, 'edit'])->name('daily-task.edit');
+    // Route::put('daily-task/{id}', [DailyTaskController::class, 'update'])->name('daily-task.update');
+     
+    // Edit and update Route
+    Route::get('edit/{id}', [DailyTaskController::class, 'edit'])->name('daily-task.edit');
+    Route::post('update/{id}', [DailyTaskController::class, 'update'])->name('daily-task.update');
+
+    // Route::get('/daily-task/export', [DailyTaskController::class, 'exportPDF'])->name('daily-task.export');
+    Route::get('daily-task/export-pdf', [DailyTaskController::class, 'exportPdf'])->name('daily-task.export-pdf');
+
+
+});
 
 Route::group([
     'prefix' => 'ticket'

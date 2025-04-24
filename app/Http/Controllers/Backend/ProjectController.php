@@ -10,7 +10,7 @@ use App\Models\Backend\ProjectEstimationChangeLog;
 use App\Models\Backend\Task;
 use App\Helpers\ClientHelper;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Backend\User;
 class ProjectController
 {
   
@@ -61,73 +61,6 @@ class ProjectController
             'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects'));
     }
    
-   
-    // public function manage(Request $request)
-    // {
-    //     $query = Project::query();
-
-    //     // Global project name search (from header)
-    //     if ($request->has('global_project_name') && $request->global_project_name != '') {
-    //         $query->where('si_projects.project_name', 'like', '%' . $request->global_project_name . '%');
-    //     }
-        
-    //     // Manage page project name search
-    //     elseif ($request->has('project_name') && $request->project_name != '') {
-    //         $query->where('si_projects.project_name', 'like', '%' . $request->project_name . '%');
-    //     }
-    
-    //     // Global project ID search (from header)
-    //     if ($request->has('global_project_id') && $request->global_project_id != '') {
-    //         $query->where('si_projects.id', $request->global_project_id);
-    //     }
-
-    //         // Apply filters based on search parameters
-    //         if ($request->has('status') && $request->status != 'None') {
-    //             $query->where('si_projects.status', $request->status);
-    //         }
-
-    //         if ($request->has('assigned_to') && $request->assigned_to != '') {
-    //             $query->where('si_projects.manager', $request->assigned_to);
-    //         }
-
-    //         if ($request->has('department') && $request->department != 'None') {
-    //             $query->where('si_projects.department', $request->department);
-    //         }
-
-    //         // Month filter
-    //         if ($request->has('month') && $request->month != 'None') {
-    //             $query->whereMonth('si_projects.start_date', $request->month);
-    //         }
-
-    //         // Year filter
-    //         if ($request->has('year') && $request->year != 'None') {
-    //             $query->whereYear('si_projects.start_date', $request->year);
-    //                 }
-
-          
-    //             $viewType = $request->input('view', 'table');
-                
-    //             $projects = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
-    //                     ->leftJoin('users', 'si_projects.manager', '=', 'users.id')
-    //                     ->select(
-    //                         'si_projects.*',
-    //                         'isar_clients.client_name as client_name',
-    //                         'users.name as manager_name'
-    //                     );
-                        
-    //             $perPage = $request->input('per_page', $viewType === 'table' ? 10 : 12);
-    //             $projectsmanage = $projects->paginate($perPage);
-                    
-    //             $totalProjectscount = $projectsmanage->total();
-                
-    //             return view('backend.project.manage', [
-    //                 'projectsmanage' => $projectsmanage,
-    //                 'totalProjectscount' => $totalProjectscount,
-    //                 'viewType' => $viewType,
-    //                 'projects' => $projectsmanage->items()
-    //             ]);
-
-    // }
 
     
     public function manage(Request $request)
@@ -210,7 +143,20 @@ class ProjectController
            // Get all query parameters except page
           $queryParams = $request->except('page');
     
-        $projectsmanage = $projects->paginate($perPage);
+        // $projectsmanage = $projects->paginate($perPage);
+
+        $projectsmanage = $projects->paginate($perPage)->appends([
+            'view' => $viewType,
+            'project_name' => $request->project_name,
+            'status' => $request->status,
+            'assigned_to' => $request->assigned_to,
+            'department' => $request->department,
+            'month' => $request->month,
+            'year' => $request->year,
+            'global_project_name' => $request->global_project_name,
+            'global_project_id' => $request->global_project_id,
+            'per_page' => $perPage
+        ]);
         
         return view('backend.project.manage', [
             'projectsmanage' => $projectsmanage,
@@ -231,8 +177,10 @@ class ProjectController
             'category'        => 'nullable|integer|in:1,2,3,4,5,6,7,8,9,10',
             'project_image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'manager'         => 'required|integer|exists:users,id',
-            'team_leader'     => 'required|integer|exists:users,id',
-            'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
+            // 'team_leader'     => 'required|integer|exists:users,id',
+            // 'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
+            'team_members' => 'required|array',
+            'team_members.*' => 'integer|exists:users,id',
             'start_date'      => 'required|date',
             'end_date'        => 'required|date|after_or_equal:start_date',
             'department'      => 'required|integer|in:1,2,3',
@@ -292,7 +240,8 @@ class ProjectController
         $project->category     = $request->category;
         $project->manager      = $request->manager;
         $project->team_leader  = $request->team_leader;
-        $project->team_members = $request->team_members; // Comma-separated string of team member IDs
+        // $project->team_members = $request->team_members; // Comma-separated string of team member IDs
+        $project->team_members = implode(',', $request->team_members);
         $project->start_date   = $request->start_date;
         $project->end_date     = $request->end_date;
         $project->department   = $request->department;
@@ -344,30 +293,41 @@ class ProjectController
     //     return response()->json($project); // Return project data as JSON
     // }
    
+    // public function edit($id)
+    // {
+    //     $project = Project::with(['estimationChangeLogs.changedBy'])->findOrFail($id);
+
+    //     // Convert stored team member IDs string into an array
+    //     $teamMemberIds = explode(',', $project->team_members);
+
+    //     // Fetch employee names using helper
+    //     $employees = EmployeeHelper::getEmployeeNames();
+
+    //     // Map IDs to names, if exists
+    //     $project->team_members = array_map(function ($id) use ($employees) {
+    //         return [
+    //             'id' => $id,
+    //             'name' => $employees[$id] ?? "Unknown" // Replace ID with name or "Unknown" if not found
+    //         ];
+    //     }, $teamMemberIds);
+
+    //     return response()->json($project);
+    // }
+      
     public function edit($id)
     {
         $project = Project::with(['estimationChangeLogs.changedBy'])->findOrFail($id);
-
-        // Convert stored team member IDs string into an array
-        $teamMemberIds = explode(',', $project->team_members);
-
-        // Fetch employee names using helper
-        $employees = EmployeeHelper::getEmployeeNames();
-
-        // Map IDs to names, if exists
-        $project->team_members = array_map(function ($id) use ($employees) {
-            return [
-                'id' => $id,
-                'name' => $employees[$id] ?? "Unknown" // Replace ID with name or "Unknown" if not found
-            ];
-        }, $teamMemberIds);
-
+    
+        // Convert team members string to array for Select2
+        // $project->team_members = $project->team_members ? explode(',', $project->team_members) : [];
+    
         return response()->json($project);
     }
 
     public function update(Request $request, $id)
     {
-
+           
+      
         // Fetch the employee by ID
         $project = Project::findOrFail($id);
         
@@ -379,9 +339,12 @@ class ProjectController
             'project_image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'manager'         => 'required|integer|exists:users,id',
             'team_leader'     => 'required|integer|exists:users,id',
-            'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
+            // 'team_members'    => 'required|string|exists:users,id', // Comma-separated string of team member IDs
             // 'team_members' => 'required|array',
             //  'team_members.*' => 'integer|exists:si_users,id',
+            
+           'team_members' => 'required|array',
+            'team_members.*' => 'integer|exists:users,id',
 
             'start_date'      => 'required|date',
             'end_date'        => 'required|date|after_or_equal:start_date',
@@ -434,28 +397,35 @@ class ProjectController
             'project_image.max'   => 'The project image cannot exceed 2048KB.',
         ]);
 
-          // Check if the estimation has changed
-         if ($project->estimation != $request->estimation) {
-            // Create a new entry in the project_estimation_change_log table
-            ProjectEstimationChangeLog::create([
-                'project_id'   => $project->id,
-                'changed_by'   => Auth::id(),
-                'changed_from' => $project->estimation,
-                'changed_to'   => $request->estimation,
-                'diff'         => $request->estimation - $project->estimation,
-                'reason'       => $request->change_estimation_reason,
-                'created_by'   => Auth::id(), 
-                'updated_by'   => Auth::id(), // Add this line to set the updated_by field
-            ]);
-        }    
+         // Check if estimation has changed
+            if ($project->estimation != $request->estimation) {
+                // Manually verify the user exists
+                if (!User::where('id', Auth::id())->exists()) {
+                    return response()->json(['error' => 'Invalid user'], 400);
+                }
+
+                // Create change log without foreign key constraints
+                ProjectEstimationChangeLog::create([
+                    'project_id' => $project->id,
+                    'changed_by' => Auth::id(),
+                    'changed_from' => $project->estimation,
+                    'changed_to' => $request->estimation,
+                    'diff' => $request->estimation - $project->estimation,
+                    'reason' => $request->change_estimation_reason,
+                    'created_by' => Auth::id(),
+                    'updated_by' => Auth::id(),
+                ]);
+            }
         $project->client       = $request->client;
         $project->project_name = $request->project_name;
         $project->category     = $request->category;
         $project->manager      = $request->manager;
         $project->team_leader  = $request->team_leader;
-        $project->team_members = is_array($request->team_members) 
-        ? implode(',', $request->team_members) 
-        : $request->team_members; // If it's already a string, just assign it directly
+        // $project->team_members = is_array($request->team_members) 
+        // ? implode(',', $request->team_members) 
+        // : $request->team_members; // If it's already a string, just assign it directly
+        // $project->team_members = implode(',', $request->team_members);
+        $project->team_members = $request->team_members ? implode(',', $request->team_members) : null;
     
         $project->start_date   = $request->start_date;
         $project->end_date     = $request->end_date;

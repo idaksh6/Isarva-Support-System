@@ -68,7 +68,7 @@
     .billing-value {
         display: inline-block;
         min-width: 60px;
-        text-align: right;
+       
     }
 
    /* Color coding for billing types */

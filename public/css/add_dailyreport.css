@@ -22,7 +22,8 @@
     padding: 20px;
     margin-bottom: 10px;
     border-radius: 5px;
-    background: #c8d3e2;
+    /* background: #c8d3e2; */
+    background: #484c7f;
   }
   
   .dropdown-section, .project-fields, .ticket-field, .common-fields {
@@ -37,23 +38,7 @@
     border-radius: 4px;
   }
   
-  .action-buttons {
-    text-align: right;
-  }
   
-  .add-btn, .remove-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    margin: 2px;
-    cursor: pointer;
-    border-radius: 3px;
-  }
-  
-  .remove-btn {
-    background-color: #f44336;
-  }
   
   .summary-container {
     margin-top: 20px;
@@ -285,6 +270,83 @@
   background-color: blue;
   color: white;
 }
+
+
+
+
+/* ADD & REMOVE BUTTON CONTAINER */
+.action-buttons {
+  text-align: right;
+  display: flex;
+  gap: 1px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* MODERN CIRCLE BUTTONS */
+.btn-circle {
+  width: 31px;
+  height: 29px;
+  border-radius: 5px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* COLOR SCHEMES */
+.add-btn {
+  background: linear-gradient(135deg, #38b000, #70e000);
+  color: white;
+}
+
+.remove-btn {
+  background: linear-gradient(135deg, #d00000, #ff4d4d);
+  color: white;
+}
+
+.btn-circle:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+
+/* Add this to your CSS file */
+input:focus, 
+textarea:focus, 
+select:focus {
+  outline: none;
+  border-color: #009688; /* Matching your header color */
+  box-shadow: 0 0 0 2px rgba(0, 150, 136, 0.2);
+  transition: all 0.3s ease;
+}
+
+
+/* Add smooth transitions for all form elements */
+input, textarea, select {
+  transition: all 0.3s ease;
+}
+
+
+
+.action-buttons {
+
+  gap: 6px
+
+}
+  
+button.btn-circle.remove-btn{
+  
+  margin:0px
+}
+
+
+/* Media CSS */
 
 @media(max-width:768px){
 

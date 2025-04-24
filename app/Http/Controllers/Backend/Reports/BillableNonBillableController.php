@@ -187,6 +187,8 @@ class BillableNonBillableController extends Controller
         
         // Load the PDF view
         $pdf = PDF::loadView('backend.reports.billable_pdf', $data);
+        $pdf->setPaper('A4', 'landscape');
+
         
         // Download the PDF file
         return $pdf->download('billable-report-'.now()->format('Y-m-d').'.pdf');

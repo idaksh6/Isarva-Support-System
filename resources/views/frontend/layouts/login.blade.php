@@ -6,8 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Responsive Bootstrap 5 admin template and web Application ui kit.">
-    <title>::My-Task::</title>
-    <link rel="icon" href="{{ asset('/favicon.ico')}}" type="image/x-icon"> <!-- Favicon-->
+    <title>Login | Isarva Support</title>
+    {{-- <link href="{{ asset('/assets/my-task.style.min.css') }}" rel="stylesheet"> <!-- Favicon--> --}}
+    <link rel="icon" href="{{ asset('isarvafavicon.png') }}">
     <!-- project css file  -->
     <link href="{{ asset('/assets/my-task.style.min.css') }}" rel="stylesheet">
 </head>

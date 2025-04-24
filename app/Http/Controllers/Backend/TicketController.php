@@ -82,75 +82,160 @@ class TicketController
     //     ]);
     // }
 
+    // public function ticketView(Request $request)
+    // {
+    //     // Start with base query
+    //     $query = Ticket::query();
+        
+    //     // Get current user info
+    //     $user = Auth::user();
+    //     $userId = $user->id;
+        
+    //     // Apply role-based filtering
+    //     // if ($user->role != 1) { // If not admin
+    //     //     $query->where('flag_to', $userId);
+    //     // }
+    //       // Apply role-based filtering
+    // if ($user->role != 1) { // If not admin
+    //     $query->where(function($q) use ($userId) {
+    //         $q->where('flag_to', $userId)
+    //           ->orWhere('team_members', 'LIKE', '%,'.$userId.',%')
+    //           ->orWhere('team_members', 'LIKE', $userId.',%')
+    //           ->orWhere('team_members', 'LIKE', '%,'.$userId)
+    //           ->orWhere('team_members', '=', $userId);
+    //     });
+    // }
+
+    //     // Apply search filters
+    //     if ($request->filled('q')) {
+    //         $query->where(function ($q) use ($request) {
+    //             $q->where('title', 'like', '%' . $request->q . '%')
+    //             ->orWhere('id', 'like', '%' . $request->q . '%')
+    //             ->orWhere('domain', 'like', '%' . $request->q . '%');
+    //         });
+    //     }
+
+    //     if ($request->filled('month_year')) {
+    //         $monthYear = explode('-', $request->month_year);
+    //         if (count($monthYear) == 2) {
+    //             $query->whereYear('created_at', $monthYear[0])
+    //                 ->whereMonth('created_at', $monthYear[1]);
+    //         }
+    //     }
+
+    //     if ($request->filled('assignedTo')) {
+    //         $query->where('flag_to', $request->assignedTo);
+    //     }
+
+    //     if ($request->filled('department')) {
+    //         $query->where('department', $request->department);
+    //     }
+
+    //     if ($request->filled('priority')) {
+    //         $query->where('priority', $request->priority);
+    //     }
+
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     // Fetch filtered tickets
+    //     $tickets = $query->get();
+
+    //     // Get supporting data
+    //     $clients = ClientHelper::getClientNames();
+    //     $projects = ClientHelper::getProjects();
+    //     $employees = ClientHelper::getEmployees();
+    //     $status = ClientHelper::TicketStatus();
+    //     $department = ClientHelper::Departments();
+    //     $priority = ClientHelper::Priority();
+
+    //     return view('backend.tickets.ticket-view', [
+    //         'tickets' => $tickets,
+    //         'clients' => $clients,
+    //         'projects' => $projects,
+    //         'employees' => $employees,
+    //         'status' => $status,
+    //         'department' => $department,
+    //         'priority' => $priority,
+    //     ]);
+    // }
     public function ticketView(Request $request)
-{
-    // Start with base query
-    $query = Ticket::query();
+    {
+        // Start with base query
+        $query = Ticket::query();
+        
+        // Get current user info
+        $user = Auth::user();
+        $userId = $user->id;
+        
+        // // Apply role-based filtering
     
-    // Get current user info
-    $user = Auth::user();
-    $userId = $user->id;
-    
-    // Apply role-based filtering
-    if ($user->role != 1) { // If not admin
-        $query->where('flag_to', $userId);
-    }
-
-    // Apply search filters
-    if ($request->filled('q')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->q . '%')
-              ->orWhere('id', 'like', '%' . $request->q . '%')
-              ->orWhere('domain', 'like', '%' . $request->q . '%');
-        });
-    }
-
-    if ($request->filled('month_year')) {
-        $monthYear = explode('-', $request->month_year);
-        if (count($monthYear) == 2) {
-            $query->whereYear('created_at', $monthYear[0])
-                  ->whereMonth('created_at', $monthYear[1]);
+        if ($user->role != 1) { // If not admin
+            $query->where(function($q) use ($userId) {
+                $q->where('flag_to', $userId)
+                ->orWhereRaw("CONCAT(',', team_members, ',') LIKE ?", ['%,' . $userId . ',%']);
+            });
         }
+
+
+
+   
+    
+        // Apply search filters
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->q . '%')
+                  ->orWhere('id', 'like', '%' . $request->q . '%')
+                  ->orWhere('domain', 'like', '%' . $request->q . '%');
+            });
+        }
+    
+        if ($request->filled('month_year')) {
+            $monthYear = explode('-', $request->month_year);
+            if (count($monthYear) == 2) {
+                $query->whereYear('created_at', $monthYear[0])
+                      ->whereMonth('created_at', $monthYear[1]);
+            }
+        }
+    
+        if ($request->filled('assignedTo')) {
+            $query->where('flag_to', $request->assignedTo);
+        }
+    
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
+        }
+    
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+    
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+    
+        // Fetch filtered tickets
+        $tickets = $query->get();
+    
+        // Get supporting data
+        $clients = ClientHelper::getClientNames();
+        $projects = ClientHelper::getProjects();
+        $employees = ClientHelper::getEmployees();
+        $status = ClientHelper::TicketStatus();
+        $department = ClientHelper::Departments();
+        $priority = ClientHelper::Priority();
+    
+        return view('backend.tickets.ticket-view', [
+            'tickets' => $tickets,
+            'clients' => $clients,
+            'projects' => $projects,
+            'employees' => $employees,
+            'status' => $status,
+            'department' => $department,
+            'priority' => $priority,
+        ]);
     }
-
-    if ($request->filled('assignedTo')) {
-        $query->where('flag_to', $request->assignedTo);
-    }
-
-    if ($request->filled('department')) {
-        $query->where('department', $request->department);
-    }
-
-    if ($request->filled('priority')) {
-        $query->where('priority', $request->priority);
-    }
-
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    // Fetch filtered tickets
-    $tickets = $query->get();
-
-    // Get supporting data
-    $clients = ClientHelper::getClientNames();
-    $projects = ClientHelper::getProjects();
-    $employees = ClientHelper::getEmployees();
-    $status = ClientHelper::TicketStatus();
-    $department = ClientHelper::Departments();
-    $priority = ClientHelper::Priority();
-
-    return view('backend.tickets.ticket-view', [
-        'tickets' => $tickets,
-        'clients' => $clients,
-        'projects' => $projects,
-        'employees' => $employees,
-        'status' => $status,
-        'department' => $department,
-        'priority' => $priority,
-    ]);
-}
-
 
 
     public function ticketDetail($id)
@@ -281,6 +366,30 @@ class TicketController
 
     public function store(Request $request)
     {
+
+        
+    $validated = $request->validate([
+       'client' => 'required',
+        'title' => 'required|string|max:500',
+        'priority' => 'required',
+        'description' => 'required',
+        'privacy' => 'required',
+        'assignedTo' => 'required|exists:users,id',
+        'teamMembers' => 'required|array',
+        'teamMembers.*' => 'exists:users,id',
+        'dueDate' => 'required|date',
+        'department' => 'required',
+    ], [
+        'client.required' => 'The client field is required.',
+        'title.required' => 'The title field is required.',
+        'priority.required' => 'The priority field is required.',
+        'description.required' => 'The description field is required.',
+        'privacy.required' => 'The privacy field is required.',
+        'assignedTo.required' => 'The assigned to field is required.',
+        'teamMembers.required' => 'Please select at least one team member.',
+        'dueDate.required' => 'The due date field is required.',
+        'department.required' => 'The department field is required.',
+    ]);
         // Create a new Ticket instance
         $ticket = new Ticket();
 
@@ -312,8 +421,13 @@ class TicketController
         $ticket->created_by = Auth::id();
         $ticket->last_updated_by = Auth::id();
         $ticket->last_modified_on = now();
-        $ticket->team_members = "";
+        // $ticket->team_members = $request->teamMembers ? implode(',', $request->teamMembers) : null; // Comma-separated string
+        $ticket->team_members = $request->teamMembers ? implode(',', $request->teamMembers) : null;
+        
+
         $ticket->flag_to = $request->assignedTo; // This is the assigned user ID
+      
+      
         $ticket->status = 1;
         $ticket->start_date = now();
         $ticket->created_on = now();
@@ -340,9 +454,19 @@ class TicketController
                 )
             );
         }
+           // Return a response
+           if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Ticket created successfully!'
+            ]);
+        }
+        
+        return redirect()->back()->withFlashSuccess(__('The ticket was successfully created.'));
+        
 
         // Redirect back with a success message
-        return redirect()->back()->withFlashSuccess(__('The ticket was successfully created.'));
+        // return redirect()->back()->withFlashSuccess(__('The ticket was successfully created.'));
     }
 
 
@@ -357,6 +481,7 @@ class TicketController
     // UPDATE SINGLE TICKET INFORMATION - AUTH - SK - 13-03-2025
     public function update(Request $request, $id) 
     {
+      
         // Validate the request data
         // $request->validate([
         //     'client' => 'required|string|max:200',
@@ -373,7 +498,49 @@ class TicketController
         //     'department' => 'required|string',
         //     'attachment' => 'nullable|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:2048',
         // ]);
-
+        $validated = $request->validate([
+            't_client' => 'required|exists:isar_clients,id', // Assuming clients is your table
+            't_title' => 'required|string|max:500',
+            't_domain' => 'nullable|string|max:255',
+            't_tag' => 'required|integer|between:1,7',
+            't_source' => 'required|integer|between:1,6',
+            't_priority' => 'required|integer|between:1,3',
+            't_project' => 'nullable|exists:si_projects,id', // Assuming projects is your table
+            't_description' => 'required|string',
+            't_privacy' => 'required|integer|between:1,2',
+            't_assignedTo' => 'required|exists:users,id',
+            't_teamMembers' => 'required|array',
+            't_teamMembers.*' => 'exists:users,id',
+            't_dueDate' => 'required|date|after_or_equal:today',
+            't_department' => 'required|integer|between:1,4',
+            't_attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        ], [
+            't_client.required' => 'The client field is required.',
+            't_client.exists' => 'The selected client is invalid.',
+            't_title.required' => 'The title field is required.',
+            't_title.max' => 'The title may not be greater than 500 characters.',
+            't_tag.required' => 'The tag field is required.',
+            't_tag.between' => 'The selected tag is invalid.',
+            't_source.required' => 'The source field is required.',
+            't_source.between' => 'The selected source is invalid.',
+            't_priority.required' => 'The priority field is required.',
+            't_priority.between' => 'The selected priority is invalid.',
+            't_project.exists' => 'The selected project is invalid.',
+            't_description.required' => 'The description field is required.',
+            't_privacy.required' => 'The privacy field is required.',
+            't_privacy.between' => 'The selected privacy option is invalid.',
+            't_assignedTo.required' => 'The assigned to field is required.',
+            't_assignedTo.exists' => 'The selected assigned user is invalid.',
+            't_teamMembers.required' => 'Please select at least one team member.',
+            't_teamMembers.*.exists' => 'One or more selected team members are invalid.',
+            't_dueDate.required' => 'The due date field is required.',
+            't_dueDate.after_or_equal' => 'The due date must be today or in the future.',
+            't_department.required' => 'The department field is required.',
+            't_department.between' => 'The selected department is invalid.',
+            't_attachment.mimes' => 'The attachment must be a file of type: jpg, jpeg, png, pdf, doc, docx.',
+            't_attachment.max' => 'The attachment may not be greater than 2MB.',
+        ]);
+    
        
         // Find the existing ticket
         $ticket = Ticket::findOrFail($id);
@@ -389,6 +556,9 @@ class TicketController
         $ticket->comments = $request->t_description;
         $ticket->privacy = $request->t_privacy;
         $ticket->flag_to = $request->t_assignedTo;
+        // $ticket->team_members = $request->t_teamMembers ? implode(',', $request->t_teamMembers) : null; // Only implode if array exists
+     
+        $ticket->team_members = $request->t_teamMembers ? implode(',', $request->t_teamMembers) : null;
         $ticket->end_date = $request->t_dueDate;
         $ticket->department = $request->t_department;
         $ticket->last_updated_by = Auth::id();

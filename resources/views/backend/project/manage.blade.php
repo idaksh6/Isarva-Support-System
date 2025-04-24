@@ -6,7 +6,7 @@
 
 <style>
 /* Css for select2 */
-.select2-container .select2-selection--single {
+/* .select2-container .select2-selection--single {
     height: 38px;
     padding: 5px 10px;
     border-radius: 4px;
@@ -30,6 +30,148 @@
 #advancedSearchPanels label {
 
     margin-bottom: 10px !important;
+}
+
+
+button.select2-selection__choice__remove {
+    border: 0px;
+    background: none;
+}
+
+li.select2-selection__choice {
+    margin-top: 0px;
+}
+
+
+span.select2-selection.select2-selection--multiple.select2-selection--clearable {
+
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+
+/* Reset base height & layout */
+/* .select2-container--default .select2-selection--multiple {
+    min-height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+} */
+
+
+ .select2-container .select2-selection--single {
+    height: 38px;
+    padding: 5px 10px;
+    border-radius: 4px;
+  
+}
+span.select2-selection.select2-selection--single.select2-selection--clearable {
+
+    height: 38px;
+}
+
+
+.select2-selection--multiple {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 4px;
+    min-height: 42px;
+    box-sizing: border-box;
+}
+
+/* Keep tags inline with search bar */
+.select2-selection__rendered {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.select2-search--inline {
+    display: inline-flex !important;
+}
+
+/* Adjust search field inside */
+/* .select2-search--inline .select2-search__field {
+    min-width: 120px;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 4px !important;
+    border: none;
+    box-shadow: none;
+    font-size: 14px;
+    flex-grow: 1;
+} */
+
+.select2-search--inline .select2-search__field {
+    height: 30px !important;
+    padding: 4px 6px !important;
+    margin: 0 !important;
+    border: none;
+    box-shadow: none;
+    font-size: 14px;
+    flex: 1;
+    min-width: 120px;
+    line-height: 1.5;
+    resize: none;
+}
+
+/* Selected tags style */
+.select2-selection__choice {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Remove unnecessary clear reverse layout */
+/* span.select2-selection.select2-selection--multiple.select2-selection--clearable {
+    height: auto !important;
+    display: flex;
+  
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row !important;
+}  */
+
+
+span#select2-team_members-container-choice-b22y-1 {
+    color: black !important;
+}
+
+.select2project .select2-selection--multiple {
+    height: 40px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    /* flex-direction: row-reverse !important; */
+}
+
+
+button.select2-selection__clear {
+    display: none;
+}
+
+li.select2-selection__choice {
+    margin: 10px 0;
+    margin-top: 20px !important;
+    color: black;
+}
+
+button.select2-selection__choice__remove {
+    border: 0px;
+    background: none;
 }
 
 </style>
@@ -67,13 +209,13 @@
                 
                     <div class="mb-3">
                          <label for="project_name" class="form-label">Project Name<span class="required">*</span></label>
-                         <input type="text" class="form-control" name="project_name"  value="{{ old('create_project_name') }}" placeholder="Enter the Project Name">
+                         <input type="text" class="form-control inputprojectbox" name="project_name"  value="{{ old('create_project_name') }}" placeholder="Enter the Project Name">
                          <div class="text-danger" id="proj-add-error-project_name"></div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Project Category</label>
-                        <select class="form-select" name="category" aria-label="Default select Project Category">
+                        <select class="form-select inputprojectbox" name="category" aria-label="Default select Project Category">
                             <option selected>None</option>
                             <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Website Design</option>
                             <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>App Development</option>
@@ -90,7 +232,7 @@
 
                     <div class="mb-3">
                         <label for="project_img" class="form-label">Project Image</label>
-                        <input class="form-control" type="file" name="project_image" multiple>
+                        <input class="form-control inputprojectbox" type="file" name="project_image" multiple>
                         <div class="text-danger" id="proj-add-error-project_image"></div>
                     </div>
 
@@ -108,7 +250,7 @@
                         </div>
                         <div class="col">
                             <label for="team_leader" class="form-label">Team Leader<span class="required">*</span></label>
-                            <select class="form-select select2" name="team_leader" aria-label="Default select Priority">
+                            <select class="form-select select2 " name="team_leader" aria-label="Default select Priority">
                                 <option value="">Select Team Leader</option>
                                 @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
                                 <option value="{{ $id }}" {{ old('manager') == $id ? 'selected' : '' }}>{{ $employeeName }}</option>
@@ -118,7 +260,7 @@
                         </div>
                     </div>
                    
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
                         <div class="dropdown">
                             <button class="form-select text-start dropdown-toggle  " type="button" id="teamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -137,7 +279,20 @@
                          <div id="selectedTeamMembers" class="mt-2 d-flex flex-wrap"></div>
                          <input type="hidden" name="team_members" id="teamMembersInput">
                          <div class="text-danger" id="proj-add-error-team_members"></div>
-                     </div>
+                     </div> --}}
+                     <div class="mb-3">
+                        <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
+                        <select class="form-select select2 select2project" name="team_members[]" id="team_members" multiple="multiple">
+                            <option value="">Select Team Members</option>
+                          
+                            @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                <option value="{{ $id }}">{{ $employeeName }}</option>
+                            @endforeach
+                        </select>
+
+                        
+                        <div class="text-danger" id="proj-add-error-team_members"></div>
+                    </div>
 
 
                     <div class="deadline-form">
@@ -158,7 +313,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-sm">
                                 <label for="formFileMultipleone" class="form-label">Department<span class="required">*</span></label>
-                                <select class="form-select" name="department" aria-label="Default select Priority">
+                                <select class="form-select inputprojectbox" name="department" aria-label="Default select Priority">
                                    <option selected>None</option>
                                    <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Web Application</option>
                                    <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>Website</option>
@@ -167,8 +322,8 @@
                                 <div class="text-danger" id="proj-add-error-department"></div>
                             </div>
                             <div class="col-sm">
-                               <label for="formFileMultipleone" class="form-label">Status<span class="required">*</span></label>
-                               <select class="form-select" name="status" aria-label="Default select Priority">
+                               <label for="formFileMultipleone " class="form-label">Status<span class="required">*</span></label>
+                               <select class="form-select inputprojectbox" name="status" aria-label="Default select Priority">
                                     <option selected>None</option>
                                     <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Onboard</option>
                                     <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Open</option>
@@ -186,13 +341,13 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-sm">
-                           <label for="formFileMultipleone" class="form-label">Budget</label>
-                           <input type="number" name="budget" class="form-control" value="{{ old('budget') }}">
+                           <label for="formFileMultipleone inputprojectbox" class="form-label">Budget</label>
+                           <input type="number" name="budget" class="form-control inputprojectbox" value="{{ old('budget') }}">
                            <div class="text-danger" id="proj-add-error-budget"></div>
                         </div>
                         <div class="col-sm">
                             <label for="formFileMultipleone" class="form-label">Priority<span class="required">*</span></label>
-                            <select class="form-select" name="priority"  aria-label="Default select Priority">
+                            <select class="form-select inputprojectbox" name="priority"  aria-label="Default select Priority">
                               <option selected>None</option>
                               <option value="1" {{ old('priority') == '1' ? 'selected' : '' }}>Low</option>
                               <option value="2" {{ old('priority') == '2' ? 'selected' : '' }}>Medium</option>
@@ -204,7 +359,7 @@
 
                     <div class="mb-3">
                        <label class="form-label">Type<span class="required">*</span></label>
-                        <select class="form-select" name="type" aria-label="Default select Project Category">
+                        <select class="form-select inputprojectbox" name="type" aria-label="Default select Project Category">
                           <option selected>None</option>
                           <option value="1" {{ old('type') == '1' ? 'selected' : '' }}>External</option>
                           <option value="2" {{ old('type') == '2' ? 'selected' : '' }}>Internal</option>
@@ -214,13 +369,13 @@
 
                     <div class="mb-3">
                        <label for="estimation" class="form-label">Estimation<span class="required">*</span></label>
-                       <input type="number" class="form-control" name="estimation"  value="{{ old('estimation') }}" placeholder="Enter the Project Estimation">
+                       <input type="number" class="form-control inputprojectbox" name="estimation"  value="{{ old('estimation') }}" placeholder="Enter the Project Estimation">
                        <div class="text-danger" id="proj-add-error-estimation"></div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Billing Company</label>
-                        <select class="form-select" name="biiling_company" >
+                        <select class="form-select inputprojectbox" name="biiling_company" >
                            <option value="0">None</option>
                            <option value="1" {{ old('biiling_company') == '1' ? 'selected' : '' }}>Isarva</option>
                            <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option>
@@ -230,7 +385,7 @@
 
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea78" class="form-label">Description <span class="required">*</span></label>
-                        <textarea class="form-control" name="description"  placeholder="Enter the details about project" rows="3">{{ old('description') }}</textarea>
+                        <textarea class="form-control inputprojectbox" name="description"  placeholder="Enter the details about project" rows="3">{{ old('description') }}</textarea>
                         <div class="text-danger" id="proj-add-error-description"></div>
                     </div>
                     <div class="modal-footer">
@@ -330,7 +485,7 @@
 
                     
                     <!-- Team Members -->
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label for="team_members" class="form-label">Team Members<span class="required">*</span></label>
                         <div class="dropdown">
                             <button class="form-select text-start dropdown-toggle" type="button" id="editTeamMembersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -348,6 +503,16 @@
                         </div>
                         <div id="editSelectedTeamMembers" class="mt-2 d-flex flex-wrap"></div>
                         <input type="hidden" name="team_members" id="editTeamMembersInput">
+                        <div class="text-danger" id="proj-edit-error-team_members"></div>
+                    </div> --}}
+                    <div class="mb-3">
+                        <label for="edit_team_members" class="form-label">Team Members<span class="required">*</span></label>
+                        <select class="form-select select2" name="team_members[]" id="edit_team_members" multiple="multiple">
+                            <option value="">Select Team Members</option>
+                            @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
+                                <option value="{{ $id }}">{{ $employeeName }}</option>
+                            @endforeach
+                        </select>
                         <div class="text-danger" id="proj-edit-error-team_members"></div>
                     </div>
 
@@ -545,7 +710,7 @@
             <!-- Search Form -->
             <form action="{{ route('admin.project.manage') }}" method="GET">
                 <!-- Basic Search Row -->
-                <div class="row mb-3 mt-4">
+                <div class="row mb-3 mt-4 g-4">
                     {{-- <div class="col-md-4">
                     
                         <div class="input-group">
@@ -670,7 +835,7 @@
 
 
         <!-- Total Projects Card -->
-        <div class=" mb-3 d-flex justify-content-between align-items-center">
+        <div class=" mb-3 d-flex justify-content-between align-items-center  flex-wrap gap-3">
             {{-- <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-light">
                     <div class="card-body d-flex align-items-center p-3">
@@ -685,24 +850,24 @@
                 </div>
             </div> --}}
             <div class="col-md-2.8">
-    <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #4e73df, #6f42c1); color: white;">
-        <div class="card-body d-flex align-items-center p-3">
-            <div class="icon-box bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                <i class="icofont-dashboard-web fs-5"></i>
+                <div class="card border-0 shadow-sm projectcountbox" style="background: linear-gradient(135deg, #4e73df, #6f42c1); color: white;">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                            <i class="icofont-dashboard-web fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1" style="opacity: 0.85;">Total Projects</h6>
+                            <h5 class="fw-bold mb-0" id="totalProjects">{{ $totalProjectscount }}</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h6 class="mb-1" style="opacity: 0.85;">Total Projects</h6>
-                <h5 class="fw-bold mb-0" id="totalProjects">{{ $totalProjectscount }}</h5>
-            </div>
-        </div>
-    </div>
-</div>
 
             
             
             <!--  toggle buttons for table and card view -->
     
-            <div class="view-toggle-container">
+            {{-- <div class="view-toggle-container">
                 <div class="toggle-switch">
                     <input type="radio" id="table-view" name="view-toggle" class="toggle-input" value="table" checked>
                     <label for="table-view" class="toggle-label toggletablcrdsview">
@@ -718,14 +883,51 @@
                     
                     <span class="toggle-slider"></span>
                 </div>
+            </div> --}}
+            {{-- working fine --}} 
+            {{-- <div class="view-toggle-container">
+                <div class="toggle-switch">
+                    <input type="radio" id="table-view" name="view-toggle" class="toggle-input" value="table" checked>
+                    <label for="table-view" class="toggle-label toggletablcrdsview" title="Table View">
+                        <i class="icofont-layout"></i>
+                    </label>
+            
+                    <input type="radio" id="card-view" name="view-toggle" class="toggle-input" value="cards">
+                    <label for="card-view" class="toggle-label toggletablcrdsview" title="Card View">
+                        <i class="icofont-ui-note"></i>
+                    </label>
+            
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>  --}}
+            <div class="view-toggle-container">
+                <div class="toggle-switch">
+                    <form id="view-toggle-form" method="GET" style="display: none;">
+                        @foreach(request()->except('view', 'page') as $key => $value)
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endforeach
+                        <input type="hidden" name="view" value="{{ $viewType }}">
+                    </form>
+                    <input type="radio" id="table-view" name="view-toggle" class="toggle-input" value="table" {{ $viewType === 'table' ? 'checked' : '' }}>
+                    <label for="table-view" class="toggle-label toggletablcrdsview {{ $viewType === 'table' ? 'active' : '' }}" title="Table View">
+                        <i class="icofont-layout"></i>
+                    </label>
+                
+                    <input type="radio" id="card-view" name="view-toggle" class="toggle-input" value="cards" {{ $viewType === 'cards' ? 'checked' : '' }}>
+                    <label for="card-view" class="toggle-label toggletablcrdsview {{ $viewType === 'cards' ? 'active' : '' }}" title="Card View">
+                        <i class="icofont-ui-note"></i>
+                    </label>
+                
+                    <span class="toggle-slider" style="{{ $viewType === 'cards' ? 'transform: translateX(100%);' : '' }}"></span>
+                </div>
             </div>
-        
+                    
         </div>
 
         <!-- Project under Table View -->
         <div id="tableView" class="{{ $viewType === 'table' ? '' : 'd-none' }}">
         
-            <div class="">
+            <div class="tableView">
                 @if($projectsmanage->isEmpty())
                     <div class="col-12 text-center py-5">
                         <div class="no-info-card mx-auto">
@@ -819,18 +1021,16 @@
                             @endforeach
                         </tbody>
                     </table>
-                    
-                    <!-- Pagination Links -->
-                    {{-- <div class="d-flex justify-content-center mt-4">
-                        {{ $projectsmanage->links() }}
-                    </div> --}}
+              
                     <!-- Pagination - Table View -->
                     <div class="d-flex justify-content-center mt-4 ">
-                        {{-- {{ $projectsmanage->appends(['view' => 'table'])->links() }} --}}
+                     
                         {{ $projectsmanage->appends(request()->query())->links() }}
                     </div>
-
-                
+                    {{-- <div class="d-flex justify-content-center mt-4">
+                        {{ $projectsmanage->appends(['view' => 'table'] + request()->except('page', 'view'))->links() }}
+                    </div>
+                 --}}
                 @endif
             </div>
         </div>
@@ -948,9 +1148,13 @@
             </div>
             <!-- Pagination - Card View -->
             <div class="d-flex justify-content-center mt-4">
-                {{-- {{ $projectsmanage->appends(['view' => 'cards'])->links() }} --}}
+     
                 {{ $projectsmanage->appends(request()->query())->links() }}
             </div>
+
+            {{-- <div class="d-flex justify-content-center mt-4">
+                {{ $projectsmanage->appends(['view' => 'cards'] + request()->except('page', 'view'))->links() }}
+            </div> --}}
         </div>
     </div>
     <!-- Jquery Page Js -->
@@ -965,46 +1169,96 @@
 
 <script>
             // Init Select2
-            $(document).ready(function() {
-                $('.select2').select2({
-                    placeholder: "Select an option",
-                    allowClear: true,
-                    width: 'resolve'
-                });
-            });
+            // $(document).ready(function() {
+            //     $('.select2').select2({
+            //         // placeholder: "Select an option",
+            //         allowClear: true,
+            //         width: '100%'
+            //     });
+            // });
 
          
-            $('#createproject').on('shown.bs.modal', function () {
-                    $(this).find('.select2').select2({
-                        dropdownParent: $('#createproject')
-                            });
-                    });
+            // $('#createproject').on('shown.bs.modal', function () {
+            //         $(this).find('.select2').select2({
+            //             dropdownParent: $('#createproject')
+            //                 });
+            //         });
              
 
-            // $('#editproject').on('shown.bs.modal', function () {
+            //         // $('#team_members').select2({
+            //         //     placeholder: "Select Team Members",
+            //         //     allowClear: true,
+            //         //     width: '100%'
+            //         // });
+
+            //         // Initialize Select2 for edit project team members when modal opens
+            //         $('#editproject').on('shown.bs.modal', function() {
+            //             $('#edit_team_members').select2({
+            //                 dropdownParent: $('#editproject'),
+            //                 placeholder: "Select Team Members",
+            //                 allowClear: true,
+            //                 width: '100%'
+            //             });
+            //         });
+
+            // // $('#editproject').on('shown.bs.modal', function () {
+            // //         $(this).find('.select2').select2({
+            // //             dropdownParent: $('#editproject')
+            // //         });
+            // //     });
+            // // Replace with this initialization code:
+            // $(document).ready(function() {
+            //     // Initialize Select2 for elements outside modals
+            //     $('.select2:not(.modal .select2)').select2({
+            //         // placeholder: "Select an option",
+            //         allowClear: true,
+            //           width: '100%'
+            //     });
+                
+            //     // Initialize Select2 for modal elements when modal is shown
+            //     $(document).on('shown.bs.modal', '.modal', function() {
             //         $(this).find('.select2').select2({
-            //             dropdownParent: $('#editproject')
+            //             dropdownParent: $(this),
+            //             // placeholder: "Select an option",
+            //             allowClear: true,
+            //               width: '100%'
             //         });
             //     });
-            // Replace with this initialization code:
+            // });
+
             $(document).ready(function() {
-                // Initialize Select2 for elements outside modals
-                $('.select2:not(.modal .select2)').select2({
-                    placeholder: "Select an option",
-                    allowClear: true,
-                    width: 'resolve'
-                });
-                
-                // Initialize Select2 for modal elements when modal is shown
-                $(document).on('shown.bs.modal', '.modal', function() {
-                    $(this).find('.select2').select2({
-                        dropdownParent: $(this),
-                        placeholder: "Select an option",
-                        allowClear: true,
-                        width: 'resolve'
-                    });
-                });
+        // Outside modal
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Inside modal
+        $(document).on('shown.bs.modal', '.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this),
+                // placeholder: "Select an option",
+                allowClear: true,
+                width: '100%'
             });
+        });
+    });
+  
+    // Focus for select2 search
+    $(document).on('select2:open', function (e) {
+    const focusableFields = ['client', 'manager', 'team_leader'];
+    if (focusableFields.includes(e.target.name)) {
+            const searchField = document.querySelector('.select2-container--open .select2-search__field');
+            if (searchField) {
+                searchField.focus();
+            }
+        }
+    });
+
+
+
+
 
 </script>
 
@@ -1068,11 +1322,19 @@
 
                 // Show advanced search panels if any advanced filter is already selected
                 const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('status') && urlParams.get('status') !== 'None' || 
-                urlParams.has('assigned_to') || 
-                urlParams.has('department') && urlParams.get('department') !== 'None' ||
-                urlParams.has('month') && urlParams.get('month') !== 'None' ||
-                urlParams.has('year') && urlParams.get('year') !== 'None') {
+
+                // Only show advanced search if any ADVANCED search filter is set
+                let showAdvanced = false;
+
+                if ((urlParams.has('status') && urlParams.get('status') !== 'None') ||
+                    (urlParams.has('assigned_to') && urlParams.get('assigned_to') !== '') ||
+                    (urlParams.has('department') && urlParams.get('department') !== 'None') ||
+                    (urlParams.has('month') && urlParams.get('month') !== 'None') ||
+                    (urlParams.has('year') && urlParams.get('year') !== 'None')) {
+                    showAdvanced = true;
+                }
+
+                if (showAdvanced) {
                     $('#advancedSearchPanels').show();
                     $('#toggleAdvancedSearch').html('<i class="fa fa-cog"></i> Hide Advanced Search');
                 }
@@ -1091,44 +1353,51 @@
                     window.location.href = "{{ route('admin.project.manage') }}";
                 });
             });
-                // // View toggle functionality (jQuery version)
-                // $('.view-toggle').on('click', function() {
-                // $('.view-toggle').removeClass('active');
-                // $(this).addClass('active');
                 
-                // var viewType = $(this).data('view');
-                
-                // // Toggle views
-                // $('#tableView').toggleClass('d-none', viewType !== 'table');
-                // $('#cardsView').toggleClass('d-none', viewType !== 'cards');
-                
-                // // Update URL with view type
-                // var url = new URL(window.location);
-                // url.searchParams.set('view', viewType);
-                // window.history.pushState({}, '', url);
+
+                    // table and card view toggle
+                //     $(document).ready(function() {
+                //     $('.toggle-input').change(function() {
+                //         const viewType = $(this).val();     //  Gets the value ('table' or 'cards') from the clicked radio button
+                //         $('.toggle-label').removeClass('active');   //  Update Active State Styling
+                //         $(this).next('.toggle-label').addClass('active');
+                        
+                //         $('#tableView').toggleClass('d-none', viewType !== 'table');  // Shows table view if viewType is 'table' (d-none removed) and hides table if view is not table
+                //         $('#cardsView').toggleClass('d-none', viewType !== 'cards');
+                        
+                //         // Update URL
+                //         const url = new URL(window.location);  // Creates a URL object from current page URL
+                //         url.searchParams.set('view', viewType); // Sets/updates the 'view' parameter in the URL
+                //         window.history.pushState({}, '', url);  //  Updates browser history without reloading the page
+                //     });
+                    
+                //     // Initialize based on current view
+                //     const urlParams = new URLSearchParams(window.location.search); //Gets all URL query parameters
+                //     const currentView = urlParams.get('view') || 'table'; // Checks for 'view' parameter, defaults to 'table' if not found
+                //     $(`#${currentView}-view`).prop('checked', true).trigger('change'); // Finds the corresponding radio button (#table-view or #cards-view) Sets it to checked
                 // });
 
-                    $(document).ready(function() {
+                $(document).ready(function() {
                     $('.toggle-input').change(function() {
-                        const viewType = $(this).val();     //  Gets the value ('table' or 'cards') from the clicked radio button
-                        $('.toggle-label').removeClass('active');   //  Update Active State Styling
+                        const viewType = $(this).val();   //  Gets the value ('table' or 'cards') from the clicked radio button
+                        
+                        // Update UI immediately
+                        $('.toggle-label').removeClass('active');      //  Update Active State Styling
                         $(this).next('.toggle-label').addClass('active');
+                        $('.toggle-slider').css('transform', viewType === 'cards' ? 'translateX(100%)' : 'translateX(0)');
                         
-                        $('#tableView').toggleClass('d-none', viewType !== 'table');  // Shows table view if viewType is 'table' (d-none removed) and hides table if view is not table
-                        $('#cardsView').toggleClass('d-none', viewType !== 'cards');
+                        // Update URL without reload
+                        const url = new URL(window.location);
+                        url.searchParams.set('view', viewType);
+                        url.searchParams.set('page', 1); // Reset to first page when changing views
+                        window.history.pushState({}, '', url);
                         
-                        // Update URL
-                        const url = new URL(window.location);  // Creates a URL object from current page URL
-                        url.searchParams.set('view', viewType); // Sets/updates the 'view' parameter in the URL
-                        window.history.pushState({}, '', url);  //  Updates browser history without reloading the page
+                        // Submit a hidden form to reload with new view type
+                        $('#view-toggle-form input[name="view"]').val(viewType);
+                        $('#view-toggle-form').submit();
                     });
-                    
-                    // Initialize based on current view
-                    const urlParams = new URLSearchParams(window.location.search); //Gets all URL query parameters
-                    const currentView = urlParams.get('view') || 'table'; // Checks for 'view' parameter, defaults to 'table' if not found
-                    $(`#${currentView}-view`).prop('checked', true).trigger('change'); // Finds the corresponding radio button (#table-view or #cards-view) Sets it to checked
                 });
-           
+                        
 
             
                     // Project Section AJAX Add/Edit/Delete 
@@ -1172,8 +1441,17 @@
                                     $('#proj_biiling_company').val(response.biiling_company);
                                     $('#proj_description').val(response.description);
                                     
-                                    console.log("Team Members from Response:", response.team_members);
-                                    prefillEditTeamMembers(response.team_members);
+                                    // console.log("Team Members from Response:", response.team_members);
+                                    // prefillEditTeamMembers(response.team_members);
+
+                                       // Handle team members
+                                        if (response.team_members) {
+                                            // Convert comma-separated string to array
+                                            var teamMemberIds = response.team_members.split(',');
+                                            $('#edit_team_members').val(teamMemberIds).trigger('change');
+                                        } else {
+                                            $('#edit_team_members').val(null).trigger('change');
+                                        }
 
                                     // Set the form action URL for updating
                                     $('#editprojectform').attr('action', "{{ route('admin.project.update-project', ':id') }}".replace(':id', projectId));
@@ -1402,82 +1680,82 @@
                         });
                     
                    // JS for Project team_member section
-                   let selectedTeamMembers = {}; // Store selected members
+                //    let selectedTeamMembers = {}; // Store selected members
 
-                    function selectTeamMember(id, name) {
-                        if (!selectedTeamMembers[id]) {     // If the member is not already selected, the code inside the block runs.
-                            selectedTeamMembers[id] = name;  // Adds the Selected Member to the Object
+                //     function selectTeamMember(id, name) {
+                //         if (!selectedTeamMembers[id]) {     // If the member is not already selected, the code inside the block runs.
+                //             selectedTeamMembers[id] = name;  // Adds the Selected Member to the Object
 
-                            let tag = document.createElement("div"); // Creates a New HTML <div> Element:This <div> will be used to display the selected team member in the UI as a badge.
-                            tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
+                //             let tag = document.createElement("div"); // Creates a New HTML <div> Element:This <div> will be used to display the selected team member in the UI as a badge.
+                //             tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
 
-                            // Displays the selected member's name.
-                            tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeTeamMember(${id}, this)">❌</span>`;
-                            tag.setAttribute("data-id", id);
+                //             // Displays the selected member's name.
+                //             tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeTeamMember(${id}, this)">❌</span>`;
+                //             tag.setAttribute("data-id", id);
 
-                            document.getElementById("selectedTeamMembers").appendChild(tag);
-                            updateTeamMembersInput();   // Calls a Function to Update the Hidden Input Field
-                        }
-                    }
+                //             document.getElementById("selectedTeamMembers").appendChild(tag);
+                //             updateTeamMembersInput();   // Calls a Function to Update the Hidden Input Field
+                //         }
+                //     }
 
-                    function removeTeamMember(id, element) {
-                        delete selectedTeamMembers[id]; // Remove from object
-                        element.parentElement.remove(); // Remove badge
-                        updateTeamMembersInput();
-                    }
+                //     function removeTeamMember(id, element) {
+                //         delete selectedTeamMembers[id]; // Remove from object
+                //         element.parentElement.remove(); // Remove badge
+                //         updateTeamMembersInput();
+                //     }
 
-                    function updateTeamMembersInput() {
-                        document.getElementById("teamMembersInput").value = Object.keys(selectedTeamMembers).join(",");
-                    }
-
-
-
-                    // JS for Edit Project team_member section
-                    let editSelectedTeamMembers = {}; // Store selected members for edit form
-
-                    // Function to select a team member in the edit form
-                    function selectEditTeamMember(id, name) {
-                    console.log(`Selecting team member: ID=${id}, Name=${name}`);
-                    if (!editSelectedTeamMembers[id]) {
-                        editSelectedTeamMembers[id] = name;
-                        let tag = document.createElement("div");
-                        tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
-                        tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeEditTeamMember(${id}, this)">❌</span>`;
-                        tag.setAttribute("data-id", id);
-                        document.getElementById("editSelectedTeamMembers").appendChild(tag);
-                        updateEditTeamMembersInput();
-                    } else {
-                        console.log(`Team member ${id} already selected.`);
-                    }
-                    } 
+                //     function updateTeamMembersInput() {
+                //         document.getElementById("teamMembersInput").value = Object.keys(selectedTeamMembers).join(",");
+                //     }
 
 
 
-                    // Function to remove a team member in the edit form
-                    function removeEditTeamMember(id, element) {
-                        delete editSelectedTeamMembers[id]; // Remove from object
-                        element.parentElement.remove(); // Remove badge
-                        updateEditTeamMembersInput();
-                    }
+                //     // JS for Edit Project team_member section
+                //     let editSelectedTeamMembers = {}; // Store selected members for edit form
 
-                        // Function to update the hidden input field in the edit form
-                        function updateEditTeamMembersInput() {
-                            document.getElementById("editTeamMembersInput").value = Object.keys(editSelectedTeamMembers).join(",");
-                        }
+                //     // Function to select a team member in the edit form
+                //     function selectEditTeamMember(id, name) {
+                //     console.log(`Selecting team member: ID=${id}, Name=${name}`);
+                //     if (!editSelectedTeamMembers[id]) {
+                //         editSelectedTeamMembers[id] = name;
+                //         let tag = document.createElement("div");
+                //         tag.className = "badge bg-primary me-2 mb-2 p-2 d-flex align-items-center";
+                //         tag.innerHTML = `${name} <span class="ms-2 text-white" style="cursor:pointer;" onclick="removeEditTeamMember(${id}, this)">❌</span>`;
+                //         tag.setAttribute("data-id", id);
+                //         document.getElementById("editSelectedTeamMembers").appendChild(tag);
+                //         updateEditTeamMembersInput();
+                //     } else {
+                //         console.log(`Team member ${id} already selected.`);
+                //     }
+                //     } 
 
-                        // Function to pre-fill team members in the edit form
-                        function prefillEditTeamMembers(teamMembers) {
-                            $("#editSelectedTeamMembers").empty(); // Clear previous selections
-                            editSelectedTeamMembers = {}; // Reset object
 
-                            if (Array.isArray(teamMembers)) {
-                                teamMembers.forEach(member => {
-                                    selectEditTeamMember(member.id, member.name);
-                                });
-                            } else {
-                                console.warn("Invalid team members data:", teamMembers);
-                            }
-                        }
+
+                //     // Function to remove a team member in the edit form
+                //     function removeEditTeamMember(id, element) {
+                //         delete editSelectedTeamMembers[id]; // Remove from object
+                //         element.parentElement.remove(); // Remove badge
+                //         updateEditTeamMembersInput();
+                //     }
+
+                //         // Function to update the hidden input field in the edit form
+                //         function updateEditTeamMembersInput() {
+                //             document.getElementById("editTeamMembersInput").value = Object.keys(editSelectedTeamMembers).join(",");
+                //         }
+
+                //         // Function to pre-fill team members in the edit form
+                //         function prefillEditTeamMembers(teamMembers) {
+                //             $("#editSelectedTeamMembers").empty(); // Clear previous selections
+                //             editSelectedTeamMembers = {}; // Reset object
+
+                //             if (Array.isArray(teamMembers)) {
+                //                 teamMembers.forEach(member => {
+                //                     selectEditTeamMember(member.id, member.name);
+                //                 });
+                //             } else {
+                //                 console.warn("Invalid team members data:", teamMembers);
+                //             }
+                //         }
 
 
 

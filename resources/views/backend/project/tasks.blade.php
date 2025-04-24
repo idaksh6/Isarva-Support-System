@@ -36,27 +36,27 @@
     .dd-handle[data-assigned-to-me="false"] {
     cursor: not-allowed;
     opacity: 0.8;
-}
+    }
 
-/* Style for non-editable tasks */
-.dd-handle[data-assigned-to-me="false"] {
-    cursor: not-allowed;
-    opacity: 0.8;
-    position: relative;
-}
+    /* Style for non-editable tasks */
+    .dd-handle[data-assigned-to-me="false"] {
+        cursor: not-allowed;
+        opacity: 0.8;
+        position: relative;
+    }
 
-/* Optional overlay for non-editable tasks */
-.dd-handle[data-assigned-to-me="false"]::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.5);
-    z-index: 1;
-    pointer-events: none;
-}
+    /* Optional overlay for non-editable tasks */
+    .dd-handle[data-assigned-to-me="false"]::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.5);
+        z-index: 1;
+        pointer-events: none;
+    }
 </style>
 
 @if (session()->has('flash_success_project'))
@@ -239,7 +239,7 @@
                     </div>
 
                     <div class="mb-3">
-                       <label for="estimation" class="form-label">Estimation<span class="required">*</span></label>
+                       <label for="estimation" class="form-label">Estimation Hr<span class="required">*</span></label>
                        <input type="number" class="form-control" name="estimation"  value="{{ old('estimation') }}" placeholder="Enter the Project Estimation">
                        <div class="text-danger" id="proj-add-error-estimation"></div>
                     </div>
@@ -562,10 +562,10 @@
                         <input type="text" class="form-control" name="task_name" placeholder="Enter the Task name" value="{{ old('task_name') }}" >
                         <div class="text-danger" id="task-error-task_name"></div> <!-- Error container for "name" -->
                     </div>
-                   
+{{--                    
                     <div class="mb-3">
                         <label class="form-label">Task Category</label>
-                        <select class="form-select select2" name="task_category" aria-label="Default select Project Category" style="width: 100%; ">
+                        <select class="form-select " name="task_category" aria-label="Default select Project Category" style="width: 100%; ">
                             <option selected>None</option>
                             <option value="1" {{ old('category') == '1' ? 'selected' : '' }}>Website Design</option>
                             <option value="2" {{ old('category') == '2' ? 'selected' : '' }}>App Development</option>
@@ -573,12 +573,12 @@
                             <option value="4" {{ old('category') == '4' ? 'selected' : '' }}>Development</option>
                             <option value="5" {{ old('category') == '5' ? 'selected' : '' }}>Backend Development</option>
                             <option value="6" {{ old('category') == '6' ? 'selected' : '' }}>Software Testing</option>
-                            <option value="8" {{ old('category') == '8' ? 'selected' : '' }}>Marketing</option>
-                            <option value="9" {{ old('category') == '9' ? 'selected' : '' }}>UI/UX Design</option>
-                            <option value="10"{{ old('category') == '10' ? 'selected' : ''}}>Other</option>
+                            <option value="7" {{ old('category') == '7' ? 'selected' : '' }}>Marketing</option>
+                            <option value="8" {{ old('category') == '8' ? 'selected' : '' }}>UI/UX Design</option>
+                            <option value="9"{{ old('category') == '9' ? 'selected' : ''}}>Other</option>
                         </select>
                         <div class="text-danger" id="task-error-task_category"></div>
-                    </div>
+                    </div> --}}
                     
 
                     <div class="mb-3">
@@ -594,26 +594,31 @@
 
                     
                     <div class="mb-3">
-                        <label  class="form-label">Task End Date</label>
+                        <label  class="form-label">Task End Date<span class="required">*</span></label>
                         <input type="date" class="form-control" name="task_end_date" value="{{ old('task_end_date') }}" >
                         <div class="text-danger" id="task-error-task_end_date"></div>
                     </div>
                         
                     <div class="mb-3 mt-4">
                         <label for="assigned_for" class="form-label">Assigned For <span class="required">*</span></label>
-                        <select class="form-select select2 " name="task_assigned_for" style="width: 100%; ">
+                        <select class="form-select select2" name="task_assigned_for" style="width: 100%;">
                             <option value="">Select Member</option>
                             @foreach(App\Helpers\EmployeeHelper::getEmployeeNames() as $id => $employeeName)
-                                <option value="{{ $id }}">{{ $employeeName }}</option>
+                                <option value="{{ $id }}" {{ $id == $currentUserId ? 'selected' : '' }}>
+                                    {{ $employeeName }}
+                                </option>
                             @endforeach
                         </select>                        
                         <div class="text-danger" id="task-error-task_assigned_for"></div>
                     </div>
+                    
 
                     <!-- Estimation Field -->
                     <div class="mb-3 mt-4">
                         <label class="form-label">Estimation Hr <span class="required">*</span></label>
-                        <input type="number" class="form-control" name="task_estimation_hr"  value="{{ old('task_estimation') }}" placeholder="Enter the Task Estimation" >
+                        <input  type="number" 
+                        step="0.01" 
+                        min="0"  class="form-control" name="task_estimation_hr"  value="{{ old('task_estimation') }}" placeholder="Enter the Task Estimation" >
                         <div class="text-danger" id="task-error-task_estimation_hr"></div>
                     </div>
                     
@@ -652,9 +657,9 @@
 
                     
                      <!-- Project Category -->
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label class="form-label">Task Category</label>
-                        <select class="form-select select2" name="task_category" id="edit_task_category" style="width: 100%; ">
+                        <select class="form-select " name="task_category" id="edit_task_category" style="width: 100%; ">
                             <option value="">None</option>
                             <option value="1">Website Design</option>
                             <option value="2">App Development</option>
@@ -667,12 +672,13 @@
                             <option value="9">Other</option>
                         </select>
                         <div class="text-danger" id="task_edit-error-task_category"></div>
-                    </div>
+                    </div> --}}
 
                       <!-- Description -->
                       <div class="mb-3">
                         <label for="edit_description" class="form-label">Description</label>
-                        <textarea class="form-control" id="edit_task_description" name="task_description" rows="3"></textarea>
+                        <textarea class="form-control " name="task_description" rows="3" placeholder="Enter the details about project">{{ old('task_description') }}</textarea>
+
                         <div class="text-danger" id="task_edit-error-task_description"></div>
                     </div>
 
@@ -680,7 +686,7 @@
 
                     <!-- End Date -->
                     <div class="mb-3">
-                        <label for="edit_end_date" class="form-label">End Date <span class="text-danger">*</span></label>
+                        <label for="edit_end_date" class="form-label">End Date <span class="required">*</span><span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="edit_task_end_date" name="task_end_date">
                         <div class="text-danger" id="task_edit-error-task_end_date"></div>
                     </div>
@@ -699,11 +705,18 @@
                         </div>
     
                       <!-- Estimation Field -->
-                    <div class="mb-3 mt-4">
-                        <label class="form-label">Estimation Hr <span class="required">*</span></label>
-                        <input type="number" class="form-control" name="task_estimation_hr" id="edit_task_estimation" placeholder="Enter the Task Estimation" >
+                      <div class="mb-3 mt-4">
+                        <input 
+                        type="number" 
+                        step="0.01" 
+                        min="0" 
+                        class="form-control" 
+                        name="task_estimation_hr" 
+                        id="edit_task_estimation" 
+                        placeholder="Enter the Task Estimation"
+                    >
                         <div class="text-danger" id="task_edit-error-task_estimation_hr"></div>
-                    </div>   
+                    </div>
 
                     <!-- Submit Button -->
                     <div class="text-end">
@@ -1057,7 +1070,9 @@
                                     <h6 class="fw-bold py-3 mb-0">In Progress</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[1]) && count($tasksByStatus[1]) > 0)
-                                            @foreach ($tasksByStatus[1] as $task)
+                                            @foreach ($tasksByStatus[1]->sortByDesc('created_at')->sortByDesc(function($task) use ($currentUserId) {
+                                                return $task->assigned_to == $currentUserId;
+                                            }) as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
                                                     <div class="dd-handle edit-task-btn" 
                                                          data-id="{{ $task->id }}" 
@@ -1072,10 +1087,10 @@
                                                             </h6>
                                                             <div class="task-priority d-flex flex-column align-items-center justify-content-center">
                                                                 <div class="avatar-list avatar-list-stacked m-0">
-                                                                    <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt="">
+                                                                    {{-- <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt=""> --}}
                                                                     <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar1.jpg') }}" alt="">
                                                                 </div>
-                                                                <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span>
+                                                                {{-- <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span> --}}
                                                             </div>
                                                         </div>
                                                         <p class="py-2 mb-0">{{ $task->description }}</p>
@@ -1112,10 +1127,14 @@
                                     <h6 class="fw-bold py-3 mb-0">Needs Review</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[2]) && count($tasksByStatus[2]) > 0)
-                                            @foreach ($tasksByStatus[2] as $task)
+                                        @foreach ($tasksByStatus[2]->sortByDesc('created_at')->sortByDesc(function($task) use ($currentUserId) {
+                                            return $task->assigned_to == $currentUserId;
+                                        }) as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
                                                     <div class="dd-handle  edit-task-btn" 
                                                          data-id="{{ $task->id }}" 
+                                                         data-editable="{{ $task->assigned_to == auth()->id() ? 'true' : 'false' }}"
+                                                         
                                                          data-project-id="{{ $task->project_id }}" 
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#edittask"
@@ -1127,10 +1146,10 @@
                                                             </h6>
                                                             <div class="task-priority d-flex flex-column align-items-center justify-content-center">
                                                                 <div class="avatar-list avatar-list-stacked m-0">
-                                                                    <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt="">
+                                                                    {{-- <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt=""> --}}
                                                                     <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar1.jpg') }}" alt="">
                                                                 </div>
-                                                                <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span>
+                                                                {{-- <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span> --}}
                                                             </div>
                                                         </div>
                                                         <p class="py-2 mb-0">{{ $task->description }}</p>
@@ -1168,7 +1187,9 @@
                                     <h6 class="fw-bold py-3 mb-0">Completed</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[3]) && count($tasksByStatus[3]) > 0)
-                                            @foreach ($tasksByStatus[3] as $task)
+                                        @foreach ($tasksByStatus[3]->sortByDesc('created_at')->sortByDesc(function($task) use ($currentUserId) {
+                                            return $task->assigned_to == $currentUserId;
+                                        }) as $task)
                                                 <li class="task-item" data-id="{{ $task->id }}">
                                                     <div class="dd-handle  edit-task-btn" 
                                                          data-id="{{ $task->id }}" 
@@ -1183,10 +1204,10 @@
                                                             </h6>
                                                             <div class="task-priority d-flex flex-column align-items-center justify-content-center">
                                                                 <div class="avatar-list avatar-list-stacked m-0">
-                                                                    <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt="">
+                                                                    {{-- <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar2.jpg') }}" alt=""> --}}
                                                                     <img class="avatar rounded-circle small-avt" src="{{ url('/images/xs/avatar1.jpg') }}" alt="">
                                                                 </div>
-                                                                <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span>
+                                                                {{-- <span class="badge bg-warning text-end mt-2">{{ $task->taskCategoryName }}</span> --}}
                                                             </div>
                                                         </div>
                                                         <p class="py-2 mb-0">{{ $task->description }}</p>
@@ -1434,33 +1455,39 @@
                     });
 
             // Task edit AJAX code
-           // Task edit AJAX code
-$(document).ready(function () {
-    // When edit button is clicked
-    $('.edit-task-btn').on('click', function () {
-        var taskId = $(this).data('id');
-        var url = editTaskRoute.replace(':id', taskId);
+                    
+            $(document).ready(function () {
+                // When edit button is clicked
+                $('.edit-task-btn').on('click', function (e) {
+                    // Check if the task is assigned to current user
+                    if ($(this).data('assigned-to-me') === 'false') {
+                        e.preventDefault(); // Prevent default action
+                        e.stopPropagation(); // Stop event bubbling
+                        return false; // Exit early
+                     }
+                    var taskId = $(this).data('id');
+                    var url = editTaskRoute.replace(':id', taskId);
 
-        // Fetch Task data via AJAX
-        $.ajax({
-            url: url,
-            method: 'GET',
-            success: function (response) {
-                if (response.success === false) {
-                    // Show error message if unauthorized
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Access Denied',
-                        text: response.message || 'You can only edit tasks assigned to you',
-                        showConfirmButton: true
-                    });
-                    return;
-                }
+                    // Fetch Task data via AJAX
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.success === false) {
+                                // Show error message if unauthorized
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Access Denied',
+                                    text: response.message || 'You can only edit tasks assigned to you',
+                                    showConfirmButton: true
+                                });
+                                return;
+                            }
 
-                // Existing success handling code...
-                var task = response.task;
-                $('#edit_project_id').val(task.project_id);
-                $('#edit_task_id').val(task.id);
+                            // Existing success handling code...
+                            var task = response.task;
+                            $('#edit_project_id').val(task.project_id);
+                            $('#edit_task_id').val(task.id);
 
                             // Debugging: Verify the hidden fields are set correctly
                             console.log('Form Project ID:', $('#edit_project_id').val());
@@ -1483,64 +1510,64 @@ $(document).ready(function () {
 
                             // Ensure modal is shown after data is set
                             $('#edittask').modal('show');
-            },
-            error: function (xhr) {
-                console.error('Error fetching task data:', xhr.responseText);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to fetch task data',
-                    showConfirmButton: true
-                });
-            }
-        });
-    });
-
-
-              // Handle task edit form submission
-    $('#editTaskForm').on('submit', function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: $(this).attr('action'),
-            method: 'PUT',
-            data: $(this).serialize(),
-            success: function (response) {
-                // Existing success handling...
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Task updated successfully!',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-                $('#edittask').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 2000);
-            },
-            error: function (xhr) {
-                if (xhr.status === 403) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Access Denied',
-                        text: xhr.responseJSON.message || 'You can only edit tasks assigned to you',
-                        showConfirmButton: true
+                        },
+                        error: function (xhr) {
+                            console.error('Error fetching task data:', xhr.responseText);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to fetch task data',
+                                showConfirmButton: true
+                            });
+                        }
                     });
-                    $('#edittask').modal('hide');
-                } else {
-                    console.error('Error updating task:', xhr.responseText);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to update task',
-                        showConfirmButton: true
+                });
+
+
+                 // Handle task edit form submission
+                $('#editTaskForm').on('submit', function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        method: 'PUT',
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            // Existing success handling...
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Task updated successfully!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                            $('#edittask').modal('hide');
+                            setTimeout(function () {
+                                location.reload();
+                            }, 2000);
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 403) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Access Denied',
+                                    text: xhr.responseJSON.message || 'You can only edit tasks assigned to you',
+                                    showConfirmButton: true
+                                });
+                                $('#edittask').modal('hide');
+                            } else {
+                                console.error('Error updating task:', xhr.responseText);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to update task Cant update others task',
+                                    showConfirmButton: true
+                                });
+                            }
+                        }
                     });
-                }
-            }
-        });
-    });
-});
+                });
+            });
 
 
 

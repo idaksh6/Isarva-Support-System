@@ -36,9 +36,12 @@
     height: 38px !important;
 }
 
+.mainbillablecontainer{
 
+    max-width: none !important;
+}
 </style>
-<div class="container">
+<div class="container mainbillablecontainer">
     <div class="card mt-3">
         <div class="card-header bg-primary text-white">
             <h5>Search Filters</h5>
@@ -131,7 +134,7 @@
 
 @if($reports->count() > 0)
 
-        <div class="container mt-4">
+        <div class="container mt-4 m-0">
     
                 <div class="card-body ">
                     <button id="exportPdf" class="btn btn-success btn-lg">

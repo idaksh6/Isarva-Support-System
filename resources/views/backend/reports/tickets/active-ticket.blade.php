@@ -62,7 +62,8 @@
                 <table class="table table-bordered fixed-header-table">
                     <thead>
                         <th>Sl.No</th>
-                        <th>Ticket</th>
+                        <th>TicketId</th>
+                        <th>Ticket Name</th>
                         <th>Total Worked Hours</th>
                         <th>Status</th>
                         <th>Priority</th>
@@ -80,8 +81,14 @@
                             <td>
                                 {{$i}}
                             </td>
-                            <td>
+                            {{-- <td>
                                 {{'#'.$t->ticketId.''.$t->title}}
+                            </td> --}}
+                            <td>
+                                {{'#'.$t->ticketId}}
+                            </td>
+                            <td>
+                                {{$t->title}}
                             </td>
                             <td>
                                 {{$t->hrs}}
