@@ -681,65 +681,153 @@ class TicketController
     // }
 
 
-        
-        // SAVE SINGLE TICKET DISCUSSION  - AUTH - SK  14-03-2025
-        public function storeTicketDiscussion(Request $request)
-        {
-            $validated = $request->validate([
-                'comments' => 'required|string',
-                'ticket_id' => 'required|exists:isar_tickets,id',
-                'attachment' => 'nullable|file|max:2048',
-            ]);
+     // SAVE SINGLE TICKET DISCUSSION  - AUTH - SK  14-03-2025
+    // public function storeTicketDiscussion(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'comments' => 'required|string',
+    //         'ticket_id' => 'required|exists:isar_tickets,id',
+    //         'attachment' => 'nullable|file|max:2048',
+    //     ]);
 
+    //     // Handle file upload
+    //     $attachmentPath = null;
+    //     if ($request->hasFile('attachment')) {
+    //         $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+    //     }
+
+    //     $ticket = Ticket::findOrFail($validated['ticket_id']);
+    //     $loggedInUser = Auth::user();
+
+    //     // Fetch latest status directly from DB
+    //     $currentStatus = DB::table('isar_tickets')->where('id', $ticket->id)->value('status');
+
+    //     // Update assignedTo if provided
+    //     if (!empty($request->assignedTo)) {
+    //         $ticket->flag_to = $request->assignedTo;  // Save assigned user
+    //         $ticket->save();
+
+    //         // Get assigned user details
+    //         $assignedUser = User::find($request->assignedTo);
+
+    //        // Send email notification **only if status = 5**
+    //         if ($assignedUser && $currentStatus == 5) {
+    //             Mail::to($assignedUser->email)->send(
+    //                 new TicketAssignedNotification(
+    //                     $ticket->id,
+    //                     $ticket->title,
+    //                     $loggedInUser->name,
+    //                     $assignedUser->email
+    //                 )
+    //             );
+    //         }
+    //     }
+
+    //     // Update status if provided
+    //     if (!empty($request->status)) {
+    //         $ticket->status = $request->status;
+    //         $ticket->save();
+    //     }
+
+    //     // Handle attachment
+    //     $fileName = null;
+    //     if ($request->hasFile('attachment')) {
+    //         $folderPath = public_path('images/ticket_attachments');
+            
+    //         if (!File::exists($folderPath)) {
+    //             File::makeDirectory($folderPath, 0775, true, true);
+    //         }
+            
+    //         $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+    //         $request->file('attachment')->move($folderPath, $fileName);
+    //     }
+
+    //     // Create comment
+    //     TicketComment::create([
+    //         'user_id' => $loggedInUser->id,
+    //         'ticket_id' => $validated['ticket_id'],
+    //         'comments' => $validated['comments'],
+    //         'attahcement' => $fileName,
+    //         'created_on' => now(),
+    //         'last_modified_on' => now(),
+    //         'ip_address' => $request->ip(),
+    //     ]);
+
+    //     return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
+    // }
+
+
+
+    public function storeTicketDiscussion(Request $request)
+    {
+
+      
+        $validated = $request->validate([
+            'comments' => 'required|string',
+            'ticket_id' => 'required|exists:isar_tickets,id',
+            'attachment' => 'nullable|file|max:2048',
+        ]);
+    
+        try {
             // Handle file upload
-            $attachmentPath = null;
-            if ($request->hasFile('attachment')) {
-                $attachmentPath = $request->file('attachment')->store('attachments', 'public');
-            }
-
-            $ticket = Ticket::findOrFail($validated['ticket_id']);
-            $loggedInUser = Auth::user();
-
-            // an email is only sent when a user is being assigned to the ticket. Update assignedTo if provided
-            if (!empty($request->assignedTo)) {
-                $ticket->flag_to = $request->assignedTo;  // retrieves the ID of the user being assigned to the ticket from the form data submitted in the request.
-                $ticket->save();
-
-                // Get assigned user details
-                $assignedUser = User::find($request->assignedTo); //object will contain all the information about the assigned user
-                
-                // Send email notification
-                if ($assignedUser) {
-                    Mail::to($assignedUser->email)->send(
-                        new TicketAssignedNotification(
-                            $ticket->id,
-                            $ticket->title,
-                            $loggedInUser->name,
-                            $assignedUser->email
-                        )
-                    );
-                }
-            }
-
-            // Update status if provided
-            if (!empty($request->status)) {
-                $ticket->status = $request->status;
-                $ticket->save();
-            }
-
-            // Handle attachment
             $fileName = null;
             if ($request->hasFile('attachment')) {
                 $folderPath = public_path('images/ticket_attachments');
-                
-                if (!File::exists($folderPath)) {
-                    File::makeDirectory($folderPath, 0775, true, true);
-                }
-                
+                File::ensureDirectoryExists($folderPath, 0775, true);
                 $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
                 $request->file('attachment')->move($folderPath, $fileName);
             }
-
+    
+            $ticket = Ticket::findOrFail($validated['ticket_id']);
+            $loggedInUser = Auth::user();
+            $sendEmail = false;
+            $assignedUser = null;
+    
+            // Store original values
+            $originalStatus = $ticket->status;
+            $originalAssignedTo = $ticket->flag_to;
+    
+            // Update status if provided
+            if ($request->has('status')) {
+                $ticket->status = $request->status;
+            }
+    
+            // Update assignedTo if provided
+            if ($request->has('assignedTo')) {
+                $newAssigneeId = $request->assignedTo;
+                $ticket->flag_to = $newAssigneeId;
+                $assignedUser = User::find($newAssigneeId);
+    
+                // Only send email if:
+                // 1. There is an assigned user
+                // 2. The status is specifically 5 for this ticket
+                // 3. The assignee is actually being changed to a new user
+                if ($assignedUser && 
+                    $ticket->status == 5 && 
+                    $originalAssignedTo != $newAssigneeId
+                ) {
+                    $sendEmail = true;
+                }
+            }
+    
+            // Save ticket if changed
+            if ($ticket->isDirty()) {
+                $ticket->save();
+            }
+    
+            // Send email if conditions met
+            if ($sendEmail) {
+                Mail::to($assignedUser->email)->queue(
+                    new TicketAssignedNotification(
+                        $ticket->id,
+                        $ticket->title,
+                        $loggedInUser->name,
+                        $assignedUser->email
+                    )
+                );
+                \Log::info("Email sent to {$assignedUser->email} for ticket #{$ticket->id} (Status: {$ticket->status})");
+            }
+    
             // Create comment
             TicketComment::create([
                 'user_id' => $loggedInUser->id,
@@ -750,8 +838,13 @@ class TicketController
                 'last_modified_on' => now(),
                 'ip_address' => $request->ip(),
             ]);
-
+    
             return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
+    
+        } catch (\Exception $e) {
+            \Log::error("Ticket discussion error: " . $e->getMessage());
+            return redirect()->back()->withFlashError(__('An error occurred. Please try again.'));
         }
+    }
 
 }

@@ -67,6 +67,84 @@
     </div>
 @endif
 
+    <!-- Credential Add Modal -->
+    <div class="modal fade" id="addCredentialModal" tabindex="-1" aria-labelledby="addCredentialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                <h5 class="modal-title" id="addCredentialModalLabel">Add Credential</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="credentialForm" action="{{ route('admin.store_credential') }}" method="POST">
+                        @csrf
+
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                        <div class="mb-3">
+                            <label for="credentialTitle" class="form-label">Title <span class="required">*</span></label>
+                            <input type="text" class="form-control" name="credential_title" >
+                            <div class="text-danger" id="cred-add-error-credential_title"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="credentialDescription" class="form-label">Description <span class="required">*</span></label>
+                            <textarea class="form-control" name="credential_description" rows="3" maxlength="500" ></textarea>
+                            <div class="text-danger" id="cred-add-error-credential_description"></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" form="credentialForm" class="btn btn-primary">Save</button>
+                        </div>
+                    
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Credential Edit Modal -->
+    <div class="modal fade" id="editcredentialmodal" tabindex="-1" aria-labelledby="addCredentialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCredentialModalLabel">Edit Credential</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editcredentialForm" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+
+                        <input type="hidden" name="credential_id" id="editCredentialId">
+
+                        <div class="mb-3">
+                            <label for="credentialTitle" class="form-label">Title <span class="required">*</span></label>
+                            <input type="text" class="form-control" name="credential_title"  id="credentialTitle" >
+                            <div class="text-danger" id="cred-edit-error-credential_title"></div>
+
+                        </div>
+                            
+                        <div class="mb-3">
+                            <label for="credentialDescription" class="form-label">Description <span class="required">*</span></label>
+                            <textarea class="form-control"  name="credential_description"  id="credentialDescription"  rows="3" maxlength="500" ></textarea>
+                            <div class="text-danger" id="cred-edit-error-credential_description"></div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" form="editcredentialForm" class="btn btn-primary">Update</button>
+                        </div>
+                    
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <!-- Create Project-->
 <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
@@ -804,6 +882,11 @@
                     <button class="btn btn-outline-primary d-flex align-items-center" id="showAdditionHr">
                         <i class="icofont-plus-circle me-2"></i> Add.Hrs
                     </button>
+
+                    <button class="btn btn-outline-primary d-flex align-items-center" id="showcredentials">
+                        <i class="icofont-briefcase me-2"></i>  Credentials
+                    </button>
+                    
                     
                 </div>
 
@@ -1013,7 +1096,7 @@
                     </div>
 
 
-                  <!-- Additional Hr section -->
+                    <!-- Additional Hr section -->
                     <div id="additionHrSection" class="tab-content shadow-sm p-3 rounded bg-white" style="display: none;">
                         <form id="additionalHrsForm">
                             @csrf
@@ -1053,6 +1136,48 @@
                         </form>
                     </div>
 
+                    <!-- Credential section -->
+                    <div id="credentialssection" class="tab-content shadow-sm p-3 rounded bg-white" style="display: none;">
+
+                        <div class="d-flex align-items-center justify-content-between  mb-4">
+
+                          
+                            <a href="#" class="addailytask" data-bs-toggle="modal" data-bs-target="#addCredentialModal">
+                                <i class="icofont-plus-circle me-2"></i>Add Credentials
+                              </a>
+                              
+                        </div>
+
+                        <strong class="fs-5">#{{ $project->id }} Project: {{ $project->project_name }}</strong> 
+
+                        @foreach($credentials as $credential)
+                            <div class="row mb-4 mt-3 p-3 shadow-sm rounded border bg-light">
+                                <!-- Left part -->
+                                <div class="col-md-4  d-flex flex-column align-items-center text-center border-end">
+                                    <img src="{{ asset('isarvafavicon.png') }}" alt="Logo" width="50" class="mb-2">
+                                    <p class="fw-bold">{{ $credential->creator->name ?? 'Unknown' }} says:</p>
+                                    <div class="mt-auto">
+                                        <a href="#" class="btn btn-sm btn-outline-primary me-2 edit-credential-btn" data-id="{{ $credential->id }}" data-bs-toggle="modal" data-bs-target="#editcredentialmodal">Edit</a>
+                                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </div>
+                                </div>
+
+                                <!-- Right part -->
+                                <div class="col-md-8">
+                                    <p class="text-muted small mb-1">Posted On: {{ $credential->created_at->format('d M Y') }}</p>
+                                    <h5 class="fw-bold mt-4">{{ $credential->title }}</h5>
+                                    <hr>
+                                    <p>{{ $credential->description }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+
+                           
+                 
+  
+
+                    </div>
+
                   
                         
                 <div id="taskSection" class="tab-content shadow-sm p-3 rounded bg-white">
@@ -1066,7 +1191,7 @@
                         <div class="task-card">
                             <div class="row taskboard g-3 py-xxl-4">
                                 <!-- In Progress -->
-                                <div class="col-xxl-4" data-status="1">
+                                <div class="col-xxl-4 scrolltasks" data-status="1">
                                     <h6 class="fw-bold py-3 mb-0">In Progress</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[1]) && count($tasksByStatus[1]) > 0)
@@ -1123,7 +1248,7 @@
                                 </div>
                         
                                 <!-- Needs Review -->
-                                <div class="col-xxl-4" data-status="2">
+                                <div class="col-xxl-4 scrolltasks" data-status="2">
                                     <h6 class="fw-bold py-3 mb-0">Needs Review</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[2]) && count($tasksByStatus[2]) > 0)
@@ -1183,7 +1308,7 @@
                                 </div>
                         
                                 <!-- Completed -->
-                                <div class="col-xxl-4" data-status="3">
+                                <div class="col-xxl-4 scrolltasks" data-status="3">
                                     <h6 class="fw-bold py-3 mb-0">Completed</h6>
                                     <ol class="dd-list">
                                         @if(isset($tasksByStatus[3]) && count($tasksByStatus[3]) > 0)
@@ -1569,6 +1694,245 @@
                 });
             });
 
+                   //----- AJAX for Credential Add Modal validation form---
+              
+                    // Handle form submission
+                    $('#credentialForm').on('submit', function (e) {
+                        e.preventDefault(); // Prevent the default form submission
+
+                        var form = $(this);
+                        var url = form.attr('action');
+                        var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+
+                        // Clear previous errors
+                        $('.text-danger').html('');
+
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
+                            contentType: false, // for the proper handling of file uploads, 
+                            success: function (response) {
+                            
+                                // If the form is successfully submitted, close the modal and redirect
+                               
+                                $('#addCredentialModal').modal('hide');
+                                Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Credential added successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.href.reload();
+                                    });
+                            },
+                            error: function (xhr) {
+                                // If there are validation errors, display them below each field
+                                // var errors = xhr.responseJSON.errors;
+                                // $.each(errors, function (key, value) {
+                                //     $('#proj-add-error-' + key).html(value[0]); // Display the first error message
+                                // });
+
+                                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    $.each(errors, function (key, value) {
+                                        $('#cred-add-error-' + key).html(value[0]); // Display the first error message
+                                    });
+                                } else {
+                                    console.error('An unexpected error occurred:', xhr.responseText);
+                                    alert('An unexpected error occurred. Please check the console for details.');
+                                }
+                            }
+                        });
+                    });
+
+
+
+
+            // AJAX for credential edit button when clicked
+            var editCredentialRoute = "{{ route('admin.edit_credential', ':id') }}"; // id is the placeholder for emplyoee id which is replaced further
+             $('.edit-credential-btn').on('click', function () {
+               
+               var credentialId = $(this).data('id'); 
+               console.log(credentialId);
+
+                // Generate the URL using the route name and employee ID
+                var url = editCredentialRoute.replace(':id', credentialId);
+               //  console.log(url);
+            
+               // Fetch Employee data via AJAX
+               $.ajax({
+
+                   url: url, // Use the dynamically generated URL
+                   method: 'GET',
+                   // data: formData,
+                   success: function (response) {    // callback function that runs only if the request is successful.
+                    //    console.log(response);
+                       // Populate the modal form with the fetched data
+                       $('#credentialTitle').val(response.title);
+                       $('#credentialDescription').val(response.description);
+                       $('#editCredentialId').val(credentialId);
+
+                    
+                       
+                        // Set the form action URL for updating
+                        $('#editcredentialForm').attr('action', "{{ route('admin.update_credential', ':id') }}".replace(':id', credentialId));
+                       
+                   },
+                   error: function (xhr) {
+                       console.error('Error fetching Credential data:', xhr.responseText);
+                   }
+
+               });
+           });
+    
+
+               // When the delete button is clicked
+               $('.delete-employee-btn').on('click', function () {
+                   var employeeId = $(this).data('id'); // Get the client ID from the data attribute
+
+                   // Set the form action dynamically
+                   var deleteUrl = "{{ route('admin.our-employee.destroy-employee', ':id') }}"; // Route with placeholder
+                   deleteUrl = deleteUrl.replace(':id', employeeId);       // Replace placeholder with actual ID
+
+                   // Update the form action
+                   $('#delete-employee-form').attr('action', deleteUrl);
+               });
+
+               // Handle form submission
+               $('#delete-employee-form').on('submit', function (e) {
+                   e.preventDefault(); // Prevent the default form submission
+
+                   var form = $(this);
+                   var url = form.attr('action');
+
+                   // Send the delete request via AJAX
+                   $.ajax({
+                       url: url,
+                       method: 'POST', // Use POST method (Laravel handles DELETE via method spoofing)
+                       data: form.serialize(), // Serialize the form data
+                       success: function (response) {
+                           if (response.success) {
+                               // Show a success message
+                               alert(response.message);
+
+                               // Optionally, reload the page or remove the deleted client from the list
+                               location.reload(); // Reload the page to reflect the changes
+                           }
+                       },
+                       error: function (xhr) {
+                           console.error('Error deleting employee:', xhr.responseText);
+                           alert('An error occurred while deleting the employee.');
+                       }
+                   });
+               });
+
+
+
+
+                 //----- AJAX for edit credential validation form Modal -----
+
+                    // // Handle edit form submission
+                    // $('#editcredentialForm').on('submit', function (e) {
+                    //     e.preventDefault(); // Prevent the default form submission
+
+                    //     var form = $(this);
+                    //     var url = form.attr('action');  // specifies the URL where the form data will be sent when the form is submitted. 
+                    //     var formData = new FormData(form[0]); // Include file uploads
+
+                    //     // Clear previous errors
+                    //     $('.text-danger').html('');
+
+                    //     $.ajax({
+                    //         url: url,
+                    //         // type: 'POST',
+                    //         type: 'PUT', // <- this is the correct method
+                    //         data: formData,
+                    //         processData: false,
+                    //         contentType: false,
+                    //         success: function (response) {
+                    //             // Close modal immediately
+                    //             $('#editcredentialmodal').modal('hide');
+
+                    //             // Remove modal backdrop (fixes black background issue)
+                    //             $('body').removeClass('modal-open');
+                    //             $('.modal-backdrop').remove();
+
+                    //             // Show success alert with proper orientation
+                    //             Swal.fire({
+                    //                 title: 'Success!',
+                    //                 html: '<div style="transform: scaleX(1)">Credentails has been updated!</div>',
+                    //                 icon: 'success',
+                    //                 timer: 2000, // 2 seconds
+                    //                 timerProgressBar: true,
+                    //                 showConfirmButton: false,
+                    //                 position: 'center',
+                    //                 willClose: () => {
+                    //                     window.location.reload();
+                    //                 }
+                    //             });
+                    //         },
+                    //         error: function (xhr) {
+                    //             // Log the error response to the console
+                    //             console.log(xhr.responseJSON);
+
+                    //             // If there are validation errors, display them below each field
+                    //             var errors = xhr.responseJSON.errors;
+                    //             if (errors) {
+                    //                 $.each(errors, function (key, value) {
+                    //                     $('#cred-edit-error-' + key).html(value[0]); // Display the first error message
+                    //                 });
+                    //             }
+                    //         } 
+                    //     });
+
+                    // });
+                    $('#editcredentialForm').on('submit', function (e) {
+                    e.preventDefault();
+                    
+                    var form = $(this);
+                    var url = form.attr('action');
+                    var formData = new FormData(form[0]);
+                    
+                    // For PUT method with FormData, we need to append _method
+                    formData.append('_method', 'PUT');
+                    
+                    // Clear previous errors
+                    $('.text-danger').html('');
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST', // Laravel handles PUT via POST with _method parameter
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            // Handle success
+                            $('#editcredentialmodal').modal('hide');
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Credentials have been updated!',
+                                icon: 'success',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                position: 'center'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        },
+                        error: function (xhr) {
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                var errors = xhr.responseJSON.errors;
+                                $.each(errors, function (key, value) {
+                                    $('#cred-edit-error-' + key).html(value[0]);
+                                });
+                            }
+                        }
+                    });
+                });
+
 
 
         // JS to Display selected file under assets
@@ -1602,12 +1966,14 @@
                 let assetsBtn = document.getElementById("showAssets");
                 let workedhrsbtn = document.getElementById("showWorkedHrs");
                 let additionalhrbtn = document.getElementById("showAdditionHr");  // Semicolon added here
+                let credentialbtn = document.getElementById("showcredentials")
 
                 let taskSection = document.getElementById("taskSection");
                 let internalDocsSection = document.getElementById("internalDocsSection");
                 let assetsSection = document.getElementById("assetsSection");
                 let workedHrsSection = document.getElementById("workedHrsSection");
                 let additionHrSection = document.getElementById("additionHrSection");
+                let credentialsSection = document.getElementById("credentialssection");
 
                 // Ensure Task section is visible by default
                 taskSection.style.display = "block";
@@ -1615,6 +1981,7 @@
                 assetsSection.style.display = "none";
                 workedHrsSection.style.display = "none";
                 additionHrSection.style.display = "none";
+                credentialsSection.style.display = "none";
 
                 // Tab click event listeners
                 taskBtn.addEventListener("click", function () {
@@ -1623,6 +1990,7 @@
                     assetsSection.style.display = "none";
                     workedHrsSection.style.display = "none";
                     additionHrSection.style.display = "none";
+                    credentialsSection.style.display = "none";
                 });
 
                 internalDocsBtn.addEventListener("click", function () {
@@ -1631,6 +1999,7 @@
                     assetsSection.style.display = "none";
                     workedHrsSection.style.display = "none";
                     additionHrSection.style.display = "none";
+                    credentialsSection.style.display = "none";
                 });
 
                 assetsBtn.addEventListener("click", function () {
@@ -1639,6 +2008,7 @@
                     internalDocsSection.style.display = "none";
                     workedHrsSection.style.display = "none";
                     additionHrSection.style.display = "none";
+                    credentialsSection.style.display = "none";
                 });
 
                 workedhrsbtn.addEventListener("click", function () {
@@ -1647,6 +2017,7 @@
                     internalDocsSection.style.display = "none";
                     assetsSection.style.display = "none";
                     additionHrSection.style.display = "none";
+                    credentialsSection.style.display = "none";
                 });   
                 
                 additionalhrbtn.addEventListener("click", function () {
@@ -1655,7 +2026,19 @@
                     internalDocsSection.style.display = "none";
                     assetsSection.style.display = "none";
                     workedHrsSection.style.display = "none";
+                    credentialsSection.style.display = "none";
+                });    
+                
+                credentialbtn.addEventListener("click", function () {
+                    credentialsSection.style.display = "block";
+                    taskSection.style.display = "none";
+                    internalDocsSection.style.display = "none";
+                    assetsSection.style.display = "none";
+                    workedHrsSection.style.display = "none";
+                    additionHrSection.style.display = "none";
+
                 });         
+        
         
                 // Function to get the next row index correctly
                     function getRowIndex() {

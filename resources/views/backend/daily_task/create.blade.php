@@ -154,7 +154,7 @@
             
             </div>
         </div>
-          <div class="subbtn gap-2">
+        <div class="subbtn gap-2">
             <button type="submit" class="btn dailytsksybbtn fw-bold">Submit</button>
             <a href="{{ route('admin.add_dailytask') }}" class="btn btn-secondary fw-bold">Cancel</a>
         </div> 

@@ -93,6 +93,7 @@
             @endforeach
             @php $serial++; @endphp
         @endforeach
+     
     </tbody>
 </table>
 

@@ -363,9 +363,9 @@ class DailyReportController extends Controller
         ];
     
        // Send email to main recipient with user as CC
-        Mail::to($mainRecipient)
-        ->cc($userEmail)
-        ->send(new DailyReportMail($emailData, $userName));
+        // Mail::to($mainRecipient)
+        // ->cc($userEmail)
+        // ->send(new DailyReportMail($emailData, $userName));
             
         return redirect()->back()->with('flash_success_dailyreport', 'Daily Report added successfully.');
     }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Backend\ProjectAdditionalHrController;
 use App\Http\Controllers\Backend\Reports\ReportsController;
 use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
 use App\Http\Controllers\Backend\DailyTaskController;
+use App\Http\Controllers\Backend\BackupController;
 
 
 // All route names are prefixed with 'admin.'.
@@ -230,6 +231,16 @@ Route::get('/admin/task-asset/fetch/{project_id}', [TaskController::class, 'fetc
 
 Route::post('/task/update-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
 
+// Route for credential section store,edit,update,delete
+Route::post('/credential_store', [TaskController::class, 'storecredential'])->name('store_credential');
+
+Route::get('credential_edit/{id}', [TaskController::class, 'editcredential'])->name('edit_credential');
+
+Route::put('/credential_update/{id}', [TaskController::class, 'updatecredential'])->name('update_credential');
+
+
+
+
 
 
 
@@ -326,6 +337,41 @@ Route::group([
     ->name('ticket.comment-store');
 
 });
+
+
+// Backup Route
+Route::group([
+    'prefix' => 'backup'
+], function () {
+    Route::get('backup', [BackupController::class, 'index'])
+    ->name('backup_manage')
+    ->breadcrumbs(function (Trail $trail) {
+        $trail->push(__('Home'), route('admin.backup_manage'));
+    });
+
+    // Creating a form route
+    Route::get('/create', [BackupController::class, 'create'])->name('backup_create');
+
+    // Storing a form route
+    Route::post('/backup/store', [BackupController::class, 'store'])->name('backup.store');
+
+    // Log History blade route
+    // Route::get('/log-history/{domain}', [BackupController::class, 'logHistory'])->name('backup.log-history');
+    // Route
+    Route::get('/log-history/{group_id}', [BackupController::class, 'logHistory'])->name('backup.log-history');
+
+    // Edit and Update method
+    Route::get('/backup/edit/{id}', [BackupController::class, 'edit'])->name('backup.edit');
+    Route::put('/backup/update/{id}', [BackupController::class, 'update'])->name('backup.update');
+
+    //Search method 
+    Route::get('backup/search', [BackupController::class, 'searchBackups'])->name('backup_search');
+
+
+});
+
+
+
 
 Route::group([
     'prefix' => 'our-client'

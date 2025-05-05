@@ -629,7 +629,7 @@
                     
 
 
-                    //----- AJAX for Employee_edit form Modal -----
+                    //----- AJAX for Employee_edit validation form Modal -----
 
                     // Handle edit form submission
                     $('#edit-employee-form').on('submit', function (e) {

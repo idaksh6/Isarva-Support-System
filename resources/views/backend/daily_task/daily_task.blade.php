@@ -10,9 +10,7 @@
     <a href="{{ route('admin.daily-task.create') }}"
        class="addailytask"><i class="icofont-plus-circle me-2"></i>Add Daily Task
     </a>
-
-  
-
+    
 </div>
 
 @if($tasks->count())

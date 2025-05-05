@@ -190,7 +190,7 @@
            
           <div class="total-hrs">
             <label for="total-hrs">Total Hrs:</label>
-            <input type="text" id="total-hrs" name="total_hrs" readonly value="{{ old('total_hrs', '') }}">
+            <input type="text" id="total-hrs" name="total_hrs" class="dailyrpttotlhrs" readonly value="{{ old('total_hrs', '') }}">
             @if ($errors->has('total_hrs'))
               <p class="error-message">{{ $errors->first('total_hrs') }}</p>
             @endif

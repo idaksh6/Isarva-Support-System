@@ -1,0 +1,100 @@
+
+
+.mainbackupconatiner{
+
+    max-width: 750px;
+    margin: auto;
+    border: 1px solid #d3d3d3;
+    padding: 27px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;;
+}
+
+.inputbackupbox{
+
+    background: white;
+    border: 1px solid #aaa;
+}
+
+.historylog{
+
+    font-size: x-large;
+}
+
+
+.icofont-history:hover{
+
+    color: orange;
+    cursor: pointer;
+}
+
+.bckupmanagebtn{
+
+    color: white;
+}
+
+
+
+.drive-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    background-color: #f1f5f9;
+    border: 1px solid #60a5fa;
+    color: #0c63e4;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.drive-link:hover {
+    background-color: #0c63e4;
+    color: white;
+    border-color: #0c63e4;
+    text-decoration: none;
+}
+
+.bckupsino{
+
+    width: 6%;
+}
+
+h5.managebcktxt{
+
+    font-size: 25px;
+    font-weight: bold;
+    color: rgb(72, 76, 127);
+}
+
+.bckupmanagetbl{
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #d3d3d3;
+    padding: 10px;
+}
+
+
+.bckupsrchheader{
+
+    border-bottom: 1px solid #d3d3d3 !important;
+    padding-bottom: 20px;
+}
+
+.logohistryicon{
+
+    font-size: x-large;
+    font-weight: bold;
+    color: red;
+}
+
+
+
+
+
+
+
+
+

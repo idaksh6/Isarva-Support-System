@@ -42,6 +42,43 @@ class GoogleController extends Controller
      */
    
 
+    // public function handleGoogleCallback()
+    // {
+    //     try {
+    //         $googleUser = Socialite::driver('google')->stateless()->user();
+
+    //         // Check if user exists
+    //         $user = User::where('email', $googleUser->getEmail())->first();
+            
+    //         if (!$user) {
+    //             //print_r($user);exit;
+    //             return redirect()->route('login')->with('error', 'No access to this account.');
+    //         }
+
+          
+    //     // Check if user is deactivated (status = 2)
+    //     if ($user->status == 2) {
+    //         return redirect()->route('login')
+    //             ->with('error', 'You have been removed from the company. No access provided.');
+    //     }
+          
+    //         // Log in the user
+    //         Auth::login($user, true); // Now $user is an Authenticatable instance
+
+             
+            
+
+    //         session(['employee_id' => $user->id]); // Optional session data
+    //         session()->save(); // Ensures the session is saved immediately
+
+    //         return redirect()->route('admin.project');
+
+    //     } catch (\Exception $e) {
+    //         return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
+    //     }
+    // }
+
+
     public function handleGoogleCallback()
     {
         try {
@@ -51,20 +88,20 @@ class GoogleController extends Controller
             $user = User::where('email', $googleUser->getEmail())->first();
             
             if (!$user) {
-                //print_r($user);exit;
                 return redirect()->route('login')->with('error', 'No access to this account.');
             }
 
-          
-          
+            // Check if user is deactivated (status = 2)
+            if ($user->status == 2) {
+                return redirect()->route('login')
+                    ->with('error', 'You have been removed from the company. No access provided.');
+            }
+        
             // Log in the user
-            Auth::login($user, true); // Now $user is an Authenticatable instance
+            Auth::login($user, true);
 
-             
-            
-
-            session(['employee_id' => $user->id]); // Optional session data
-            session()->save(); // Ensures the session is saved immediately
+            session(['employee_id' => $user->id]);
+            session()->save();
 
             return redirect()->route('admin.project');
 

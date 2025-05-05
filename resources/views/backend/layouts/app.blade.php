@@ -66,6 +66,8 @@
 
     <link rel="stylesheet" href="{{ asset('css/daily_task.css')}}">
 
+    <link rel="stylesheet" href="{{ asset('css/backupmodule.css')}}">
+
 
     
     {{-- select 2  --}}

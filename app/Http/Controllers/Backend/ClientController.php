@@ -44,7 +44,8 @@ class ClientController
             'username' => 'required|string|max:255',
             'password' => 'nullable|string|min:6',
             'email' => 'nullable|email',
-            'phone' => 'required|unique:isar_clients,phone',
+            // 'phone' => 'required|unique:isar_clients,phone',
+            'phone' => 'required|unique:isar_clients,phone|regex:/^[0-9-]{1,20}$/|max:20',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'client_name.required' => 'The client name is required.',
@@ -69,7 +70,9 @@ class ClientController
             'email.email' => 'The email must be a valid email address.',
             
             'phone.required' => 'The phone number is required.',
-            'phone.unique' => 'The Phone number entered already Exist',
+            'phone.unique' => 'The phone number entered already exists.',
+            'phone.regex' => 'The phone number can only contain numbers and hyphens.',
+            'phone.max' => 'The phone number may not be greater than 20 characters.',
             
             'profile_image.image' => 'The profile image must be an image.',
             'profile_image.mimes' => 'The profile image must be a file of type: jpeg, png, jpg.',
@@ -132,7 +135,7 @@ class ClientController
             'username' => 'required|string|max:255',
             'password' => 'nullable|string|min:6',
             'email' => 'nullable|email',
-            'phone' => 'required',
+            'phone' => 'required|unique:isar_clients,phone|regex:/^[0-9-]{1,20}$/|max:20',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'client_name.required' => 'The client name is required.',
@@ -156,6 +159,9 @@ class ClientController
             'email.email' => 'The email must be a valid email address.',
             
             'phone.required' => 'The phone number is required.',
+            'phone.unique' => 'The phone number entered already exists.',
+            'phone.regex' => 'The phone number can only contain numbers and hyphens.',
+            'phone.max' => 'The phone number may not be greater than 20 characters.',
             
             'profile_image.image' => 'The profile image must be an image.',
             'profile_image.mimes' => 'The profile image must be a file of type: jpeg, png, jpg.',

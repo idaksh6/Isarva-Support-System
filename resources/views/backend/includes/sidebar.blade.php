@@ -110,6 +110,11 @@
                     </ul>
                 </li>
             @endif
+            
+            @if(auth()->user()->role == 1)
+                <li><a class="m-link {{ Request::segment(2) == 'backup' ? 'active' : '' }}"   href="{{ route('admin.backup_manage') }}">  <i class="icofont-database"></i> <span>Backup </span></a></li>
+            @endif
+            
             {{-- Clients side bar --}}
             @if(auth()->user()->role == 1)  <!-- Only show for admin users -->
               <li><a class="m-link {{ Request::segment(2) == 'our-client' ? 'active' : '' }}" href="{{ route('admin.our-client.clients') }}"><i

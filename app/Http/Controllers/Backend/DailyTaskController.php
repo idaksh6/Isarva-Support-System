@@ -37,7 +37,7 @@ class DailyTaskController extends Controller
             $query->where('user_id', $user->id);
         }
     
-        $tasks = $query->orderBy('created_at', 'desc')->paginate(5);
+        $tasks = $query->orderBy('created_at', 'desc')->paginate(20);
     
         foreach ($tasks as $task) {
             $task->status_text = $task->getStatusText();
@@ -66,18 +66,18 @@ class DailyTaskController extends Controller
     public function store(Request $request)
     {
         // Only one task per day 
-        $user = Auth::user();
+        // $user = Auth::user();
     
-        // Check if user already submitted a task today
-        $existingTask = DailyTask::where('user_id', $user->id)
-            ->whereDate('created_at', today())
-            ->first();
+        // // Check if user already submitted a task today
+        // $existingTask = DailyTask::where('user_id', $user->id)
+        //     ->whereDate('created_at', today())
+        //     ->first();
         
-        if ($existingTask) {
-            return response()->json([
-                'error' => 'Only one daily task submission allowed per day'
-            ], 422);
-        }
+        // if ($existingTask) {
+        //     return response()->json([
+        //         'error' => 'Only one daily task submission allowed per day'
+        //     ], 422);
+        // }
 
          // validation
         $validator = Validator::make($request->all(), [
@@ -318,13 +318,41 @@ class DailyTaskController extends Controller
     //     return view('backend.daily_task.edit', compact('task', 'tasks', 'projects', 'tickets'));
 
     // }
+    // public function edit($id)
+    // {
+    //     $mainTask = DailyTask::findOrFail($id);
+    //     $userId = Auth::id();
+        
+    //     // Get all tasks from the same day by the same user
+    //     $tasks = DailyTask::where('user_id', $userId)
+    //         ->whereDate('created_at', $mainTask->created_at->toDateString())
+    //         ->orderBy('created_at')
+    //         ->get();
+            
+    //     $projects = ProjectHelper::getProjectNames();
+    //     $tickets = TicketHelper::getTicketNames();
+        
+    //     return view('backend.daily_task.edit', [
+    //         'task' => $mainTask,
+    //         'additionalTasks' => $tasks->where('id', '!=', $id), // All other tasks from the same day
+    //         'projects' => $projects,
+    //         'tickets' => $tickets
+    //     ]);
+    // }
+   
     public function edit($id)
     {
         $mainTask = DailyTask::findOrFail($id);
-        $userId = Auth::id();
         
-        // Get all tasks from the same day by the same user
-        $tasks = DailyTask::where('user_id', $userId)
+        // Check if the current user owns the task
+        if ($mainTask->user_id != Auth::id()) {
+            abort(403, 'You are not authorized to edit this task as it does not belong to you.');
+        }
+        
+        $taskUserId = $mainTask->user_id;
+        
+        // Get all tasks from the same day by the same user who owns the main task
+        $tasks = DailyTask::where('user_id', $taskUserId)
             ->whereDate('created_at', $mainTask->created_at->toDateString())
             ->orderBy('created_at')
             ->get();
@@ -334,13 +362,12 @@ class DailyTaskController extends Controller
         
         return view('backend.daily_task.edit', [
             'task' => $mainTask,
-            'additionalTasks' => $tasks->where('id', '!=', $id), // All other tasks from the same day
+            'additionalTasks' => $tasks->where('id', '!=', $id),
             'projects' => $projects,
             'tickets' => $tickets
         ]);
     }
-   
-          
+            
 
     // public function update(Request $request, $id)
     // {
@@ -405,6 +432,23 @@ class DailyTaskController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        // First validate ownership of all existing tasks being updated
+    if ($request->has('task_ids')) {
+        foreach ($request->task_ids as $taskId) {
+            if ($taskId) {
+                $task = DailyTask::find($taskId);
+                if ($task && $task->user_id != Auth::id()) {
+                    return response()->json([
+                        'errors' => [
+                            'authorization' => ['You are not authorized to update task ID: '.$taskId]
+                        ]
+                    ], 403);
+                }
+            }
+        }
+    }
+    
         $validator = Validator::make($request->all(), [
             'type.*' => 'required|in:1,2',
             'status.*' => 'required|integer|between:1,7',

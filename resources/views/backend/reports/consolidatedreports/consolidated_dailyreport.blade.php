@@ -3,7 +3,98 @@
 @section('title', 'Consolidated DailyReport | Isarva Support')
 
 @section('content')
-        
+     
+<style>
+    .total-summary-container {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .total-summary-container h5 {
+        margin-bottom: 0;
+        font-size: 16px;
+    }
+    
+    @media (max-width: 768px) {
+        .total-summary-container .col-md-4 {
+            margin-bottom: 10px;
+        }
+    }
+
+
+
+
+    .total-summary-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 40px auto;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* Common Styling for Columns */
+        .col-md-4 {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Specific Colors for Each Section */
+        .billable_color_fin {
+            background-color: #4caf50; /* Green */
+        }
+
+        .non_billable_color_fin {
+            background-color: #f44336; /* Red */
+        }
+
+        .internal_billable_color_fin {
+            background-color: blue; /* Orange */
+        }
+
+        /* Hover Effect for Columns */
+        .col-md-4:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling for Text (H5) */
+        .total-summary-container h5 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 20px;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .total-summary-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .col-md-4 {
+                margin: 10px 0;
+            }
+        }
+</style>
     <div class="search-container">
     
         <form method="GET" action="{{ route('admin.consolidated_dailyreport') }}" id="searchForm">
@@ -42,6 +133,48 @@
         
         </div>
 
+       <!-- Toal Hrs calculation --> 
+        <div class="total-summary-container mt-4 mb-4 p-3" style="background-color: #f8f9fa; border-radius: 5px;">
+            <div class="row">
+                @php
+                    // Calculate grand totals across all departments
+                    $totalBillable = $departmentData['backend']['totals']['billable'] + 
+                                    $departmentData['frontend']['totals']['billable'] + 
+                                    $departmentData['internship']['totals']['billable'];
+                    
+                    $totalNonBillable = $departmentData['backend']['totals']['non_billable'] + 
+                                    $departmentData['frontend']['totals']['non_billable'] + 
+                                    $departmentData['internship']['totals']['non_billable'];
+                    
+                    $totalInternal = $departmentData['backend']['totals']['internal'] + 
+                                $departmentData['frontend']['totals']['internal'] + 
+                                $departmentData['internship']['totals']['internal'];
+                    
+                    $grandTotal = $totalBillable + $totalNonBillable + $totalInternal;
+                    $grandTotal = $grandTotal > 0 ? $grandTotal : 1; // Avoid division by zero
+                @endphp
+                
+                <div class="col-md-4 text-center">
+                    <h5 class="font-weight-bold billable_color_fin">
+                        Billable Hrs: {{ number_format($totalBillable, 2) }}Hrs ({{ number_format(($totalBillable / $grandTotal) * 100, 2) }}%)
+                    </h5>
+                </div>
+                
+                <div class="col-md-4 text-center">
+                    <h5 class="font-weight-bold non_billable_color_fin">
+                        Non Billable Hrs: {{ number_format($totalNonBillable, 2) }}Hrs ({{ number_format(($totalNonBillable / $grandTotal) * 100, 2) }}%)
+                    </h5>
+                </div>
+                
+                <div class="col-md-4 text-center">
+                    <h5 class="font-weight-bold internal_billable_color_fin">
+                        Internal Billable Hrs: {{ number_format($totalInternal, 2) }}Hrs ({{ number_format(($totalInternal / $grandTotal) * 100, 2) }}%)
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        
         @if(count($departmentData['backend']['employees']) > 0 || 
         count($departmentData['frontend']['employees']) > 0 || 
         count($departmentData['internship']['employees']) > 0)
@@ -139,7 +272,11 @@
                             <td  class="font-weight-bold" style="font-size: 22px;">{{ number_format($totals['ticket_total'], 2) }}</td>
                         </tr>
                     </tbody>
+
+                    
                 </table>
+
+
             @else
                 <div class="no-data">No data found for the selected date range</div>
             @endif

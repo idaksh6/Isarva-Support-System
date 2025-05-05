@@ -346,7 +346,10 @@ class DailyReportField extends Model
                 $item->non_billable_percent = $total ? round(($item->non_billable / $total) * 100, 2) : 0;
                 $item->internal_percent = $total ? round(($item->internal / $total) * 100, 2) : 0;
                 return $item;
-            });
+            })
+            // ->sortByDesc('non_billable'); // To disaply non billable emp at first
+            ->sortByDesc('non_billable_percent'); // To display highest non-billable % first
+
     }
    
 }

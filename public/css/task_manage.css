@@ -269,3 +269,16 @@ h4.totalhrs {
     border: 1px solid #aaa !important;
 
 }
+
+
+.scrolltasks{
+
+    height: 100vh ;
+    overflow-y: scroll;
+
+    
+}
+
+
+
+

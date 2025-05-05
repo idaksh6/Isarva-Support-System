@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Backend\Credential;
 use App\Models\Backend\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -106,6 +107,13 @@ class TaskController
                 abort(404, 'Project not found');
             }
             
+
+            // Fetch credentials related to the project, with user details
+            $credentials = Credential::where('project_id', $id)
+            ->with('creator') // assuming relation to fetch created_by user
+            ->latest()
+            ->get();
+
             // Get the current authenticated user's ID
             $currentUserId = auth()->id();
             
@@ -161,7 +169,7 @@ class TaskController
         
             return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
             'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays',
-            'currentUserId'));
+            'currentUserId', 'credentials' ));
         }
         
         
@@ -503,5 +511,121 @@ class TaskController
          // Return only the HTML for the uploaded files section
          return view('admin.project.tasks', compact('assets'))->render();
      }
+
+
+     public function storecredential(Request $request)
+     {
+
+        // dd($request->all());
+        $request->validate([
+            'credential_title' => 'required',
+            'credential_description' => 'required|max:500',
+         
+        ]);
+
+        try {
+            $credential = new Credential();
+    
+            $credential->title = $request->credential_title;
+            $credential->description = $request->credential_description;
+    
+            // Optional: Fill these values from session or request if available
+            $credential->user_id = Auth::id(); // or $request->user_id;
+            $credential->project_id = $request->project_id ?? 0; // assuming you pass project_id or default to 0
+            $credential->created_by = Auth::id();
+            $credential->updated_by = Auth::id();
+    
+            $credential->save();
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Credential added successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong while saving the credential.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+  
+    
+     }
+
+     public function editcredential($id)
+     {
+
+     
+           $credential = Credential::findOrFail($id); // Fetch the Employee by ID
+           return response()->json($credential); // Return Employee data as JSON
+       
+     }
+
+    //  public function updatecredential(Request $request)
+    //  {
+    //     dd($request->all());
+
+    //      // Validate the incoming request
+    //      $request->validate([
+    //          'credential_title' => 'required',
+    //          'credential_description' => 'required|max:500',
+    //      ]);
+     
+    //      try {
+    //          // You must pass credential ID in the form (either as a hidden input or in the route)
+    //          $credentialId = $request->input('credential_id');
+     
+    //          $credential = Credential::findOrFail($credentialId);
+     
+    //          // Update values
+    //          $credential->title = $request->credential_title;
+    //          $credential->description = $request->credential_description;
+    //          $credential->updated_by = Auth::id(); // optional but recommended
+     
+    //          $credential->save();
+     
+    //          return response()->json([
+    //              'status' => true,
+    //              'message' => 'Credential updated successfully.',
+    //          ]);
+     
+    //      } catch (\Exception $e) {
+    //          return response()->json([
+    //              'status' => false,
+    //              'message' => 'Something went wrong while updating the credential.',
+    //              'error' => $e->getMessage(),
+    //          ], 500);
+    //      }
+    //  }
+    public function updatecredential(Request $request, $id)
+{
+    // Validate the incoming request
+    $request->validate([
+        'credential_title' => 'required',
+        'credential_description' => 'required|max:500',
+    ]);
+
+    try {
+        $credential = Credential::findOrFail($id);
+        
+        $credential->title = $request->credential_title;
+        $credential->description = $request->credential_description;
+        $credential->updated_by = Auth::id();
+        
+        $credential->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Credential updated successfully.',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Something went wrong while updating the credential.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+     
 }
 

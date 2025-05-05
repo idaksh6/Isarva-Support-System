@@ -132,12 +132,38 @@
            font-size: 15px !important;
         }
 
+
+        /* Total hrs color */
+        .summary-title {
+                font-size: 20px;
+                font-weight: bold;
+                font-family: Arial, sans-serif;
+                margin: 0; /* Remove margin */
+                padding: 0; /* Remove padding */
+            }
+            .billable_color_fin {
+                color: green;
+            }
+            .non_billable_color_fin {
+                color: red;
+                font-weight: bold;
+                font-size: 20px;
+            }
+            .internal_billable_color_fin {
+                color: blue;
+                font-weight: bold;
+                font-size: 20px;
+            }
+            .col-md-4 {
+                padding: 10px; /* Remove padding between columns */
+            }
+
     </style>
 </head>
 <body>
     <h2 style="text-align: center; font-weight: bold;">Consolidated Daily Report</h2>
 
-    @php
+    {{-- @php
         use Carbon\Carbon;
 
         $start = Carbon::parse($startDate);
@@ -147,6 +173,27 @@
         @if($startDate && $endDate)
             Date Range: {{ $start->format('d-m-Y') }} to {{ $end->format('d-m-Y') }}
             ({{ $start->format('l') }}{{ $start->ne($end) ? ' to ' . $end->format('l') : '' }})
+        @else
+            All Records
+        @endif
+    </p> --}}
+    @php
+    use Carbon\Carbon;
+    
+    $start = Carbon::parse($startDate);
+    $end = Carbon::parse($endDate);
+    $today = Carbon::today();
+    @endphp
+    
+    <p style="text-align: center; font-size: 15px; color: #2196F3;">
+        @if($startDate && $endDate)
+            <span style="font-weight: bold;">Date Range:</span>
+            <span style="color: red; font-weight: bold;">
+                {{ $start->format('d-m-Y') }} to {{ $end->format('d-m-Y') }}
+            </span>
+            @if($start->equalTo($end))
+                ({{ $start->format('l') }})
+            @endif
         @else
             All Records
         @endif
@@ -240,5 +287,96 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Toal Hrs calculation --> 
+    {{-- <div class="total-summary-container mt-4 mb-4 p-3" style="background-color: #f8f9fa; border-radius: 5px;">
+        <div class="row">
+            @php
+                // Calculate grand totals across all departments
+                $totalBillable = $departmentData['backend']['totals']['billable'] + 
+                                $departmentData['frontend']['totals']['billable'] + 
+                                $departmentData['internship']['totals']['billable'];
+                
+                $totalNonBillable = $departmentData['backend']['totals']['non_billable'] + 
+                                $departmentData['frontend']['totals']['non_billable'] + 
+                                $departmentData['internship']['totals']['non_billable'];
+                
+                $totalInternal = $departmentData['backend']['totals']['internal'] + 
+                            $departmentData['frontend']['totals']['internal'] + 
+                            $departmentData['internship']['totals']['internal'];
+                
+                $grandTotal = $totalBillable + $totalNonBillable + $totalInternal;
+                $grandTotal = $grandTotal > 0 ? $grandTotal : 1; // Avoid division by zero
+            @endphp
+            
+            <div class="col-md-4 text-center">
+                <h5 class="font-weight-bold billable_color_fin">
+                    Billable Hrs: {{ number_format($totalBillable, 2) }}Hrs ({{ number_format(($totalBillable / $grandTotal) * 100, 2) }}%)
+                </h5>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <h5 class="font-weight-bold non_billable_color_fin">
+                    Non Billable Hrs: {{ number_format($totalNonBillable, 2) }}Hrs ({{ number_format(($totalNonBillable / $grandTotal) * 100, 2) }}%)
+                </h5>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <h5 class="font-weight-bold internal_billable_color_fin">
+                    Internal Billable Hrs: {{ number_format($totalInternal, 2) }}Hrs ({{ number_format(($totalInternal / $grandTotal) * 100, 2) }}%)
+                </h5>
+            </div>
+        </div>
+    </div> --}}
+
+
+   <!-- Total Hrs calculation --> 
+    <div class="total-summary-container mt-4 mb-4 p-3" style="background-color: #f8f9fa; border-radius: 5px;">
+        <div class="row no-gutters">
+            @php
+                // Calculate grand totals across all departments
+                $totalBillable = $departmentData['backend']['totals']['billable'] + 
+                                $departmentData['frontend']['totals']['billable'] + 
+                                $departmentData['internship']['totals']['billable'];
+                
+                $totalNonBillable = $departmentData['backend']['totals']['non_billable'] + 
+                                $departmentData['frontend']['totals']['non_billable'] + 
+                                $departmentData['internship']['totals']['non_billable'];
+                
+                $totalInternal = $departmentData['backend']['totals']['internal'] + 
+                            $departmentData['frontend']['totals']['internal'] + 
+                            $departmentData['internship']['totals']['internal'];
+                
+                $grandTotal = $totalBillable + $totalNonBillable + $totalInternal;
+                $grandTotal = $grandTotal > 0 ? $grandTotal : 1; // Avoid division by zero
+            @endphp
+
+            <style>
+            
+            </style>
+
+            <div class="col-md-4 text-center">
+                <h5 class="summary-title billable_color_fin">
+                    Billable Hrs: {{ number_format($totalBillable, 2) }}Hrs 
+                    <span>({{ number_format(($totalBillable / $grandTotal) * 100, 2) }}%)</span>
+                </h5>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <h5 class="summary-title non_billable_color_fin">
+                    Non Billable Hrs: {{ number_format($totalNonBillable, 2) }}Hrs 
+                    <span>({{ number_format(($totalNonBillable / $grandTotal) * 100, 2) }}%)</span>
+                </h5>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <h5 class="summary-title internal_billable_color_fin">
+                    Internal Billable Hrs: {{ number_format($totalInternal, 2) }}Hrs 
+                    <span>({{ number_format(($totalInternal / $grandTotal) * 100, 2) }}%)</span>
+                </h5>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
