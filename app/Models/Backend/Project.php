@@ -106,6 +106,7 @@ public static $statusNames = [
     6 => 'Closed',
     7 => 'On Hold',
     8 => 'Warranty',
+    9 => 'Waiting For Client Response'
 ];
 
 public static $priorityNames = [

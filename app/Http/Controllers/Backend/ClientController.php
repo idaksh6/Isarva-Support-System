@@ -37,6 +37,7 @@ class ClientController
     /** Store the Client Information - Author SK - 29-02-2025 */
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'client_name' => 'required|string|max:255',
             'client_pos_in_comp' => 'nullable|string|max:255',

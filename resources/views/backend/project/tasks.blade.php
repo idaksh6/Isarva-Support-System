@@ -57,6 +57,41 @@
         z-index: 1;
         pointer-events: none;
     }
+
+    @media(max-width:709px){
+
+        .tabnavclass{
+
+            overflow-y: auto;
+        }
+    }
+
+    @media(max-width:890px){
+
+        .projectdetailclass{
+
+            flex-direction: column;
+            gap:20px;
+        }
+
+        .editaddbtn{
+
+            justify-content: center;
+        }
+        
+    }
+
+    @media(max-width:563px){
+       
+        .projectlists{
+            flex-direction: column;
+        }
+
+        .progrsbar {
+            width:50% !important;
+        }
+
+    }
 </style>
 
 @if (session()->has('flash_success_project'))
@@ -85,6 +120,35 @@
                             <input type="text" class="form-control" name="credential_title" >
                             <div class="text-danger" id="cred-add-error-credential_title"></div>
                         </div>
+
+                        <div class="mb-3">
+                               <label for="credentialtype" class="form-label">Type <span class="required">*</span></label>
+                               <select class="form-select" name="credential_type" aria-label="Default select Priority">
+                                   <option selected>None</option>
+                                   <option value="1" {{ old('credential_type') == '1' ? 'selected' : '' }}>Server</option>
+                                   <option value="2" {{ old('credential_type') == '2' ? 'selected' : '' }}>Application</option>
+                                   <option value="3" {{ old('credential_type') == '3' ? 'selected' : '' }}>FTP</option>
+                                   <option value="4" {{ old('credential_type') == '3' ? 'selected' : '' }}>Others</option>
+                                </select>
+                                <div class="text-danger" id="cred-add-error-credential_type"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username">Username</label>
+                            <input type="text"  name="username" class="form-control" placeholder="Enter username">
+                            <div class="text-danger" id="cred-add-error-username"></div>
+                        </div>
+
+                        <div style="position: relative;" class="mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password">
+                            
+                            <!-- Eye icon -->
+                            <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                👁️
+                            </span>
+                        </div>
+
                         <div class="mb-3">
                             <label for="credentialDescription" class="form-label">Description <span class="required">*</span></label>
                             <textarea class="form-control" name="credential_description" rows="3" maxlength="500" ></textarea>
@@ -126,6 +190,34 @@
                             <div class="text-danger" id="cred-edit-error-credential_title"></div>
 
                         </div>
+
+                        <div class="mb-3">
+                               <label for="credentialtype" class="form-label">Type <span class="required">*</span></label>
+                               <select class="form-select" id="credentialType" name="credential_type" aria-label="Default select Priority">
+                                   <option selected>None</option>
+                                   <option value="1" >Server</option>
+                                   <option value="2" >Application</option>
+                                   <option value="3" >FTP</option>
+                                   <option value="4" >Others</option>
+                                </select>
+                                <div class="text-danger" id="cred-edit-error-credential_type"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username">Username</label>
+                            <input type="text" id="credntialUsername" name="username" class="form-control" placeholder="Enter username">
+                            <div class="text-danger" id="cred-edit-error-username"></div>
+                        </div>
+
+                          <div style="position: relative;" class="mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" id="editcredential_password" name="password" class="form-control" placeholder="Enter new password to update old password">
+                            
+                            <!-- Eye icon -->
+                            <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                👁️
+                            </span>
+                        </div>
                             
                         <div class="mb-3">
                             <label for="credentialDescription" class="form-label">Description <span class="required">*</span></label>
@@ -145,6 +237,30 @@
         </div>
     </div>
 
+    <!-- Modal for Delete Confirmation of credentials-->
+    <div class="modal fade" id="deletecredential" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="deleteprojectLabel">Delete Item Permanently?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body justify-content-center flex-column d-flex">
+                    <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                    <p class="mt-4 fs-5 text-center">You can only delete this item permanently.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <!-- Add a form for the delete action -->
+                    <form id="delete-credential-form" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger color-fff">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <!-- Create Project-->
 <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
@@ -282,6 +398,7 @@
                                     <option value="6" {{ old('status') == '6' ? 'selected' : '' }}>Closed</option>
                                     <option value="7" {{ old('status') == '7' ? 'selected' : '' }}>On Hold</option>
                                     <option value="8" {{ old('status') == '8' ? 'selected' : '' }}>Warranty</option>
+                                    <option value="9" {{ old('status') == '9' ? 'selected' : '' }}>Waiting for client Response</option>
                                 </select>
                                 <div class="text-danger" id="proj-add-error-status"></div>
                             </div>
@@ -501,6 +618,7 @@
                                 <option value="6">Closed</option>
                                 <option value="7">On Hold</option>
                                 <option value="8">Warranty</option>
+                                <option value="9">Waiting for client Response</option>
                             </select>
                             <div class="text-danger" id="proj-edit-error-status"></div>
                         </div>
@@ -814,20 +932,22 @@
         <div class="container-xxl">
 
                 <!-- First Row: Project Details -->
-                <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+                <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded projectdetailclass">
                     <div class="w-100 ">
                         <h5 class="mb-0 projectlists">
                             <strong>{{ $project->client_name ?? 'N/A' }}</strong> -
                             <strong>{{ $project->project_name }}</strong> -
                             <span class="badge bg-{{ $project->getStatusClass() }}">{{ $project->status_name }}</span> -
                             {{-- <strong>{{ \Carbon\Carbon::parse($project->end_date)->format('d-m-Y') }}</strong> --}}
-                            <div class="progress-container progrsbar" style="height: 23px;">
-                                <!-- Date Range Inside Progress Bar -->
-                                <div class="date-range">{{ $project->formatted_date_range }}</div>
-        
-                                <!-- Progress Bar -->
-                                <div class="progress-bar-manage" style="width: {{ $project->progress }}%; background-color: {{ $project->is_overdue ? 'red' : 'blue' }};"></div>
-                            </div>
+                         
+                                <div class="progress-container progrsbar" style="height: 23px;">
+                                    <!-- Date Range Inside Progress Bar -->
+                                    <div class="date-range">{{ $project->formatted_date_range }}</div>
+            
+                                    <!-- Progress Bar -->
+                                    <div class="progress-bar-manage" style="width: {{ $project->progress }}%; background-color: {{ $project->is_overdue ? 'red' : 'blue' }};"></div>
+                                </div>
+                          
                         </h5>
                     </div>
                     <div class="editaddbtn">
@@ -863,7 +983,7 @@
 
             
                 <!-- Tab Navigation -->
-                <div class="d-flex gap-3 mt-3">
+                <div class="d-flex gap-3 mt-3 tabnavclass">
                     <button class="btn btn-outline-primary d-flex align-items-center" id="showTasks">
                         <i class="icofont-tasks me-2"></i> Tasks
                     </button>
@@ -1158,7 +1278,7 @@
                                     <p class="fw-bold">{{ $credential->creator->name ?? 'Unknown' }} says:</p>
                                     <div class="mt-auto">
                                         <a href="#" class="btn btn-sm btn-outline-primary me-2 edit-credential-btn" data-id="{{ $credential->id }}" data-bs-toggle="modal" data-bs-target="#editcredentialmodal">Edit</a>
-                                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                        <a href="#" class="btn btn-sm btn-outline-danger delete-credential-btn me-2 " data-id="{{ $credential->id }}" data-bs-toggle="modal" data-bs-target="#deletecredential">Delete</a>
                                     </div>
                                 </div>
 
@@ -1171,11 +1291,7 @@
                                 </div>
                             </div>
                         @endforeach
-
-                           
-                 
-  
-
+                        
                     </div>
 
                   
@@ -1407,6 +1523,23 @@
 
 
 <script>
+
+     // For credential password section
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const type = passwordInput.getAttribute("type");
+        passwordInput.setAttribute("type", type === "password" ? "text" : "password");
+    }
+
+    // For edit credential section
+    function togglePassword() {
+        const passwordInput = document.getElementById("editcredential_password");
+        const type = passwordInput.getAttribute("type");
+        passwordInput.setAttribute("type", type === "password" ? "text" : "password");
+    }
+
+
+
     var editTaskRoute = "{{ route('admin.task.edit', ':id') }}"; // id is the placeholder for emplyoee id which is replaced further
     
     // Select2 for task and Project
@@ -1772,6 +1905,9 @@
                        // Populate the modal form with the fetched data
                        $('#credentialTitle').val(response.title);
                        $('#credentialDescription').val(response.description);
+                       $('#credentialType').val(response.type);
+                       $('#credntialUsername').val(response.username);
+
                        $('#editCredentialId').val(credentialId);
 
                     
@@ -1789,19 +1925,19 @@
     
 
                // When the delete button is clicked
-               $('.delete-employee-btn').on('click', function () {
-                   var employeeId = $(this).data('id'); // Get the client ID from the data attribute
+               $('.delete-credential-btn').on('click', function () {
+                   var credentialId = $(this).data('id'); // Get the client ID from the data attribute
 
                    // Set the form action dynamically
-                   var deleteUrl = "{{ route('admin.our-employee.destroy-employee', ':id') }}"; // Route with placeholder
-                   deleteUrl = deleteUrl.replace(':id', employeeId);       // Replace placeholder with actual ID
+                   var deleteUrl = "{{ route('admin.destroy-credential', ':id') }}"; // Route with placeholder
+                   deleteUrl = deleteUrl.replace(':id', credentialId);       // Replace placeholder with actual ID
 
                    // Update the form action
-                   $('#delete-employee-form').attr('action', deleteUrl);
+                   $('#delete-credential-form').attr('action', deleteUrl);
                });
 
                // Handle form submission
-               $('#delete-employee-form').on('submit', function (e) {
+               $('#delete-credential-form').on('submit', function (e) {
                    e.preventDefault(); // Prevent the default form submission
 
                    var form = $(this);
@@ -1822,8 +1958,8 @@
                            }
                        },
                        error: function (xhr) {
-                           console.error('Error deleting employee:', xhr.responseText);
-                           alert('An error occurred while deleting the employee.');
+                           console.error('Error deleting credential:', xhr.responseText);
+                           alert('An error occurred while deleting the credential.');
                        }
                    });
                });

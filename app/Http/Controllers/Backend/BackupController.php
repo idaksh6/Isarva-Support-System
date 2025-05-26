@@ -111,6 +111,7 @@ class BackupController extends Controller
             ->through(function ($backup) {
                 $backup->created_at = $backup->created_at ? Carbon::parse($backup->created_at) : null;
                 $backup->updated_at = $backup->updated_at ? Carbon::parse($backup->updated_at) : null;
+                 $backup->last_backup_date = $backup->last_backup_date ? Carbon::parse($backup->last_backup_date) : null;
                 $backup->backup_type_name = $this->getBackupTypeName($backup->backup_type);
                 return $backup;
             });
@@ -626,7 +627,7 @@ class BackupController extends Controller
             // 'domain'              => 'required|string|max:255|regex:/^(?!https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/',
             'present_ip'          => 'required|string|max:100',
             'last_backup_file'    => 'required|string|max:500',
-            'last_backup_date'    => 'required|date',
+            'last_backup_date'    => 'required|date|before_or_equal:today',
             'last_backup_location'=> 'required|string|max:500',
             'backup_type'         => 'required|integer|between:1,8',
             'site_status'         => 'required|integer|between:1,4',
@@ -635,6 +636,12 @@ class BackupController extends Controller
             'framework_version'   => 'nullable|string|max:50',
             'drive_link'          => 'nullable|url|max:255',
             'description'         => 'nullable|string|max:1000',
+        ],[
+
+            'last_backup_date.required' => 'The last backup date is required.',
+            'last_backup_date.date' => 'The last backup date must be a valid date.',
+            'last_backup_date.before_or_equal' => 'The last backup date cannot be in the future.',
+
         ]);
     
         // Normalize domain to lowercase

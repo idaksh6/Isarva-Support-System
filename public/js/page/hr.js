@@ -284,6 +284,10 @@ $(function() {
                         style: {
                             colors: '#6b7280',
                             fontSize: '12px'
+                        },
+                         // Add  formatter to show 2 decimal places
+                        formatter: function(value) {
+                            return value.toFixed(2) + ' hrs';
                         }
                     }
                 },
@@ -293,8 +297,10 @@ $(function() {
                 tooltip: {
                     theme: 'light',
                     y: {
-                        formatter: function(val) {
-                            return val + ' hrs';
+                        // formatter: function(val) {
+                        //     return val + ' hrs';
+                          formatter: function(val) {
+                          return val.toFixed(2) + ' hrs';
                         }
                     }
                 },
@@ -347,11 +353,173 @@ $(function() {
         const initialMonth = $('#monthFilter').val();
         fetchData(initialYear, initialMonth);
     
-        // Filter change handler
-        $('#yearFilter, #monthFilter').on('change', function() {
-            fetchData($('#yearFilter').val(), $('#monthFilter').val());
-        });
+    //     // Filter change handler
+    //     $('#yearFilter, #monthFilter').on('change', function() {
+    //         fetchData($('#yearFilter').val(), $('#monthFilter').val());
+    //     });
+    // });
+    // Filter change handler
+
+    $("#yearFilter, #monthFilter, #employeeFilter").on("change", function () {
+      fetchData(
+        $("#yearFilter").val(),
+        $("#monthFilter").val(),
+        $("#employeeFilter").val()
+      );
     });
+  });
+
+  // 6 month report
+
+  $(document).ready(function () {
+    let lastYearChart = null;
+
+    function initializeChart(data) {
+      const colors = ["#198754", "#1e79ea", "#F44336"]; // Green, Red, Blue
+
+      const options = {
+        chart: {
+          height: 400,
+          type: "bar",
+          toolbar: { show: false },
+          stacked: true, // Changed to true for stacked bars
+        },
+        series: [
+          { name: "Billable", data: data.series[0] },
+          { name: "Internal Billable", data: data.series[1] },
+          { name: "Non-Billable", data: data.series[2] },
+        ],
+        colors: colors,
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "70%",
+            endingShape: "rounded",
+            dataLabels: {
+              total: {
+                enabled: true,
+                style: {
+                  fontSize: "13px",
+                  fontWeight: 900,
+                },
+              },
+            },
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          show: true,
+          width: 1,
+          colors: ["transparent"],
+        },
+        xaxis: {
+          categories: data.labels,
+          labels: {
+            style: {
+              colors: "#6b7280",
+              fontSize: "12px",
+            },
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Hours",
+            style: {
+              color: "#6b7280",
+              fontSize: "12px",
+            },
+            
+          },
+          labels: {
+            style: {
+              colors: "#6b7280",
+              fontSize: "12px",
+            },
+              // Add this formatter to show 2 decimal places
+            formatter: function(value) {
+              return value.toFixed(2);
+            }
+          },
+        },
+        grid: {
+          borderColor: "#e5e7eb",
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              // return val + " hrs";
+              return val.toFixed(2) + " hrs";  // Changed to show 2 decimal places
+            },
+          },
+        },
+        legend: {
+          position: "top",
+          horizontalAlign: "right",
+          markers: {
+            radius: 12,
+          },
+          itemMargin: {
+            horizontal: 10,
+          },
+        },
+      };
+
+      if (lastYearChart) lastYearChart.destroy();
+      $("#chart-loader").hide();
+      $("#six-month-cart").html("");
+
+      lastYearChart = new ApexCharts(
+        document.querySelector("#six-month-cart"),
+        options
+      );
+      lastYearChart.render();
+    }
+
+    function fetchData(year, month, employee) {
+      $("#chart-loader").show();
+      $("#six-month-cart").html("");
+
+      $.ajax({
+        url: `last-six-month/${year}/${month}/${employee}`,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          initializeChart(data);
+        },
+        error: function (xhr) {
+          console.error("Error:", xhr.responseText);
+          $("#chart-loader").html(
+            '<div class="text-danger">Error loading data</div>'
+          );
+        },
+      });
+    }
+
+    // Initial load
+    fetchData(null, null, null);
+
+    // Initial load
+
+    const initialYear = $("#yearFilter").val();
+
+    const initialMonth = $("#monthFilter").val();
+
+    const employeeFilter = $("#employeeFilter").val();
+
+    fetchData(initialYear, initialMonth, employeeFilter);
+
+    // On filter change
+
+    $("#yearFilter, #monthFilter,#employeeFilter").on("change", function () {
+      fetchData(
+        $("#yearFilter").val(),
+        $("#monthFilter").val(),
+        $("#employeeFilter").val()
+      );
+    });
+  });
 
      // Hr Resorce
     // $(document).ready(function() {

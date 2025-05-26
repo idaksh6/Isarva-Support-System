@@ -90,6 +90,9 @@ class DashboardController
         }
 
         $totalProjects = $isAdmin ? Project::getTotalProjects() : $projectQuery->count();
+        // Get ticket counts
+    //    $ticketCounts = Ticket::getTicketCounts($user->id, $isAdmin);
+        // $totaltickets  = $isAdmin ? Ticket::getTotalTicketsts() : $ticketQuery->count();
         $openProjects = $isAdmin ? Project::getOpenProjectCount() : $projectQuery->clone()->where('status', 2)->count();
         $closedProjects = $isAdmin ? Project::getClosedProjectCount() : $projectQuery->clone()->where('status', 6)->count();
         $OnHoldProjects = $isAdmin ? Project::getOnHoldProjectCount() : $projectQuery->clone()->where('status', 7)->count();
@@ -114,10 +117,113 @@ class DashboardController
             ->orWhereRaw("FIND_IN_SET(?, team_members)", [$userId])
             ->count();
 
+        // // Get urgent renewals (expiring in <5 days) without using relationships
+        // $urgentRenewals = DB::table('services')
+        // ->leftJoin('si_projects', 'services.project_id', '=', 'si_projects.id')
+        // ->select(
+        //     'services.*',
+        //     'si_projects.project_name',
+        //     'si_projects.id as project_id'
+        // )
+        // ->where('services.priority', 'urgent')
+        // // ->orderBy('services.expiry_date')
+        // ->take(6) // Limit to 6 most urgent
+        // ->get();
+
+        // Get urgent renewals (expiring in <5 days) without using relationships
+        // $urgentRenewals = DB::table('services')
+        // ->leftJoin('si_projects', 'services.project_id', '=', 'si_projects.id')
+        // ->select(
+        //     'services.*',
+        //     'si_projects.project_name',
+        //     'si_projects.id as project_id',
+        //     // Add these to determine which service is active
+        //     DB::raw('CASE 
+        //         WHEN services.d_service = 1 THEN "domain"
+        //         WHEN services.h_service = 1 THEN "hosting"
+        //         WHEN services.a_service = 1 THEN "application"
+        //         ELSE "none"
+        //     END as service_type'),
+        //     DB::raw('CASE 
+        //         WHEN services.d_service = 1 THEN services.d_name
+        //         WHEN services.h_service = 1 THEN services.h_ip
+        //         WHEN services.a_service = 1 THEN services.a_name
+        //         ELSE "N/A"
+        //     END as service_name'),
+        //     DB::raw('CASE 
+        //         WHEN services.d_service = 1 THEN services.d_exp
+        //         WHEN services.h_service = 1 THEN services.h_exp
+        //         WHEN services.a_service = 1 THEN services.a_exp
+        //         ELSE NULL
+        //     END as expiry_date')
+        // )
+        // ->where('services.priority', 'urgent')
+        // ->orderBy('expiry_date') // Now this column is calculated in the query
+        // ->take(6) // Limit to 6 most urgent
+        // ->get();
+
+        
+        // Get all urgent services (expiring in <=5 days or past due)
+        $urgentServices = DB::table('services')
+        ->leftJoin('si_projects', 'services.project_id', '=', 'si_projects.id')
+        ->select(                         // specifies the columns that we want to retrieve:
+            'services.id',
+            'si_projects.project_name',
+            'si_projects.id as project_id',
+            DB::raw('"domain" as service_type'),
+            'services.d_name as service_name',
+            'services.d_exp as expiry_date',
+            DB::raw('DATEDIFF(services.d_exp, CURDATE()) as days_left')
+        )
+        ->where('services.d_service', 1)       //condition as d_service value should be 1
+        ->where('services.priority', 'urgent') 
+        ->whereRaw('DATEDIFF(services.d_exp, CURDATE()) <= 5') // Only <=5 days
+        ->whereNull('services.deleted_at') // Exclude soft-deleted records
+
+        ->unionAll(
+            DB::table('services')
+                ->leftJoin('si_projects', 'services.project_id', '=', 'si_projects.id')
+                ->select(
+                    'services.id',
+                    'si_projects.project_name',
+                    'si_projects.id as project_id',
+                    DB::raw('"hosting" as service_type'),
+                    'services.h_ip as service_name',
+                    'services.h_exp as expiry_date',
+                    DB::raw('DATEDIFF(services.h_exp, CURDATE()) as days_left')
+                )
+                ->where('services.h_service', 1)
+                ->where('services.priority', 'urgent')
+                ->whereRaw('DATEDIFF(services.h_exp, CURDATE()) <= 5') // Only <=5 days
+                ->whereNull('services.deleted_at') // Exclude soft-deleted records
+        )
+
+        ->unionAll(
+            DB::table('services')
+                ->leftJoin('si_projects', 'services.project_id', '=', 'si_projects.id')
+                ->select(
+                    'services.id',
+                    'si_projects.project_name',
+                    'si_projects.id as project_id',
+                    DB::raw('"application" as service_type'),
+                    'services.a_name as service_name',
+                    'services.a_exp as expiry_date',
+                    DB::raw('DATEDIFF(services.a_exp, CURDATE()) as days_left')
+                )
+                ->where('services.a_service', 1)
+                ->where('services.priority', 'urgent')
+                ->whereRaw('DATEDIFF(services.a_exp, CURDATE()) <= 5') // Only <=5 days
+                ->whereNull('services.deleted_at') // Exclude soft-deleted records
+        )
+
+        ->orderBy('days_left') // Order by closest expiry (including negative for past due)
+        // ->take(8) // Limit to 8 most urgent
+        ->get();
+
         return view('backend.project_dashboard', compact(
             'totalProjectsCount', 'totalProjects', 'openProjects', 
             'closedProjects', 'OnHoldProjects', 'openTickets',
-            'onHoldTickets', 'flaggedTickets', 'activeTickets'
+            'onHoldTickets', 'flaggedTickets', 'activeTickets', 'urgentServices',
         ));
     }
 
@@ -215,4 +321,55 @@ class DashboardController
             'selectedMonthIndex' => 12 // Last month in the range
         ]);
     }
+
+
+
+       public function lastSixMonthData($year = null, $month = null,$employee=null)
+        {
+            $year = $year ?? date('Y');
+            $month = $month ?? date('m');
+
+            $endDate = Carbon::create($year, $month)->endOfMonth();
+            $startDate = $endDate->copy()->subMonths(5)->startOfMonth(); // Last 6 months including current
+
+            $labels = [];
+            $billable = [];
+            $internalBillable = [];
+            $nonBillable = [];
+
+            for ($i = 0; $i < 6; $i++) {
+                $currentDate = $startDate->copy()->addMonths($i);
+                $labels[] = $currentDate->format('M Y');
+
+                $monthStart = $currentDate->copy()->startOfMonth();
+                $monthEnd = $currentDate->copy()->endOfMonth();
+
+                // Get totals for all billable types in one query
+                $totals = DailyReportField::whereIn('billable_type', [0, 1, 2])
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->when(auth()->user()->role != 1, function ($query) {
+                        $query->where('user_id', auth()->id());
+                    })
+                    ->when(auth()->user()->role == 1 && !empty($employee), function ($query) use ($employee) {
+                        $query->where('user_id', $employee); // Admin employee filter
+                    })
+                    ->groupBy('billable_type')
+                    ->selectRaw('billable_type, SUM(hrs) as total_hrs')
+                    ->pluck('total_hrs', 'billable_type')
+                    ->toArray();
+
+                $billable[] = $totals[1] ?? 0;
+                $internalBillable[] = $totals[2] ?? 0;
+                $nonBillable[] = $totals[0] ?? 0;
+            }
+
+            return response()->json([
+                'labels' => $labels,
+                'series' => [
+                    $billable,          // Billable (type 1)
+                    $internalBillable,  // Internal Billable (type 2)
+                    $nonBillable        // Non-Billable (type 0)
+                ]
+            ]);
+        }
 }

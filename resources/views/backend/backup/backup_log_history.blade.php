@@ -54,8 +54,10 @@
                 <tr>
                     <th class="bckupsino">SI.No</th>
                     <th class="bckupsino">Action</th>
-                    <th>Backup Date</th>
+                    <th>Last Backup Date</th>
                     <th>Backup File</th>
+                    <th> PHP Version</th>
+                    <th> Wordpress Version</th>
                     <th>Drive Link</th>
                 </tr>
             </thead>
@@ -69,8 +71,10 @@
                         </a>
                     </td>
                     
-                    <td>{{ \Carbon\Carbon::parse($log->created_at)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($log->last_backup_date)->format('d-m-Y') }}</td>
                     <td>{{ $log->last_backup_file_name ?? 'N/A' }}</td>
+                    <td>{{ $log->php_version ?? 'N/A'}}</td>
+                    <td>{{ $log->wordpress_version ?? 'N/A'}}</td>
                     {{-- <td>
                         @if($log->drive_link)
                             <a href="{{ $log->drive_link }}" target="_blank">View Link</a>

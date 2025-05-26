@@ -103,6 +103,13 @@ label {
     background-color: purple; /* Purple to indicate warranty status */
     color: white;
 }
+
+.status-waiting_for_client_response{
+
+    background-color: #3d405b;
+    color: white;
+}
+
 /** Status colors ends */
 /** Department Color boxes */
 .department-box {

@@ -3,6 +3,42 @@
 @section('title', 'Backup Manage  | Isarva Support')
 
 @section('content')
+
+<style>
+
+    @media(max-width:758px){
+
+           .managebcksrchaddbtn{
+
+                display: grid !important;
+                align-content: center !important;
+                justify-content: center !important;
+                justify-items: center !important;
+        }
+
+           .bckupsrch{
+           
+            margin: 20px;
+
+           }
+
+           .bckupsrchheader {
+
+            flex-direction: column;
+           }
+             
+
+    }
+
+    @media(max-width:475px){
+
+        .input-group{
+
+            width: 248px !important;
+        }
+    }
+
+</style>
 {{-- 
         <div class="d-flex align-items-center justify-content-between  mb-4 ">
             <form action="{{ route('admin.backup_search')}}"  method="GET" class="col-md-4">
@@ -101,9 +137,9 @@
 <div class="card bckupmanagetbl">
     <div class="card-header bckupsrchheader d-flex justify-content-between align-items-center">
         <h5 class="managebcktxt mb-0">Manage Backups</h5>
-        <div class="d-flex">
+        <div class="d-flex managebcksrchaddbtn">
             <form action="{{ route('admin.backup_search') }}" method="GET" class="me-3">
-                <div class="input-group" style="width: 300px;">
+                <div class="input-group bckupsrch" style="width: 300px;">
                     <input type="text" class="form-control  project_search" name="search" id="search" 
                         placeholder="Search domain or IP" value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary">
@@ -154,8 +190,8 @@
                             @if($backups->contains('wordpress_version'))
                                 <th>WordPress</th>
                             @endif
-                            <th>Created</th>
-                            <th>Last Updated</th>
+                            <th>Last Backup Date</th>
+                            {{-- <th>Last Updated</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -209,8 +245,9 @@
                                 <td>{{ $backup->wordpress_version ?? 'N/A' }}</td>
                             @endif
                             
-                            <td>{{ $backup->created_at ? $backup->created_at->format('d M Y') : 'N/A' }}</td>
-                            <td>{{ $backup->updated_at ? $backup->updated_at->format('d M Y') : 'N/A' }}</td>
+                            {{-- <td>{{ $backup->created_at ? $backup->created_at->format('d M Y') : 'N/A' }}</td> --}}
+                            <td>{{ $backup->last_backup_date ? $backup->last_backup_date->format('d M Y') : 'N/A' }}</td>
+                            {{-- <td>{{ $backup->updated_at ? $backup->updated_at->format('d M Y') : 'N/A' }}</td> --}}
                         </tr>
                         @endforeach
                     </tbody>

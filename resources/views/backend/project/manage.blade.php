@@ -333,6 +333,7 @@ button.select2-selection__choice__remove {
                                     <option value="6" {{ old('status') == '6' ? 'selected' : '' }}>Closed</option>
                                     <option value="7" {{ old('status') == '7' ? 'selected' : '' }}>On Hold</option>
                                     <option value="8" {{ old('status') == '8' ? 'selected' : '' }}>Warranty</option>
+                                    <option value="9" {{ old('status') == '9' ? 'selected' : '' }}>Waiting for client response</option>
                                 </select>
                                 <div class="text-danger" id="proj-add-error-status"></div>
                             </div>
@@ -375,10 +376,13 @@ button.select2-selection__choice__remove {
 
                     <div class="mb-3">
                         <label class="form-label">Billing Company</label>
-                        <select class="form-select inputprojectbox" name="biiling_company" >
-                           <option value="0">None</option>
+                        <select class="form-select inputprojectbox" name="biiling_company" placeholder="select the company">
+                           {{-- <option value="0">None</option>
                            <option value="1" {{ old('biiling_company') == '1' ? 'selected' : '' }}>Isarva</option>
-                           <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option>
+                           <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option> --}}
+                            @foreach($billingCompanies as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
                         </select>
                         <div class="text-danger" id="proj-add-error-billing_company"></div>
                     </div>
@@ -554,6 +558,7 @@ button.select2-selection__choice__remove {
                                 <option value="6">Closed</option>
                                 <option value="7">On Hold</option>
                                 <option value="8">Warranty</option>
+                                <option value="9">Waiting for client Response</option>
                             </select>
                             <div class="text-danger" id="proj-edit-error-status"></div>
                         </div>
@@ -616,9 +621,14 @@ button.select2-selection__choice__remove {
                     <div class="mb-3">
                         <label class="form-label">Billing Company</label>
                         <select class="form-select" name="biiling_company" id="proj_biiling_company">
-                            <option value="0">None</option>
+                            {{-- <option value="0">None</option>
                             <option value="1">Isarva</option>
-                            <option value="2">Blue Flemingo</option>
+                            <option value="2">Blue Flemingo</option> --}}
+                            @foreach($billingCompanies as $key => $value)
+                                <option value="{{ $key }}" {{ old('biiling_company') == $key ? 'selected' : '' }}>
+                                    {{ $value }}
+                                </option>
+                            @endforeach
                         </select>
                         <div class="text-danger" id="proj-edit-error-billing_company"></div>
                     </div>

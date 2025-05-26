@@ -118,21 +118,42 @@ class LoginController
      *
      * @return mixed
      */
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     if (! $user->isActive()) {
+    //         auth()->logout();
+
+    //         return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
+    //     }
+
+    //     event(new UserLoggedIn($user));
+
+    //     if (config('boilerplate.access.user.single_login')) {
+    //         auth()->logoutOtherDevices($request->password);
+    //     }
+    // }
+
     protected function authenticated(Request $request, $user)
-    {
-        if (! $user->isActive()) {
-            auth()->logout();
+{
+    // Force session regeneration
+    $request->session()->flush();
+    $request->session()->regenerate();
+    
+    // Explicitly set activity time
+    $request->session()->put('last_activity', time());
 
-            return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
-        }
-
-        event(new UserLoggedIn($user));
-
-        if (config('boilerplate.access.user.single_login')) {
-            auth()->logoutOtherDevices($request->password);
-        }
+    if (! $user->isActive()) {
+        auth()->logout();
+        return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
     }
 
+    event(new UserLoggedIn($user));
+
+    if (config('boilerplate.access.user.single_login')) {
+        auth()->logoutOtherDevices($request->password);
+    }
+}
+    
 
 
     protected function sendFailedLoginResponse(Request $request)
@@ -162,6 +183,11 @@ class LoginController
             ]);
     }
 
+
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     $request->session()->regenerate();
+    // }
  
     
 

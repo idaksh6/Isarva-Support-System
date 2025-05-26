@@ -21,12 +21,12 @@ class User extends Authenticatable
         'email',
         'password',
 
-       
+
         'profile_image',
         'employee_id',
         'joining_date',
         'user_name',
-    
+
         // 'email_id',
         'phone',
         'webhook_url',
@@ -56,8 +56,8 @@ class User extends Authenticatable
 
 
 
-      // Define the designation mapping
-      public static $designationNames = [
+    // Define the designation mapping
+    public static $designationNames = [
         1 => 'Website Desiginer',
         2 => 'App Development',
         3 => 'UI/UX Designer',
@@ -67,7 +67,7 @@ class User extends Authenticatable
         7 => 'Marketing Analyst',
         8 => 'Quality Assurance',
         9 => 'Others',
-        
+
     ];
 
     // Accessor to get the designation name
@@ -82,7 +82,7 @@ class User extends Authenticatable
         //             ->withPivot('page_id');
     }
 
-  
+
 
     // public function getIsSuperAdminAttribute() {
     //     return $this->role === 'super_admin'; // Replace 'role' with the actual column name
@@ -95,34 +95,38 @@ class User extends Authenticatable
 
     public function getAuthIdentifier()
     {
-        return $this->email_id; 
+        return $this->email_id;
     }
 
 
 
-                // Relationships for projects where user is manager
-            public function managedProjects()
-            {
-                return $this->hasMany(Project::class, 'manager');
-            }
+    // Relationships for projects where user is manager
+    public function managedProjects()
+    {
+        return $this->hasMany(Project::class, 'manager');
+    }
 
-            // Relationship for projects where user is a team member
-            public function teamMemberProjects()
-            {
-                return Project::whereRaw("FIND_IN_SET(?, team_members)", [$this->id]);
-            }
+    // Relationship for projects where user is a team member
+    public function teamMemberProjects()
+    {
+        return Project::whereRaw("FIND_IN_SET(?, team_members)", [$this->id]);
+    }
 
-            // Combined relationship for all projects (manager + team member)
-            public function accessibleProjects()
-            {
-                return Project::where('manager', $this->id)
-                            ->orWhereRaw("FIND_IN_SET(?, team_members)", [$this->id]);
-            }
+    // Combined relationship for all projects (manager + team member)
+    public function accessibleProjects()
+    {
+        return Project::where('manager', $this->id)
+            ->orWhereRaw("FIND_IN_SET(?, team_members)", [$this->id]);
+    }
 
-            // Relationship for assigned tasks
-            public function assignedTasks()
-            {
-                return $this->hasMany(Task::class, 'assigned_to');
-            }
-    
+    // Relationship for assigned tasks
+    public function assignedTasks()
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+    public function updateLastActivity()
+    {
+        $this->last_activity_at = now();
+        $this->save();
+    }
 }

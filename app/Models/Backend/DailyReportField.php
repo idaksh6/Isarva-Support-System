@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+
 class DailyReportField extends Model
 {
     use HasFactory;
@@ -351,5 +352,51 @@ class DailyReportField extends Model
             ->sortByDesc('non_billable_percent'); // To display highest non-billable % first
 
     }
+
+
+
+    // Ticket module- billable hrs calculation
+    public static function getTicketBillableStats($ticketId)
+    {
+        // Only for ticket type (type = 2)
+        $records = self::where('type', 2)
+            ->where('project_id', $ticketId)
+            ->select('hrs', 'billable_type')
+            ->get();
+
+        $totals = [
+            'billable' => 0.00,
+            'non_billable' => 0.00,
+            'internal_billable' => 0.00,
+        ];
+
+        foreach ($records as $record) {
+            switch ($record->billable_type) {
+                case 1:
+                    $totals['billable'] += $record->hrs;
+                    break;
+                case 0:
+                    $totals['non_billable'] += $record->hrs;
+                    break;
+                case 2:
+                    $totals['internal_billable'] += $record->hrs;
+                    break;
+            }
+        }
+
+        $grandTotal = array_sum($totals);
+        $percentages = [];
+
+        foreach ($totals as $key => $value) {
+            $percentages[$key] = $grandTotal > 0 ? round(($value / $grandTotal) * 100, 2) : 0.00;
+        }
+
+        return [
+            'totals' => $totals,
+            'percentages' => $percentages,
+            'total_hrs' => $grandTotal,
+        ];
+    }
+
    
 }

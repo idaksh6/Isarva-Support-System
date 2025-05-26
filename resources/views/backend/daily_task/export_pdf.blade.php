@@ -54,7 +54,7 @@
 
 <h2 style="text-align: center; margin-bottom: 20px;">Today's Daily Task - {{ \Carbon\Carbon::now()->format('l, d-m-Y') }}</h2>
 
-<table>
+{{-- <table>
     <thead>
         <tr>
             <th>SI.NO</th>
@@ -65,7 +65,7 @@
         </tr>
     </thead>
     <tbody>
-        @php $serial = 1; @endphp
+        {{-- @php $serial = 1; @endphp
         @foreach($tasks as $group)
             @php
                 $rowspan = count($group);
@@ -92,10 +92,71 @@
                 @endif
             @endforeach
             @php $serial++; @endphp
-        @endforeach
-     
+        @endforeach --}}
+
+        
+        
+   
+
+{{-- 
     </tbody>
-</table>
+</table>  --}}
+
+
+                    @php $serial = 1; @endphp
+
+                        @foreach($tasks as $group)
+                            @php
+                                $rowspan = count($group);
+                                $isOddSerial = $serial % 2 !== 0;
+                                $firstInPage = ($serial - 1) % $perPage == 0;
+                            @endphp
+
+                            {{-- Start a new table if it’s the first in the page or after perPage count --}}
+                            @if($firstInPage)
+                                @if($serial != 1)
+                                        </tbody>
+                                    </table>
+                                    <div style="page-break-after: always;"></div>
+                                @endif
+
+                                <table style="width: 100%; border-collapse: collapse;" border="1" cellpadding="5">
+                                    <thead>
+                                        <tr>
+                                            <th>SI.NO</th>
+                                            <th>Employee Name</th>
+                                            <th>Project (P) / Ticket (T)</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            @endif
+
+                            @foreach($group as $index => $task)
+                                @if($index == 0)
+                                    <tr class="{{ $isOddSerial ? 'odd-row' : '' }}">
+                                        <td rowspan="{{ $rowspan }}">{{ $serial }}</td>
+                                        <td rowspan="{{ $rowspan }}">{{ $task->user->name ?? 'Unknown' }}</td>
+                                        <td>{{ $task->type == 1 ? $task->project_ticket_name . ' (P)' : ($task->type == 2 ? $task->project_ticket_name . ' (T)' : '-') }}</td>
+                                        <td>{{ $task->description }}</td>
+                                        <td>{!! $task->status_badge !!}</td>
+                                    </tr>
+                                @else
+                                    <tr class="{{ $isOddSerial ? 'odd-row' : '' }}">
+                                        <td>{{ $task->type == 1 ? $task->project_ticket_name . ' (P)' : ($task->type == 2 ? $task->project_ticket_name . ' (T)' : '-') }}</td>
+                                        <td>{{ $task->description }}</td>
+                                        <td>{!! $task->status_badge !!}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
+
+                            @php $serial++; @endphp
+                        @endforeach
+
+                        {{-- Close the final table --}}
+                        </tbody>
+                        </table>
 
 </body>
 </html>

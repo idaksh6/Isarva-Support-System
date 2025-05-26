@@ -22,6 +22,8 @@ class TicketComment extends Model
         'user_id',
         'ticket_id',
         'comments',
+        'assigned_to',
+       'team_members',
         'attahcement', // Note: Matches the column name with typo from your table
         'created_on',
         'last_modified_on',

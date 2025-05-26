@@ -1,0 +1,190 @@
+    /* Premium Urgent Renewals Panel */
+    .urgent-renewals-panel {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(220, 53, 69, 0.15);
+        border-top: 4px solid #dc3545;
+        overflow: hidden;
+    }
+    
+    .urgent-header {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffecec 100%);
+        border-bottom: 1px solid #ffdddd;
+        position: relative;
+    }
+    
+    .urgent-icon {
+        width: 40px;
+        height: 40px;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 18px;
+        box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .urgent-title {
+        flex-grow: 1;
+        min-width: 0;
+    }
+    
+    .urgent-title h5 {
+        color: #dc3545;
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .urgent-count-container {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .urgent-count {
+        background: #dc3545;
+        color: white;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* For scrollable */
+    .urgent-items {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .urgent-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .urgent-item:hover {
+        background: #fff5f5;
+    }
+    
+    .item-icon {
+        width: 36px;
+        height: 36px;
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .item-details {
+        flex-grow: 1;
+        min-width: 0;
+    }
+    
+    .item-details strong {
+        display: block;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .service-info {
+        display: flex;
+        gap: 8px;
+        margin-top: 3px;
+    }
+    
+    .service-type {
+        font-size: 11px;
+        background: rgba(0, 0, 0, 0.05);
+        color: #555;
+        padding: 2px 8px;
+        border-radius: 10px;
+        white-space: nowrap;
+    }
+    
+    .project-name {
+        font-size: 11px;
+        color: #777;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .item-timer {
+        text-align: center;
+        min-width: 60px;
+        margin-left: 15px;
+        flex-shrink: 0;
+    }
+    
+    .days-counter {
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 1;
+        display: inline-block;
+        animation: popUpDown 1s infinite ease-in-out;
+        transform-origin: center bottom;
+    }
+    
+    @keyframes  popUpDown {
+        0%, 100% {
+            transform: scale(1);
+            color: #dc3545;
+        }
+        25% {
+            transform: scale(1.15);
+            color: #ff0000;
+        }
+        50% {
+            transform: scale(0.95);
+            color: #dc3545;
+        }
+        75% {
+            transform: scale(1.1);
+            color: #ff3333;
+        }
+    }
+    
+    .item-timer small {
+        display: block;
+        color: #999;
+        font-size: 10px;
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
+    
+    /* Animation */
+    .fa-spin {
+        animation: fa-spin 2s infinite linear;
+    }
+    
+    @keyframes  fa-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }

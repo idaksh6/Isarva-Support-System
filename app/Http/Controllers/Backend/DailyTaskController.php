@@ -291,10 +291,10 @@ class DailyTaskController extends Controller
         
         
         // Send to Google Chat API
-        $response = Http::post(
-            'https://chat.googleapis.com/v1/spaces/-tCJNcAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=XYr3bHhEf9fTHUjS6DKDgLNNpi8l7Dk1skf2IknQQWs',
-            ['cardsV2' => $message['cardsV2']]
-        );
+        // $response = Http::post(
+        //     'https://chat.googleapis.com/v1/spaces/-tCJNcAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=XYr3bHhEf9fTHUjS6DKDgLNNpi8l7Dk1skf2IknQQWs',
+        //     ['cardsV2' => $message['cardsV2']]
+        // );
         
 
 
@@ -618,29 +618,58 @@ class DailyTaskController extends Controller
     }
 
 
-    public function exportPdf()
-    {
-        $user = Auth::user();
-        $query = DailyTask::with('user')->whereDate('created_at', now()->toDateString());
+    // public function exportPdf()
+    // {
+    //     $user = Auth::user();
+    //     $query = DailyTask::with('user')->whereDate('created_at', now()->toDateString());
     
+    //     if ($user->role != 1) {
+    //         $query->where('user_id', $user->id);
+    //     }
+    
+    //     $tasks = $query->orderBy('user_id')->get()->groupBy('user_id');
+    
+    //     foreach ($tasks as $userId => $groupedTasks) {
+    //         foreach ($groupedTasks as $task) {
+    //             $task->status_text = $task->getStatusText();
+    //             $task->status_badge = $task->getStatusBadgeAttribute(); // Optional if needed manually
+                
+    //             // Rendered HTML already
+    //         }
+    //     }
+    
+    //     $pdf = Pdf::loadView('backend.daily_task.export_pdf', compact('tasks'))
+    //               ->setPaper('a4', 'landscape');
+    
+    //     return $pdf->download('Daily_Tasks_' . now()->format('d_m_Y') . '.pdf');
+    // }
+
+ 
+    public function exportPdf(Request $request)
+    {
+        $perPage = $request->input('per_page', 6); // Default to 6 if not passed
+        $user = Auth::user();
+
+        $query = DailyTask::with('user')->whereDate('created_at', now()->toDateString());
+
         if ($user->role != 1) {
             $query->where('user_id', $user->id);
         }
-    
+
         $tasks = $query->orderBy('user_id')->get()->groupBy('user_id');
-    
+
         foreach ($tasks as $userId => $groupedTasks) {
             foreach ($groupedTasks as $task) {
                 $task->status_text = $task->getStatusText();
-                $task->status_badge = $task->getStatusBadgeAttribute(); // Optional if needed manually
-                
-                // Rendered HTML already
+                $task->status_badge = $task->getStatusBadgeAttribute();
             }
         }
-    
-        $pdf = Pdf::loadView('backend.daily_task.export_pdf', compact('tasks'))
-                  ->setPaper('a4', 'landscape');
-    
+
+        $pdf = Pdf::loadView('backend.daily_task.export_pdf', [
+            'tasks' => $tasks,
+            'perPage' => $perPage
+        ])->setPaper('a4', 'landscape');
+
         return $pdf->download('Daily_Tasks_' . now()->format('d_m_Y') . '.pdf');
     }
     

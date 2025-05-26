@@ -58,7 +58,7 @@
             <button id="exportPdf" class="btn btn-success text-white my-2">
                 <i class="fas fa-file-pdf"></i> Export to PDF
             </button>
-            <div class="table-responsive"  style="max-height: 300px;">
+            <div class="table-responsive" >
                 <table class="table table-bordered fixed-header-table">
                     <thead>
                         <th>Sl.No</th>
@@ -118,6 +118,11 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <div class="d-flex justify-content-center">
+                    {{ $tickets->links() }}
+                </div>
+
             </div>
         </div>
     </div>

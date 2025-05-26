@@ -79,6 +79,16 @@
           
           
             <li><a class="m-link {{ Request::segment(2) == 'ticket' ? 'active' : '' }}"   href="{{ route('admin.ticket.ticket-view') }}">  <i class="icofont-ticket"></i>  <span>Tickets </span></a></li>
+
+
+            <li>
+                <a class="m-link {{ Request::segment(2) == 'renewals' ? 'active' : '' }}" 
+                href="{{ route('admin.renewals.manage') }}">
+                    <i class="icofont-automation"></i> <!-- Example icon (change as needed) -->
+                    <span>Renewals</span>
+                </a>
+            </li>
+            
             {{-- <li class="collapsed">
                 <a class="m-link {{ Request::segment(2)=='ticket' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#ticket-Components" href=""><i
                         class="icofont-ticket"></i> <span>Tickets</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
@@ -101,6 +111,7 @@
                         <li><a class="ms-link {{ Request::segment(3) == 'consolidated_daily_reports' ? 'active' : '' }}" href="{{ route('admin.consolidated_dailyreport') }}"> <span>Consolidated Daily Report</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'dailytask_reports' ? 'active' : '' }}" href="{{ route('admin.dailytask_reports') }}"> <span> Daily Task Report</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'employee_analytics_report' ? 'active' : '' }}" href="{{ route('admin.employee_analytics') }}"> <span> Employee Analytics</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'companywise_billing_report' ? 'active' : '' }}" href="{{ route('admin.companywise_billingreport') }}"> <span>Company Wise Billing Report</span></a></li>
                         {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'attendance-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance-employee') }}"> <span>Attendance Employees </span></a></li>

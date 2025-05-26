@@ -45,7 +45,8 @@ class ClientHelper
             "4"=>"Monitor",
             "5"=>"Assigned",
             "6"=>"Awaiting Client Response",
-            "7"=>"Closed"
+            "7"=>"Closed",
+            "8" => "Active"
         );
 
         return $tickets_status;

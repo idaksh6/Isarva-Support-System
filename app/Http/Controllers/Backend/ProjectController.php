@@ -11,6 +11,7 @@ use App\Models\Backend\Task;
 use App\Helpers\ClientHelper;
 use Illuminate\Support\Facades\DB;
 use App\Models\Backend\User;
+use App\Helpers\ProjectHelper;
 class ProjectController
 {
   
@@ -19,6 +20,7 @@ class ProjectController
     {
         $user = auth()->user();
         $baseQuery = Project::query();
+        $biilingtype = ProjectHelper::getbiilingtype();
 
         // For non-admin users
         if ($user->role != 1) {
@@ -35,6 +37,13 @@ class ProjectController
                 });
             });
         }
+
+        
+         // Add custom status ordering with creation date
+        $statusOrder = [1, 2, 3, 9, 7, 4, 5, 8, 6];
+        $baseQuery->orderByRaw(
+            'FIELD(si_projects.status, '.implode(',', $statusOrder).')'
+        )->orderBy('si_projects.created_at', 'desc');
 
         // Now create all your filtered queries from the base query
         $projects = $baseQuery->get();
@@ -58,15 +67,16 @@ class ProjectController
         return view('backend.project.index', 
             compact('projects', 'activeProjects','onBoardProjects','openProjects', 
             'progressProjects', 'monitorProjects', 'billingProjects', 'onHoldProjects', 'warrantyProjects',
-            'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects'));
+            'closedProjects','webApplicationProjects', 'websiteProjects', 'graphicsProjects', 'totalProjects','biilingtype'));
     }
    
 
-    
+    // Manage page main method , Table view controller method
     public function manage(Request $request)
     {
         $user = auth()->user();
         $query = Project::query();
+       $billingCompanies = ProjectHelper::getBillingCompanies();
     
         // For non-admin users (role != 1)
         if ($user->role != 1) {
@@ -127,7 +137,16 @@ class ProjectController
         if ($request->has('year') && $request->year != 'None') {
             $query->whereYear('si_projects.start_date', $request->year);
         }
-    
+
+
+         // Add custom status ordering with creation date (unless already sorting by something else)
+        if (!$request->has('sort_by')) {
+            $statusOrder = [1, 2, 3, 9, 7, 4, 5, 8, 6];   // takes the $statusOrder array ([1, 2, 3, 9, 7, 4, 5, 8, 6]) and converts it into a comma-separated string: '1,2,3,9,7,4,5,8,6'.
+            $query->orderByRaw(
+                'FIELD(si_projects.status, '.implode(',', $statusOrder).')'
+            )->orderBy('si_projects.created_at', 'desc');
+        }
+        
         $viewType = $request->input('view', 'table');
     
         $projects = $query->leftJoin('isar_clients', 'si_projects.client', '=', 'isar_clients.id')
@@ -162,7 +181,9 @@ class ProjectController
             'projectsmanage' => $projectsmanage,
             'totalProjectscount' => $projectsmanage->total(),
             'viewType' => $viewType,
-            'projects' => $projectsmanage->items()
+            'projects' => $projectsmanage->items(),
+            'billingCompanies' => $billingCompanies // Pass the billing type to the view
+           
         ]);
     }    
    
@@ -184,7 +205,7 @@ class ProjectController
             'start_date'      => 'required|date',
             'end_date'        => 'required|date|after_or_equal:start_date',
             'department'      => 'required|integer|in:1,2,3',
-            'status'          => 'required|integer|in:1,2,3,4,5,6,7,8',
+            'status'          => 'required|integer|in:1,2,3,4,5,6,7,8,9',
             'budget'          => 'nullable|numeric',
             'priority'        => 'required|integer||in:1,2,3',
             'type'            => 'required|integer||in:1,2',
@@ -349,7 +370,7 @@ class ProjectController
             'start_date'      => 'required|date',
             'end_date'        => 'required|date|after_or_equal:start_date',
             'department'      => 'required|integer|in:1,2,3',
-            'status'          => 'required|integer|in:1,2,3,4,5,6,7,8',
+            'status'          => 'required|integer|in:1,2,3,4,5,6,7,8,9',
             'budget'          => 'nullable|numeric',
             'priority'        => 'required|integer||in:1,2,3',
             'type'            => 'required|integer||in:1,2',

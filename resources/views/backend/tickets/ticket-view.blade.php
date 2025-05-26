@@ -32,12 +32,6 @@
     }
 
 
-
-
-
-
-
-
            
 </style>
 
@@ -155,7 +149,7 @@
                                     <tr>
                                         <th>Ticket Id</th>
                                         <th>Subject</th>
-                                        <th>Assigned</th> 
+                                        <th>FLAGGED_TO</th> 
                                         <th>Created Date</th> 
                                         <th>Status</th>   
                                         <th>Priority</th>
@@ -168,12 +162,17 @@
                                         
                                     
                                     @foreach($tickets as $ticket)
-                                        <tr>
+                                        <tr @if($ticket->is_client == 1) class="client-ticket" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;" @endif>
                                             <td>
                                                 <a href="{{ route('admin.ticket.ticket-detail', $ticket->id) }}" class="fw-bold text-secondary">#Tc-{{ $ticket->id }}</a>
                                             </td>
                                             <td>
-                                                {{ $ticket->title }}
+                                               <a href="{{ route('admin.ticket.ticket-detail', $ticket->id) }}" class="fw-bold text-primary"> 
+                                                    {{ $ticket->title }}
+                                                    @if($ticket->is_client == 1)
+                                                        <i class="icofont-star text-warning"></i>
+                                                    @endif
+                                                </a>
                                             </td>
                                             <td>
                                                 @php
@@ -186,6 +185,7 @@
                                                 @foreach ($employees as $id=>$name)
                                                     {{-- <span class="fw-bold ms-1">{{ $id == $ticket->flag_to ? $name : '' }}</span> --}}
                                                     {{ $id == $ticket->flag_to ? $name : '' }}
+                                                   
                                                 @endforeach
                                                 
                                             </td>
@@ -206,17 +206,18 @@
                                                          Monitor
                                                     </span>
                                                 @elseif ($ticket->status==5)
-                                                    <span class="badge bg-success text-white  rounded-pill">
+                                                    <span class="assignbgcolor text-white  rounded-pill">
                                                          Assigned
                                                     </span>
                                                 @elseif ($ticket->status==6)
-                                                    <span class="badge bg-danger text-white  rounded-pill">
+                                                    <span class="badge bg-secondary text-white  rounded-pill">
                                                          Awaiting for Client Response
                                                     </span>
                                                 @elseif ($ticket->status==7)
                                                     <span class="badge bg-danger text-white  rounded-pill">
                                                          Closed
                                                     </span>
+                                            
                                                 @else
                                                     <span class="badge bg-warning text-white  rounded-pill">
                                                          Open
@@ -353,7 +354,7 @@
                             <div class="text-danger" id="ticket-add-error-privacy"></div>
                         </div>
 
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label for="assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select select2" name="assignedTo" id="assignedTo" >
                                 <option value="">Select Employee</option>
@@ -362,10 +363,10 @@
                                 @endforeach
                             </select>
                             <div class="text-danger" id="ticket-add-error-assignedTo"></div>
-                        </div>
+                        </div> --}}
 
                         <div class="mb-3">
-                            <label for="teamMembers" class="form-label">Team Members<span class="required">*</span></label>
+                            <label for="teamMembers" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select select2" name="teamMembers[]" id="teamMembers" multiple="multiple">
                                 <option value="">Select Team Members</option>
                                 @foreach($employees as $id => $name)
@@ -492,7 +493,7 @@
                             </select>
                             <div class="text-danger" id="ticket-edit-error-t_privacy"></div>
                         </div>
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label for="t_assignedTo" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select select2" name="t_assignedTo" id="t_assignedTo" >
                                 <option value="">Select Assigned To</option>
@@ -502,10 +503,10 @@
                                 @endforeach
                             </select>
                             <div class="text-danger" id="ticket-edit-error-t_assignedTo"></div>
-                        </div>
+                        </div> --}}
 
                         <div class="mb-3">
-                            <label for="t_teamMembers" class="form-label">Team Members<span class="required">*</span></label>
+                            <label for="t_teamMembers" class="form-label">Assigned To<span class="required">*</span></label>
                             <select class="form-select select2" name="t_teamMembers[]" id="t_teamMembers" multiple="multiple">
                                 <option value="">Select Team Members</option>
                                 @foreach($employees as $id => $name)
@@ -755,55 +756,112 @@
 
             // Ticket Add Modal pop-up hidden function
         
-              // Handle form submission
-              $('#createticketform').on('submit', function (e) {
-                        e.preventDefault(); // Prevent the default form submission
+            //   // Handle form submission
+            //   $('#createticketform').on('submit', function (e) {
+            //             e.preventDefault(); // Prevent the default form submission
 
-                        var form = $(this);
-                        var url = form.attr('action');
-                        var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
+            //             var form = $(this);
+            //             var url = form.attr('action');
+            //             var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
 
-                        // Clear previous errors
-                        $('.text-danger').html('');
+            //             // Clear previous errors
+            //             $('.text-danger').html('');
 
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: formData,
-                            processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
-                            contentType: false, // for the proper handling of file uploads, 
-                            success: function (response) {
+            //             $.ajax({
+            //                 url: url,
+            //                 type: 'POST',
+            //                 data: formData,
+            //                 processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
+            //                 contentType: false, // for the proper handling of file uploads, 
+            //                 success: function (response) {
                             
-                                // If the form is successfully submitted, close the modal and redirect
+            //                     // If the form is successfully submitted, close the modal and redirect
                                
-                                $('#tickadd').modal('hide');
-                                Swal.fire({
+            //                     $('#tickadd').modal('hide');
+            //                     Swal.fire({
+            //                             title: 'Success!',
+            //                             text: 'Ticket added successfully!',
+            //                             icon: 'success',
+            //                             // confirmButtonText: 'OK'
+            //                         }).then(() => {
+            //                             window.location.href.reload();
+            //                         });
+            //                 },
+            //                 error: function (xhr) {
+                               
+
+            //                     if (xhr.responseJSON && xhr.responseJSON.errors) {
+            //                         var errors = xhr.responseJSON.errors;
+            //                         $.each(errors, function (key, value) {
+            //                             $('#ticket-add-error-' + key).html(value[0]); // Display the first error message
+            //                         });
+            //                     } else {
+            //                         console.error('An unexpected error occurred:', xhr.responseText);
+            //                         alert('An unexpected error occurred. Please check the console for details.');
+            //                     }
+            //                 }
+            //             });
+            //         });
+
+           
+                        $('#createticketform').on('submit', function (e) {
+                            e.preventDefault(); // Prevent the default form submission
+
+                            // Show loading SweetAlert
+                            Swal.fire({
+                                title: 'Submitting...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            var form = $(this);
+                            var url = form.attr('action');
+                            var formData = new FormData(form[0]); // Supports file upload
+
+                            // Clear previous error messages
+                            $('.text-danger').html('');
+
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: formData,
+                                processData: false, // Required for file upload
+                                contentType: false, // Required for file upload
+                                success: function (response) {
+                                    Swal.close(); // Stop loading popup
+
+                                    // Close modal
+                                    $('#tickadd').modal('hide');
+
+                                    // Show success SweetAlert without OK button
+                                    Swal.fire({
                                         title: 'Success!',
                                         text: 'Ticket added successfully!',
                                         icon: 'success',
-                                        // confirmButtonText: 'OK'
+                                        timer: 2000,
+                                        showConfirmButton: false
                                     }).then(() => {
-                                        window.location.href.reload();
+                                        location.reload(); // Reload to see new data
                                     });
-                            },
-                            error: function (xhr) {
-                               
+                                },
+                                error: function (xhr) {
+                                    Swal.close(); // Stop loading if there's an error
 
-                                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                    var errors = xhr.responseJSON.errors;
-                                    $.each(errors, function (key, value) {
-                                        $('#ticket-add-error-' + key).html(value[0]); // Display the first error message
-                                    });
-                                } else {
-                                    console.error('An unexpected error occurred:', xhr.responseText);
-                                    alert('An unexpected error occurred. Please check the console for details.');
+                                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                        var errors = xhr.responseJSON.errors;
+                                        $.each(errors, function (key, value) {
+                                            $('#ticket-add-error-' + key).html(value[0]); // Show first error message per field
+                                        });
+                                    } else {
+                                        console.error('Unexpected error:', xhr.responseText);
+                                        alert('An unexpected error occurred. Please check the console for details.');
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
-
-               
-               
+            
                
                
                     //----- AJAX for Ticket_edit form Modal ----

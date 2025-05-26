@@ -124,6 +124,7 @@
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary">Search</button>
                     </div>
+                  
                 </div>
             </form>
         </div>
@@ -134,44 +135,44 @@
 
 @if($reports->count() > 0)
 
-        <div class="container mt-4 m-0">
+    <div class="container mt-4 m-0">
     
-                <div class="card-body ">
-                    <button id="exportPdf" class="btn btn-success btn-lg">
-                        <i class="fas fa-file-pdf"></i> Export to PDF
-                    </button>
-                </div>
+            <div class="card-body ">
+                <button id="exportPdf" class="btn btn-success btn-lg">
+                    <i class="fas fa-file-pdf"></i> Export to PDF
+                </button>
+            </div>
           
-        </div>
+    </div>
 
-
-    <table class="table table-bordered mt-4">
-        <thead>
-            <tr>
-                <th>Employee</th>
-                <th>Date</th>
-                <th>Project(P)/Ticket(T)</th>
-                <th>Task</th>
-                <th>Comment</th>
-                <th>Task Time</th>
-                <th>Billing Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($reports as $report)
+    <div class="table-responsive">
+        <table class="table table-bordered mt-4">
+            <thead>
                 <tr>
-                    <td>{{ $report->user->name ?? 'N/A' }}</td>
-                    <td>{{ $report->created_at ? $report->created_at->format('d.m.Y') : '-' }}</td>
-                    <td>{{ $report->project_name }} ({{ $report->type == 1 ? 'P' : 'T' }})</td>
-                    <td>{{ $report->task_name }}</td>
-                    <td>{{ $report->comments }}</td>
-                    <td>{{ $report->hrs }}</td>
-                    <td>{{ $report->billable_type_text }}</td>
+                    <th>Employee</th>
+                    <th>Date</th>
+                    <th>Project(P)/Ticket(T)</th>
+                    <th>Task</th>
+                    <th>Comment</th>
+                    <th>Task Time</th>
+                    <th>Billing Type</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                @foreach($reports as $report)
+                    <tr>
+                        <td>{{ $report->user->name ?? 'N/A' }}</td>
+                        <td>{{ $report->created_at ? $report->created_at->format('d.m.Y') : '-' }}</td>
+                        <td>{{ $report->project_name }} ({{ $report->type == 1 ? 'P' : 'T' }})</td>
+                        <td>{{ $report->task_name }}</td>
+                        <td>{{ $report->comments }}</td>
+                        <td>{{ $report->hrs }}</td>
+                        <td>{{ $report->billable_type_text }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     <tr>
         <td class="total-label">
             <b><span style="color: green; font-size: 24px;">Total Billable Hours: {{ number_format($totals['billable'], 2) }}</span>
@@ -222,9 +223,6 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
  
-
-
-
 
 <script>
            

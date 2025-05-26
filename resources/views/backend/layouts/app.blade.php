@@ -69,6 +69,13 @@
     <link rel="stylesheet" href="{{ asset('css/backupmodule.css')}}">
 
 
+    <link rel="stylesheet" href="{{ asset('css/renewal.css')}}">
+
+    <link rel="stylesheet" href="{{ asset('css/project_dashboard.css')}}">
+
+    <link rel="stylesheet" href="{{ asset('css/ticket_detail.css')}}">
+
+
     
     {{-- select 2  --}}
     <link rel="stylesheet" href="{{ asset('assets/plugins/select2/select2.min.css') }}">
@@ -287,6 +294,35 @@ $(document).ready(function() {
         }
     }
 });
+
+    // let timeoutInMilliseconds = 7200000; // 2 hours
+
+    // let timeoutInMilliseconds =  1200000; // 1 hour 15 minutes; 
+
+    // let timeoutId;
+
+    // function startInactivityTimer() {
+    //     timeoutId = window.setTimeout(doInactive, timeoutInMilliseconds);
+    // }
+
+    // function resetInactivityTimer() {
+    //     window.clearTimeout(timeoutId);
+    //     startInactivityTimer();
+    // }
+
+    // function doInactive() {
+    //     alert('You have been logged out due to 2 hours of inactivity.');
+    //     window.location.href = "{{ route('frontend.auth.logout') }}"; // Adjust route if needed
+    // }
+
+    // window.onload = startInactivityTimer;
+    // document.onmousemove = resetInactivityTimer;
+    // document.onkeydown = resetInactivityTimer;
+    // document.onclick = resetInactivityTimer;
+    // document.onscroll = resetInactivityTimer;
+
+
+
 </script>
 @stack('after-scripts')
 </html>

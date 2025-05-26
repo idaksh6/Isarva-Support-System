@@ -1,0 +1,91 @@
+.services-container {
+    margin-bottom: 20px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.service-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-check {
+    margin-right: 15px;
+    min-width: 100px;
+}
+
+.service-fields {
+    display: flex;
+    flex-grow: 1;
+    gap: 15px;
+}
+
+.service-fields input {
+    flex: 1;
+}
+
+
+/* .service-fields {
+    display: none;
+} */
+
+.domainservice{
+
+    background-color: #00a65a !important;
+    padding: 5px 5px;
+    font-size: 11px;
+    color: white;
+    width: fit-content;
+    margin: auto;
+    border-radius: 3px;
+}
+
+.hostingservice{
+
+    background-color: #3c8dbc !important;
+    padding: 5px 5px;
+    font-size: 11px;
+    color: white;
+    width: fit-content;
+    margin: auto;
+    border-radius: 3px;
+}
+
+
+.applicationservice{
+
+    background-color: #d2d6de !important;
+    padding: 5px 5px;
+    font-size: 11px;
+    color: black;
+    width: fit-content;
+    margin: auto;
+    border-radius: 3px;
+}
+
+
+p.ip-or-domain-name {
+    margin-bottom: 0;
+}
+
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+}
+
+.no-results i {
+    opacity: 0.6;
+}
+
+.no-results h5 {
+    margin-bottom: 5px;
+}
+
+.no-results p {
+    margin-bottom: 15px;
+}

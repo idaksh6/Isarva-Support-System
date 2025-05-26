@@ -35,4 +35,19 @@ class EmployeeHelper
             : asset('/images/xs/avatar1.jpg');
     }
 
+
+    public static function getEmployeeNamesByIds($ids, $allEmployees)
+    {
+        $idArray = explode(',', $ids);
+        $names = [];
+        foreach ($idArray as $id) {        // ex :$idArray would become ['1', ' 5', ' 12'].
+            $id = trim($id);
+            if (isset($allEmployees[$id])) {
+                $names[] = $allEmployees[$id];
+            }
+        }
+        return $names;
+    }
+
+
 }

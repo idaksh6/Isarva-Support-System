@@ -3,7 +3,7 @@
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Backend\GoogleController;
 use App\Domains\Auth\Http\Controllers\Frontend\Auth\LoginController;
-
+use App\Http\Controllers\SupportTicketController;
 
 
 // Google ROUTE
@@ -35,6 +35,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
 });
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name("frontend.auth.login");
+
+//Client form
+
+Route::get('/form', function () {
+    return view('client-form');
+});
+
+Route::post('/form', [SupportTicketController::class, 'store'])->name('support.request.store');
+
 
 
 // GOOGLE ROUTE 

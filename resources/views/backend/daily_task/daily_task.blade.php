@@ -22,13 +22,34 @@
 </div>
 
 <!-- Separate PDF Export Container -->
-@if(auth()->user()->role == 1)
+{{-- @if(auth()->user()->role == 1)
     <div class="mb-3">
         <a href="{{ route('admin.daily-task.export-pdf') }}" class="btn dailytskexprtbtn export-pdf-btn">
             <i class="icofont-file-pdf"></i> Export PDF
         </a>
     </div>
-@endif
+@endif --}}
+
+   @if(auth()->user()->role == 1)
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <form action="{{ route('admin.daily-task.export-pdf') }}" method="GET" id="pdfExportForm" class="d-flex align-items-center gap-2">
+                        <label for="recordsPerPage" class="mb-0">Records Per Page:</label>
+                      <select name="per_page" id="recordsPerPage" class="form-select form-select-sm" style="width: auto;">
+                            @for ($i = 5; $i <= 15; $i++)
+                                <option value="{{ $i }}" {{ request('per_page', 6) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor
+                        </select>
+
+
+                        <button type="submit" class="btn dailytskexprtbtn export-pdf-btn">
+                            <i class="icofont-file-pdf"></i> Export PDF
+                        </button>
+                    </form>
+                </div>
+    @endif
+
+
+
 
 
 

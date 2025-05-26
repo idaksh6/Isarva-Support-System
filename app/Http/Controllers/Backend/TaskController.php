@@ -519,14 +519,23 @@ class TaskController
         // dd($request->all());
         $request->validate([
             'credential_title' => 'required',
+            'credential_type'  => 'required|integer||in:1,2,3,4',
+            'username'        => 'nullable',
             'credential_description' => 'required|max:500',
          
+        ], [
+
+           'credential_type.integer' => 'Type field is required'
+
         ]);
 
         try {
             $credential = new Credential();
     
             $credential->title = $request->credential_title;
+            $credential->type = $request->credential_type;
+            $credential->username = $request->username;
+            $credential->password = $request->password;
             $credential->description = $request->credential_description;
     
             // Optional: Fill these values from session or request if available
@@ -598,34 +607,67 @@ class TaskController
     //      }
     //  }
     public function updatecredential(Request $request, $id)
-{
-    // Validate the incoming request
-    $request->validate([
-        'credential_title' => 'required',
-        'credential_description' => 'required|max:500',
-    ]);
-
-    try {
-        $credential = Credential::findOrFail($id);
-        
-        $credential->title = $request->credential_title;
-        $credential->description = $request->credential_description;
-        $credential->updated_by = Auth::id();
-        
-        $credential->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Credential updated successfully.',
+    {
+        // Validate the incoming request
+        $request->validate([
+            'credential_title' => 'required',
+            'credential_description' => 'required|max:500',
+            'credential_type'  => 'required|integer||in:1,2,3,4',
+            'username'        => 'nullable',
         ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Something went wrong while updating the credential.',
-            'error' => $e->getMessage(),
-        ], 500);
+
+        try {
+            $credential = Credential::findOrFail($id);
+            
+            $credential->title = $request->credential_title;
+            $credential->type = $request->credential_type;
+            $credential->username = $request->username;
+            $credential->password = $request->password;
+            $credential->description = $request->credential_description;
+            $credential->updated_by = Auth::id();
+            
+            $credential->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Credential updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong while updating the credential.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
-}
+
+    // public function destroycredential($id)
+    // {
+    //     $credential = Credential::findOrFail($id); // Find the credential by ID
+    //     $credential->delete(); // Delete the credential
+
+    //     return response()->json(['success' => true, 'message' => 'Credential deleted successfully.']);
+    // }
+
+    public function destroycredential($id)
+    {
+        try {
+            $credential = Credential::findOrFail($id); // Find the credential by ID
+            $credential->delete(); // Soft delete the credential
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Credential soft deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete credential: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
      
 }
 

@@ -120,7 +120,7 @@
             <div class="form-group mb-3">
                 <label>Last Backup Date <span class="required">*</span></label>
                 <input type="date" class="form-control inputbackupbox" name="last_backup_date" value="{{ old('last_backup_date') }}">
-                @if($errors->has('last_backup_file'))
+                @if($errors->has('last_backup_date'))
                     <div class="text-danger">{{ $errors->first('last_backup_date') }}</div>
                 @endif
             </div>

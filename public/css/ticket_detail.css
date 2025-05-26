@@ -1,0 +1,24 @@
+.ticketdetailscontainer {
+
+    border: 1px solid #d3d3d3 !important;
+}
+
+
+.ticketdicusioncontainer{
+
+      border: 1px solid #d3d3d3 !important;
+}
+
+
+.client-details-divider {
+    border-left: 3px solid #0d6efd; /* Bootstrap primary color */
+    padding-left: 1rem;
+    margin-top: 2rem;
+}
+
+.assignbgcolor {
+    background: #0011ff;
+    font-weight: bolder;
+    font-size: 10.5px;
+    padding: 3px 5px;
+  }

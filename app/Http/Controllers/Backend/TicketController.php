@@ -10,11 +10,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
 use Illuminate\Support\Facades\Storage;
-use App\Models\Backend\Ticket; // Assuming you have a Ticket model
-use App\Models\Backend\TicketComment; // Assuming you have a Ticket model
+use App\Models\Backend\Ticket; 
+use App\Models\Backend\TicketComment;
 use App\Mail\TicketAssignedNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Backend\User;
+use App\Models\Backend\DailyReportField;
+use App\Helpers\TicketHelper;
+
+
 
 class TicketController
 {
@@ -169,19 +173,48 @@ class TicketController
         $user = Auth::user();
         $userId = $user->id;
         
-        // // Apply role-based filtering
+        // Apply role-based filtering
     
-        if ($user->role != 1) { // If not admin
+        // if ($user->role != 1) { // If not admin
+        //     $query->where(function($q) use ($userId) {
+        //         $q->where('flag_to', $userId)
+        //         ->orWhereRaw("CONCAT(',', team_members, ',') LIKE ?", ['%,' . $userId . ',%']);
+        //     });
+        // }
+          
+    //     if ($user->role != 1) {
+    //     $query->where(function($q) use ($userId) {
+    //         $q->where('flag_to', $userId)
+    //         ->orWhereRaw("CONCAT(',', team_members, ',') LIKE ?", ['%,' . $userId . ',%'])
+    //         ->orWhereExists(function($subQuery) use ($userId) {
+    //             $subQuery->select(DB::raw(1))
+    //                     ->from('isar_ticket_discusion')
+    //                     ->whereRaw('isar_ticket_discusion.ticket_id = isar_tickets.id')
+    //                     ->whereRaw("CONCAT(',', assigned_to, ',') LIKE ?", ['%,' . $userId . ',%']);
+    //         });
+    //     });
+    // }
+
+            if ($user->role != 1) {
             $query->where(function($q) use ($userId) {
                 $q->where('flag_to', $userId)
-                ->orWhereRaw("CONCAT(',', team_members, ',') LIKE ?", ['%,' . $userId . ',%']);
+                ->orWhereRaw("CONCAT(',', team_members, ',') LIKE ?", ['%,' . $userId . ',%'])
+                ->orWhereExists(function($subQuery) use ($userId) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('isar_ticket_discusion as itd')
+                        ->whereRaw('itd.ticket_id = isar_tickets.id')
+                        ->whereRaw('itd.id = (
+                            SELECT MAX(id)
+                            FROM isar_ticket_discusion
+                            WHERE ticket_id = isar_tickets.id
+                        )')
+                        ->whereRaw("CONCAT(',', assigned_to, ',') LIKE ?", ['%,' . $userId . ',%']);
+                });
             });
         }
 
 
-
-   
-    
+            
         // Apply search filters
         if ($request->filled('q')) {
             $query->where(function ($q) use ($request) {
@@ -212,8 +245,19 @@ class TicketController
         }
     
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+                    if ($request->status == '8') { // Active status (8)
+                        $query->whereNotIn('isar_tickets.status', [7]); // Not Closed (6) or On Hold (7)
+                    } else{ 
+                        $query->where('status', $request->status);
+                }
         }
+
+         // Add custom status ordering with creation date
+        $statusOrder = [1, 2, 5, 6, 3, 4, 7];
+        $query->orderByRaw(
+            'FIELD(isar_tickets.status, '.implode(',', $statusOrder).')'
+        )->orderBy('isar_tickets.created_at', 'desc');
+           
     
         // Fetch filtered tickets
         $tickets = $query->get();
@@ -241,15 +285,36 @@ class TicketController
     public function ticketDetail($id)
     {
         // Get ticket details
-        $ticket = DB::table('isar_tickets')
-            ->where('id', $id)
+        // $ticket = DB::table('isar_tickets')
+        //     ->where('id', $id)
+        //     ->first();
+
+        $ticket = DB::table('isar_tickets as t')
+            ->leftJoin('users as u', 't.created_by', '=', 'u.id')
+            ->where('t.id', $id)
+            ->select('t.*', 'u.name as created_by_name')
             ->first();
+
+
+         // Add readable type name
+        if ($ticket) {
+            $ticket->type_name = TicketHelper::getTypeName($ticket->type);
+        }
     
-        // Get associated comments
+        // $ticket->assigned_to_names = EmployeeHelper::getEmployeeNamesByIds($ticket->assigned_to, $employees);
+
+        // // Get associated comments
+        // $comments = DB::table('isar_ticket_discusion')
+        //     ->where('ticket_id', $id)
+        //     ->orderBy('created_on', 'desc')
+        //     ->paginate(5);
         $comments = DB::table('isar_ticket_discusion')
-            ->where('ticket_id', $id)
-            ->orderBy('created_on', 'desc')
-            ->paginate(5);
+        ->leftJoin('users', 'isar_ticket_discusion.user_id', '=', 'users.id')
+        ->where('isar_ticket_discusion.ticket_id', $id)
+        ->select('isar_ticket_discusion.*', 'users.name as user_name')
+        ->orderBy('isar_ticket_discusion.created_on', 'desc')
+        ->paginate(5);
+
     
         // Get user details for comments (if needed)
         $commentsWithUsers = DB::table('isar_ticket_discusion')
@@ -259,7 +324,19 @@ class TicketController
             ->get();
         
         $employees=ClientHelper::getEmployees();
+       $ticket->assigned_to_names = EmployeeHelper::getEmployeeNamesByIds($ticket->team_members, $employees);
+
         $status=ClientHelper::TicketStatus();
+
+        $billableStats = DailyReportField::getTicketBillableStats($id);
+
+        $latestComment = DB::table('isar_ticket_discusion')
+        ->where('ticket_id', $id)
+        ->orderBy('created_on', 'desc')
+        ->first(); // or ->latest('created_on')->first()
+
+       
+
 
         return view('backend.tickets.ticket-detail', [
             'ticket' => $ticket,
@@ -267,7 +344,10 @@ class TicketController
             'commentsWithUsers' => $commentsWithUsers, // choose one approach
             'id' => $id,
             'employees'=>$employees,
-            'status'=>$status
+            'status'=>$status,
+            'billableStats' => $billableStats,
+             'ticketComment' => $latestComment, 
+          
         ]);
     }
 
@@ -374,7 +454,7 @@ class TicketController
         'priority' => 'required',
         'description' => 'required',
         'privacy' => 'required',
-        'assignedTo' => 'required|exists:users,id',
+        'assignedTo' => 'nullable|exists:users,id',
         'teamMembers' => 'required|array',
         'teamMembers.*' => 'exists:users,id',
         'dueDate' => 'required|date',
@@ -385,7 +465,7 @@ class TicketController
         'priority.required' => 'The priority field is required.',
         'description.required' => 'The description field is required.',
         'privacy.required' => 'The privacy field is required.',
-        'assignedTo.required' => 'The assigned to field is required.',
+        // 'assignedTo.required' => 'The assigned to field is required.',
         'teamMembers.required' => 'Please select at least one team member.',
         'dueDate.required' => 'The due date field is required.',
         'department.required' => 'The department field is required.',
@@ -425,7 +505,7 @@ class TicketController
         $ticket->team_members = $request->teamMembers ? implode(',', $request->teamMembers) : null;
         
 
-        $ticket->flag_to = $request->assignedTo; // This is the assigned user ID
+        // $ticket->flag_to = $request->assignedTo; // This is the assigned user ID
       
       
         $ticket->status = 1;
@@ -440,20 +520,45 @@ class TicketController
         $ticket->save();
 
         // Get the logged in user and assigned user
-        $loggedInUser = Auth::user();
-        $assignedUser = User::find($request->assignedTo);
+        // $loggedInUser = Auth::user();
+        // $assignedUser = User::find($request->assignedTo);
 
-        // Send email notification to assigned user
-        if ($assignedUser) {
-            Mail::to($assignedUser->email)->send(
+        // // Send email notification to assigned user
+        // if ($assignedUser) {
+        //     Mail::to($assignedUser->email)->send(
+        //         new TicketAssignedNotification(
+        //             $ticket->id,
+        //             $ticket->title,
+        //             $loggedInUser->name,
+        //             $assignedUser->email
+        //         )
+        //     );
+        // }
+
+
+
+        
+        // Email section 
+        $loggedInUser = Auth::user();
+
+        // teamMembers is an array of user IDs already validated
+        $teamMemberIds = $request->teamMembers;
+
+        // Fetch all users by those IDs
+        $teamMembers = User::whereIn('id', $teamMemberIds)->get();
+
+        // Send email to each team member
+        foreach ($teamMembers as $member) {
+            Mail::to($member->email)->send(
                 new TicketAssignedNotification(
                     $ticket->id,
                     $ticket->title,
                     $loggedInUser->name,
-                    $assignedUser->email
+                    $member->email
                 )
             );
         }
+
            // Return a response
            if ($request->ajax()) {
             return response()->json([
@@ -508,7 +613,7 @@ class TicketController
             't_project' => 'nullable|exists:si_projects,id', // Assuming projects is your table
             't_description' => 'required|string',
             't_privacy' => 'required|integer|between:1,2',
-            't_assignedTo' => 'required|exists:users,id',
+            // 't_assignedTo' => 'nullable|exists:users,id',
             't_teamMembers' => 'required|array',
             't_teamMembers.*' => 'exists:users,id',
             't_dueDate' => 'required|date|after_or_equal:today',
@@ -529,7 +634,7 @@ class TicketController
             't_description.required' => 'The description field is required.',
             't_privacy.required' => 'The privacy field is required.',
             't_privacy.between' => 'The selected privacy option is invalid.',
-            't_assignedTo.required' => 'The assigned to field is required.',
+            // 't_assignedTo.required' => 'The assigned to field is required.',
             't_assignedTo.exists' => 'The selected assigned user is invalid.',
             't_teamMembers.required' => 'Please select at least one team member.',
             't_teamMembers.*.exists' => 'One or more selected team members are invalid.',
@@ -555,7 +660,7 @@ class TicketController
         $ticket->project = $request->t_project;
         $ticket->comments = $request->t_description;
         $ticket->privacy = $request->t_privacy;
-        $ticket->flag_to = $request->t_assignedTo;
+        // $ticket->flag_to = $request->t_assignedTo;
         // $ticket->team_members = $request->t_teamMembers ? implode(',', $request->t_teamMembers) : null; // Only implode if array exists
      
         $ticket->team_members = $request->t_teamMembers ? implode(',', $request->t_teamMembers) : null;
@@ -587,9 +692,51 @@ class TicketController
             $ticket->attachment = $fileName;
         }
 
+        
 
         // Save the updated ticket
         $ticket->save();
+
+
+         // Send email to team members
+        // $loggedInUser = Auth::user();
+        // $teamMemberIds = $request->teamMembers;
+        // $teamMembers = User::whereIn('id', $teamMemberIds)->get();
+
+        // foreach ($teamMembers as $member) {
+        //     Mail::to($member->email)->send(
+        //         new TicketAssignedNotification(
+        //             $ticket->id,
+        //             $ticket->title,
+        //             $loggedInUser->name,
+        //             $member->email
+        //         )
+        //     );
+        // }
+
+        // Email integration part
+        $loggedInUser = Auth::user();
+
+        // Handle string like "1,2,3" => convert to array
+        $teamMemberIds = explode(',', $request->teamMembers);
+        
+        // Optional: filter non-numeric values to be safe
+        $teamMemberIds = array_filter($teamMemberIds, fn($id) => is_numeric($id));
+        
+        // Fetch team members
+        $teamMembers = User::whereIn('id', $teamMemberIds)->get();
+        
+        // Send email to each member
+        foreach ($teamMembers as $member) {
+            Mail::to($member->email)->send(
+                new TicketAssignedNotification(
+                    $ticket->id,
+                    $ticket->title,
+                    $loggedInUser->name,
+                    $member->email
+                )
+            );
+        }
 
         // Redirect back with a success message
         return redirect()->back()->withFlashSuccess(__('The ticket was successfully updated.'));
@@ -756,95 +903,114 @@ class TicketController
     //     return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
     // }
 
-
-
-    public function storeTicketDiscussion(Request $request)
-    {
-
-      
-        $validated = $request->validate([
-            'comments' => 'required|string',
-            'ticket_id' => 'required|exists:isar_tickets,id',
-            'attachment' => 'nullable|file|max:2048',
-        ]);
-    
-        try {
-            // Handle file upload
-            $fileName = null;
-            if ($request->hasFile('attachment')) {
-                $folderPath = public_path('images/ticket_attachments');
-                File::ensureDirectoryExists($folderPath, 0775, true);
-                $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
-                $request->file('attachment')->move($folderPath, $fileName);
-            }
-    
-            $ticket = Ticket::findOrFail($validated['ticket_id']);
-            $loggedInUser = Auth::user();
-            $sendEmail = false;
-            $assignedUser = null;
-    
-            // Store original values
-            $originalStatus = $ticket->status;
-            $originalAssignedTo = $ticket->flag_to;
-    
-            // Update status if provided
-            if ($request->has('status')) {
-                $ticket->status = $request->status;
-            }
-    
-            // Update assignedTo if provided
-            if ($request->has('assignedTo')) {
-                $newAssigneeId = $request->assignedTo;
-                $ticket->flag_to = $newAssigneeId;
-                $assignedUser = User::find($newAssigneeId);
-    
-                // Only send email if:
-                // 1. There is an assigned user
-                // 2. The status is specifically 5 for this ticket
-                // 3. The assignee is actually being changed to a new user
-                if ($assignedUser && 
-                    $ticket->status == 5 && 
-                    $originalAssignedTo != $newAssigneeId
-                ) {
-                    $sendEmail = true;
-                }
-            }
-    
-            // Save ticket if changed
-            if ($ticket->isDirty()) {
-                $ticket->save();
-            }
-    
-            // Send email if conditions met
-            if ($sendEmail) {
-                Mail::to($assignedUser->email)->queue(
-                    new TicketAssignedNotification(
-                        $ticket->id,
-                        $ticket->title,
-                        $loggedInUser->name,
-                        $assignedUser->email
-                    )
-                );
-                \Log::info("Email sent to {$assignedUser->email} for ticket #{$ticket->id} (Status: {$ticket->status})");
-            }
-    
-            // Create comment
-            TicketComment::create([
-                'user_id' => $loggedInUser->id,
-                'ticket_id' => $validated['ticket_id'],
-                'comments' => $validated['comments'],
-                'attahcement' => $fileName,
-                'created_on' => now(),
-                'last_modified_on' => now(),
-                'ip_address' => $request->ip(),
+       public function storeTicketDiscussion(Request $request)
+        {
+            $validated = $request->validate([
+                'comments' => 'required|string',
+                'ticket_id' => 'required|exists:isar_tickets,id',
+                'attachment' => 'nullable|file|max:2048',
+                'teamMembers' => 'nullable|array',
+                'teamMembers.*' => 'exists:users,id',
             ]);
-    
-            return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
-    
-        } catch (\Exception $e) {
-            \Log::error("Ticket discussion error: " . $e->getMessage());
-            return redirect()->back()->withFlashError(__('An error occurred. Please try again.'));
-        }
-    }
 
+            try {
+                // Handle file upload
+                $fileName = null;
+                if ($request->hasFile('attachment')) {
+                    $folderPath = public_path('images/ticket_attachments');
+                    File::ensureDirectoryExists($folderPath, 0775, true);
+                    $fileName = time() . '_' . $request->file('attachment')->getClientOriginalName();
+                    $request->file('attachment')->move($folderPath, $fileName);
+                }
+
+                $ticket = Ticket::findOrFail($validated['ticket_id']);
+                $loggedInUser = Auth::user();
+                $sendEmail = false;
+                $assignedUser = null;
+
+                // Store original values
+                $originalStatus = $ticket->status;
+                $originalAssignedTo = $ticket->flag_to;
+                $originalTeamMembers = $ticket->team_members ? explode(',', $ticket->team_members) : [];
+
+                // Update status if provided
+                if ($request->has('status')) {
+                    $ticket->status = $request->status;
+                }
+
+                // Update assignedTo if provided
+                if ($request->has('assignedTo')) {
+                    $newAssigneeId = $request->assignedTo;
+                    $ticket->flag_to = $newAssigneeId;
+                    $assignedUser = User::find($newAssigneeId);
+
+                    if ($assignedUser && $ticket->status == 5 && $originalAssignedTo != $newAssigneeId) {
+                        $sendEmail = true;
+                    }
+                }
+
+                // Handle team members update and email notification
+                $newTeamMembers = $request->teamMembers ?? [];
+                $newMembersToNotify = [];
+
+                if (!empty($newTeamMembers)) {
+                    // Update ticket's team members
+                    $ticket->team_members = implode(',', $newTeamMembers);
+                    
+                    // Find new members who weren't previously assigned
+                    $newMembersToNotify = array_diff($newTeamMembers, $originalTeamMembers);
+                }
+
+                // Save ticket if changed
+                if ($ticket->isDirty()) {
+                    $ticket->save();
+                }
+
+                // Send email if conditions met for flagged to
+                if ($sendEmail) {
+                    Mail::to($assignedUser->email)->queue(
+                        new TicketAssignedNotification(
+                            $ticket->id,
+                            $ticket->title,
+                            $loggedInUser->name,
+                            $assignedUser->email
+                        )
+                    );
+                }
+
+                // Send emails to newly added team members
+                if (!empty($newMembersToNotify)) {
+                    $newMembers = User::whereIn('id', $newMembersToNotify)->get();
+                    
+                    foreach ($newMembers as $member) {
+                        Mail::to($member->email)->queue(
+                            new TicketAssignedNotification(
+                                $ticket->id,
+                                $ticket->title,
+                                $loggedInUser->name,
+                                $member->email
+                            )
+                        );
+                    }
+                }
+
+                // Create comment - don't store team members here anymore
+                TicketComment::create([
+                    'user_id' => $loggedInUser->id,
+                    'ticket_id' => $validated['ticket_id'],
+                    'comments' => $validated['comments'],
+                    'attahcement' => $fileName,
+                    'created_on' => now(),
+                    'last_modified_on' => now(),
+                    'ip_address' => $request->ip(),
+                ]);
+
+                return redirect()->back()->withFlashSuccess(__('Comment added successfully.'));
+
+            } catch (\Exception $e) {
+                return redirect()->back()->withFlashError(__('An error occurred. Please try again.'));
+            }
+        }
+
+ 
 }

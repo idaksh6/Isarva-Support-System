@@ -157,4 +157,10 @@ class User extends Authenticatable implements MustVerifyEmail, TwoFactorAuthenti
     {
         return UserFactory::new();
     }
+
+    public function updateLastActivity()
+    {
+        $this->last_activity_at = now();
+        $this->save();
+    }
 }
