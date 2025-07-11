@@ -9,6 +9,9 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use LangleyFoxall\LaravelNISTPasswordRules\PasswordRules;
 use App\Models\Backend\User;
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class LoginController.
@@ -118,11 +121,33 @@ class LoginController
      *
      * @return mixed
      */
+    protected function authenticated(Request $request, $user)
+    {
+        if (! $user->isActive()) {
+            auth()->logout();
+
+            return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
+        }
+
+        event(new UserLoggedIn($user));
+
+        if (config('boilerplate.access.user.single_login')) {
+            auth()->logoutOtherDevices($request->password);
+        }
+    }
+
     // protected function authenticated(Request $request, $user)
     // {
+    //     // Initialize session tracking
+    //      Cache::put(
+    //     'user_active_'.$user->id,
+    //     true,
+    //     now()->addMinutes(config('session.lifetime') + 1)
+    // );
+    
+    //     // Rest of your existing logic...
     //     if (! $user->isActive()) {
     //         auth()->logout();
-
     //         return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
     //     }
 
@@ -132,29 +157,6 @@ class LoginController
     //         auth()->logoutOtherDevices($request->password);
     //     }
     // }
-
-    protected function authenticated(Request $request, $user)
-{
-    // Force session regeneration
-    $request->session()->flush();
-    $request->session()->regenerate();
-    
-    // Explicitly set activity time
-    $request->session()->put('last_activity', time());
-
-    if (! $user->isActive()) {
-        auth()->logout();
-        return redirect()->route('frontend.auth.login')->withFlashDanger(__('Your account has been deactivated.'));
-    }
-
-    event(new UserLoggedIn($user));
-
-    if (config('boilerplate.access.user.single_login')) {
-        auth()->logoutOtherDevices($request->password);
-    }
-}
-    
-
 
     protected function sendFailedLoginResponse(Request $request)
     {
@@ -189,6 +191,20 @@ class LoginController
     //     $request->session()->regenerate();
     // }
  
-    
+
+ 
+//    public function logout(Request $request)
+//     {
+//         if (Auth::check()) {
+//             Cache::forget('user_active_'.Auth::id());
+//         }
+        
+//         Auth::logout();
+//         $request->session()->invalidate();
+//         $request->session()->regenerateToken();
+        
+//         return redirect('/login');
+//     }
+        
 
 }

@@ -231,12 +231,160 @@
            font-size: 15px;
         }
 
+
+
+        /* Client login Btn - starts*/
+        .clientlogin {
+            display: flex;
+            align-items:center;
+            justify-content: end;
+            color:antiquewhite;
+       }
+
+         
+        /* Login Button Styles */
+        .access-portal-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 10;
+        }
+        
+        .portal-login-btn {
+            display: flex;
+            align-items: center;
+            /* background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); */
+            background: #35954f;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 15px;
+            border-radius: 50px;
+            text-decoration: none;
+            /* box-shadow: 0 8px 20px rgba(255, 154, 158, 0.4); */
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            text-transform: uppercase;
+
+        }
+        
+        .portal-login-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fad0c4 0%, #ff9a9e 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .portal-login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 154, 158, 0.5);
+        }
+        
+        .portal-login-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .portal-login-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+        }
+        
+        .portal-login-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .portal-login-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media(max-width:765px){
+
+            .portal-login-btn{
+
+                font-size: 13px;
+                padding: 7px 10px;
+            }
+
+            .clientloginlogo{
+
+                font-size:15px !important;
+                margin-right: 5px !important;
+            }
+
+            .formlogosection{
+
+                margin-top: 20px;
+            }
+        }
+
+        
+        /* Client login Btn - ends*/
+        
+        /* .portal-login-btn .pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.7;
+            }
+            100% {
+                width: 150px;
+                height: 150px;
+                opacity: 0;
+            }
+        } */
+        
+
+
     </style>
 </head>
 <body>
 <div class="container-fluid min-vh-100 d-flex align-items-center gradient-bg">
-    <div class="container form-container">
+
+    <div class="access-portal-btn">
+                <a href="{{ route('clientloginform') }}" class="portal-login-btn">
+                    <i class="fas fa-user-shield clientloginlogo"></i>
+                    <span> CLIENT LOGIN</span>
+                    <div class="pulse"></div>
+                </a>
+    </div>
+    <div class="container form-container mt-3">
+        <!-- Successs message for forgot password reset -->
+        @if (session('status'))
+            <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                {{ session('status') }}
+            </div>
+        @endif
+
+    
         <div class="row g-0">
+            {{-- <div class="btn clientlogin">
+              <a href="{{ route('clientlogin') }}" class="btn clientlogin">LOGIN</a>
+
+           </div> --}}
         
             <div class="col-lg-7">
                 @if(session('success'))
@@ -251,7 +399,7 @@
                         <div class="shape shape-3"></div>
                     </div>
                     
-                    <div class="text-center mb-4">
+                    <div class="text-center mb-4 formlogosection">
                         <img src="{{ asset('images/logoisarva-1.svg') }}" alt="Isarva Logo" class="logo">
                         <h2 class="section-title">Customer Support Portal</h2>
                         <p class="text-muted">Complete the form below and our team will get back to you within 24 to 48 hours</p>

@@ -12,6 +12,9 @@ use App\Helpers\ClientHelper;
 use Illuminate\Support\Facades\DB;
 use App\Models\Backend\User;
 use App\Helpers\ProjectHelper;
+use App\Mail\ProjectCreated;
+use Illuminate\Support\Facades\Mail;
+
 class ProjectController
 {
   
@@ -76,7 +79,7 @@ class ProjectController
     {
         $user = auth()->user();
         $query = Project::query();
-       $billingCompanies = ProjectHelper::getBillingCompanies();
+  
     
         // For non-admin users (role != 1)
         if ($user->role != 1) {
@@ -138,6 +141,10 @@ class ProjectController
             $query->whereYear('si_projects.start_date', $request->year);
         }
 
+        if ($request->filled('biiling_company')) {
+            $query->where('biiling_company', $request->biiling_company);
+        }
+
 
          // Add custom status ordering with creation date (unless already sorting by something else)
         if (!$request->has('sort_by')) {
@@ -159,8 +166,8 @@ class ProjectController
                 
         $perPage = $request->input('per_page', $viewType === 'table' ? 10 : 12);
 
-           // Get all query parameters except page
-          $queryParams = $request->except('page');
+        // Get all query parameters except page
+        $queryParams = $request->except('page');
     
         // $projectsmanage = $projects->paginate($perPage);
 
@@ -174,15 +181,17 @@ class ProjectController
             'year' => $request->year,
             'global_project_name' => $request->global_project_name,
             'global_project_id' => $request->global_project_id,
-            'per_page' => $perPage
+            'per_page' => $perPage,
+
         ]);
-        
+
+    
         return view('backend.project.manage', [
             'projectsmanage' => $projectsmanage,
             'totalProjectscount' => $projectsmanage->total(),
             'viewType' => $viewType,
             'projects' => $projectsmanage->items(),
-            'billingCompanies' => $billingCompanies // Pass the billing type to the view
+
            
         ]);
     }    
@@ -207,10 +216,10 @@ class ProjectController
             'department'      => 'required|integer|in:1,2,3',
             'status'          => 'required|integer|in:1,2,3,4,5,6,7,8,9',
             'budget'          => 'nullable|numeric',
-            'priority'        => 'required|integer||in:1,2,3',
-            'type'            => 'required|integer||in:1,2',
+            'priority'        => 'required|integer|in:1,2,3',
+            'type'            => 'required|integer|in:1,2',
             'estimation'      => 'required|numeric',
-            'biiling_company' => 'nullable|integer',
+            'biiling_company' => 'required|integer|in:1,2',
             'description'     => 'required|string|max:200',
             'change_estimation'        => 'nullable|integer',
             'change_estimation_reason' => 'nullable|string|max:400',
@@ -245,6 +254,8 @@ class ProjectController
             'type.required'       => 'The type field is required.',
 
             'estimation.required' => 'The estimation field is required.',
+
+            'biiling_company.integer' => 'Select a valid company',
 
             'description.required' => 'The description field is required.',
             'description.max'      => 'The description cannot exceed 200 characters.',
@@ -298,6 +309,16 @@ class ProjectController
         // Save the project
         $project->save();
 
+
+        
+        // Send email notification
+        try {
+            Mail::send(new ProjectCreated($project));
+        } catch (\Exception $e) {
+            // Log the error if needed
+            \Log::error('Failed to send project creation email: ' . $e->getMessage());
+        }
+
         // Return a response
         if ($request->ajax()) {
             return response()->json(['success' => 'Project created successfully!']);
@@ -347,8 +368,7 @@ class ProjectController
 
     public function update(Request $request, $id)
     {
-           
-      
+          
         // Fetch the employee by ID
         $project = Project::findOrFail($id);
         
@@ -372,10 +392,10 @@ class ProjectController
             'department'      => 'required|integer|in:1,2,3',
             'status'          => 'required|integer|in:1,2,3,4,5,6,7,8,9',
             'budget'          => 'nullable|numeric',
-            'priority'        => 'required|integer||in:1,2,3',
-            'type'            => 'required|integer||in:1,2',
+            'priority'        => 'required|integer|in:1,2,3',
+            'type'            => 'required|integer|in:1,2',
             'estimation'      => 'required|numeric',
-            'biiling_company' => 'nullable|integer',
+            'biiling_company' => 'required|integer|in:1,2',
             'description'     => 'required|string|max:200',
             'change_estimation'        => 'nullable|integer',
             'change_estimation_reason' => 'nullable|string|max:400',
@@ -479,6 +499,8 @@ class ProjectController
         }
 
         $project->save();
+
+        
 
        // Save the updated employee data
        if ($request->ajax()) {

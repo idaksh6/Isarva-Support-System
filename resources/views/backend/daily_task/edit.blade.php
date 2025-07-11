@@ -318,22 +318,22 @@
         // });
 
         // Modify the remove button click handler
-$(document).on('click', '.btn-remove', function () {
-    const taskBlock = $(this).closest('.task-block');
-    const taskId = taskBlock.find('input[name="task_ids[]"]').val();
-    
-    // Check if this is an original task (has task_id)
-    if (taskId) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Cannot Remove',
-            text: 'You cannot remove original tasks. You can only edit them.',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-    
+        $(document).on('click', '.btn-remove', function () {
+            const taskBlock = $(this).closest('.task-block');
+            const taskId = taskBlock.find('input[name="task_ids[]"]').val();
+            
+            // Check if this is an original task (has task_id)
+            if (taskId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Cannot Remove',
+                    text: 'You cannot remove original tasks. You can only edit them.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
     // Only allow removal if it's a newly added task block
     if ($('.task-block').length > 1) {
         taskBlock.remove();

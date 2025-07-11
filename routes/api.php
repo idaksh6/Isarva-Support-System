@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Backend\DailyReportController;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Api\GeneralApiController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,3 +23,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/get_project_list', [DailyReportController::class, 'getProjectList'])->name('api.project');
     Route::get('/get_project_task_list', [DailyReportController::class, 'getProjectTaskList'])->name('api.task');
 });
+
+Route::middleware('auth.token')->get('/v1/GeneralAPI/getClients', [GeneralApiController::class, 'getClients']);

@@ -24,25 +24,18 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/prism/prism.css') }}" />
 
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
-
     <!-- Style for project.index.blade field -->
     <link rel="stylesheet" href=" {{ asset('css/project-index.css') }}">
-
     <!-- Style for members manage page -->
     <link rel="stylesheet" href=" {{ asset('css/member.css') }}">
-
     <!-- Style for client section -->
     <link rel="stylesheet" href="{{ asset('css/client_index.css') }}">
-
     <!-- Style for Task Manage Page -->
-    <link rel="stylesheet" href="{{ asset('css/task_manage.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('css/task_manage.css') }}">  
     <link rel="stylesheet" href="{{ asset('assets/my-task.style.min.css') }}">
-
     <!-- Css for project Manage section -->
     <link rel="stylesheet" href="{{ asset('css/manage.css')}}">
-
-      <!-- Css for Daily Report section -->
+    <!-- Css for Daily Report section -->
     <link rel="stylesheet" href="{{ asset('css/add_dailyreport.css')}}">
 
     <!-- Sweet Alert library -->
@@ -55,27 +48,18 @@
 
     <!-- Include jQuery UI CSS -->
     <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
-      
     <!-- Consolidated Report CSS-->
     <link rel="stylesheet" href="{{ asset('css/consolidated_report.css')}}">
-
-     <link rel="stylesheet" href="{{ asset('css/dashboard.css')}}">
-    
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css')}}">
     <!-- Include jQuery UI JS -->
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('css/daily_task.css')}}">
-
     <link rel="stylesheet" href="{{ asset('css/backupmodule.css')}}">
-
-
     <link rel="stylesheet" href="{{ asset('css/renewal.css')}}">
-
     <link rel="stylesheet" href="{{ asset('css/project_dashboard.css')}}">
-
     <link rel="stylesheet" href="{{ asset('css/ticket_detail.css')}}">
-
-
+    <link rel="stylesheet" href="{{ asset('css/companywiseanalytics.css')}}">
     
     {{-- select 2  --}}
     <link rel="stylesheet" href="{{ asset('assets/plugins/select2/select2.min.css') }}">
@@ -266,15 +250,15 @@ $(document).ready(function() {
             $('body').removeClass( 'rtl_mode');
         }
     });
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/6051a040f7ce18270930e55a/1f0vdjvfu';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-    })();
+    // var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    // (function(){
+    //     var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    //     s1.async=true;
+    //       s1.src='https://embed.tawk.to/6051a040f7ce18270930e55a/1f0vdjvfu';
+    //     s1.charset='UTF-8';
+    //     s1.setAttribute('crossorigin','*');
+    //     s0.parentNode.insertBefore(s1,s0);
+    // })();
     // cSidebar overflow daynamic height
     
     overFlowDynamic();
@@ -295,31 +279,7 @@ $(document).ready(function() {
     }
 });
 
-    // let timeoutInMilliseconds = 7200000; // 2 hours
 
-    // let timeoutInMilliseconds =  1200000; // 1 hour 15 minutes; 
-
-    // let timeoutId;
-
-    // function startInactivityTimer() {
-    //     timeoutId = window.setTimeout(doInactive, timeoutInMilliseconds);
-    // }
-
-    // function resetInactivityTimer() {
-    //     window.clearTimeout(timeoutId);
-    //     startInactivityTimer();
-    // }
-
-    // function doInactive() {
-    //     alert('You have been logged out due to 2 hours of inactivity.');
-    //     window.location.href = "{{ route('frontend.auth.logout') }}"; // Adjust route if needed
-    // }
-
-    // window.onload = startInactivityTimer;
-    // document.onmousemove = resetInactivityTimer;
-    // document.onkeydown = resetInactivityTimer;
-    // document.onclick = resetInactivityTimer;
-    // document.onscroll = resetInactivityTimer;
 
 
 

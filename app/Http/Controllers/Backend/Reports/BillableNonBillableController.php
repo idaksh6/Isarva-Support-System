@@ -18,6 +18,96 @@ class BillableNonBillableController extends Controller
     
     
               
+    // public function index(Request $request)
+    // {
+    //     // Fetch employees, projects, and tickets
+    //     $employees = EmployeeHelper::getEmployeeNames();
+    //     $projects = ProjectHelper::getProjectNames();
+    //     $tickets = TicketHelper::getTicketNames();
+    
+    //     // Prepare search filters
+    //     $filters = [
+    //         'start_date' => $request->input('start_date'),
+    //         'end_date' => $request->input('end_date'),
+    //         'employee' => $request->input('employee'),
+    //         'project_ticket' => $request->input('project_ticket'),
+    //         'select_project' => $request->input('select_project'),
+    //     ];
+    
+    //     // Check if billing type filter is applied
+    //     $billingTypeFilter = $request->filled('billing_type') && $request->billing_type !== 'none' 
+    //         ? $request->billing_type 
+    //         : null;
+    
+    //     // Fetch search results
+    //     $query = DailyReportField::query()->with('user');
+    
+    //     // Set default dates if not provided
+    //     $startDate = $request->filled('start_date') ? $request->start_date : now()->subDay()->toDateString();
+    //     $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay()
+    //     ->toDateTimeString(): Carbon::now()->endOfDay()->toDateTimeString();
+
+    //     // Only apply date filter if dates are different from defaults or explicitly set
+  
+    //     if ($request->has('start_date') || $request->has('end_date')) {
+    //         $query->where('created_at', '>=', $request->filled('start_date') ? $request->start_date : '1970-01-01')
+    //             ->where('created_at', '<=', $request->filled('end_date') ? Carbon::parse($request->end_date)->endOfDay() : Carbon::now()->endOfDay());
+    //     }
+    
+    //     // Employee filter
+    //     if (!empty($filters['employee'])) {
+    //         $query->where('user_id', $filters['employee']);
+    //     }
+    
+    //     // Project/Ticket filter
+    //     if (!empty($filters['project_ticket'])) {
+    //         if ($filters['project_ticket'] === 'project') {
+    //             $query->where('type', 1); // Only projects
+    //             if (!empty($filters['select_project'])) {
+    //                 $query->where('project_id', $filters['select_project']);
+    //             }
+    //         } elseif ($filters['project_ticket'] === 'ticket') {
+    //             $query->where('type', 2); // Only tickets
+    //             if (!empty($filters['select_project'])) {
+    //                 $query->where('project_id', $filters['select_project']);
+    //             }
+    //         }
+    //     }
+    
+    //     // Billing type filter
+    //     if ($billingTypeFilter !== null) {
+    //         $query->where('billable_type', $billingTypeFilter);
+    //     }
+    
+    //     // Calculate totals
+    //     $totals = [
+    //         'billable' => (clone $query)->where('billable_type', 1)->sum('hrs'),
+    //         'non_billable' => (clone $query)->where('billable_type', 0)->sum('hrs'),
+    //         'internal_billable' => (clone $query)->where('billable_type', 2)->sum('hrs'),
+    //     ];
+
+
+
+    
+    //     // If specific billing type is selected, adjust totals
+    //     if ($billingTypeFilter !== null) {
+    //         $totals = [
+    //             'billable' => $billingTypeFilter == 1 ? $query->sum('hrs') : 0,
+    //             'non_billable' => $billingTypeFilter == 0 ? $query->sum('hrs') : 0,
+    //             'internal_billable' => $billingTypeFilter == 2 ? $query->sum('hrs') : 0,
+    //         ];
+    //     }
+    
+    //     // Fetch results
+    //     $reports = $request->hasAny(array_keys($filters)) || $billingTypeFilter !== null 
+    //         ? $query->paginate(10) 
+    //         : collect();
+    
+    //     return view('backend.reports.billable_nonbillable', compact('employees', 'projects', 'tickets', 'reports', 'totals'));
+    // }
+
+
+    
     public function index(Request $request)
     {
         // Fetch employees, projects, and tickets
@@ -85,6 +175,10 @@ class BillableNonBillableController extends Controller
             'non_billable' => (clone $query)->where('billable_type', 0)->sum('hrs'),
             'internal_billable' => (clone $query)->where('billable_type', 2)->sum('hrs'),
         ];
+
+
+       
+
     
         // If specific billing type is selected, adjust totals
         if ($billingTypeFilter !== null) {
@@ -99,8 +193,39 @@ class BillableNonBillableController extends Controller
         $reports = $request->hasAny(array_keys($filters)) || $billingTypeFilter !== null 
             ? $query->paginate(10) 
             : collect();
+
+
+
+
+
+
+
+         $dailyBreakdown = [];
+
+        if ($reports->count() > 0) {
+            $clonedQuery = (clone $query)->get()->groupBy(function($item) {
+                return Carbon::parse($item->created_at)->format('Y-m-d');
+            });
+
+            foreach ($clonedQuery as $date => $entries) {
+                $billable = $entries->where('billable_type', 1)->sum('hrs');
+                $nonBillable = $entries->where('billable_type', 0)->sum('hrs');
+                $internalBillable = $entries->where('billable_type', 2)->sum('hrs');
+                $total = $billable + $nonBillable + $internalBillable;
+
+                $dailyBreakdown[$date] = [
+                    'billable' => $billable,
+                    'non_billable' => $nonBillable,
+                    'internal_billable' => $internalBillable,
+                    'billable_percent' => $total > 0 ? number_format(($billable / $total) * 100, 2) : 0,
+                    'non_billable_percent' => $total > 0 ? number_format(($nonBillable / $total) * 100, 2) : 0,
+                    'internal_billable_percent' => $total > 0 ? number_format(($internalBillable / $total) * 100, 2) : 0,
+                ];
+            }
+        }
     
-        return view('backend.reports.billable_nonbillable', compact('employees', 'projects', 'tickets', 'reports', 'totals'));
+        return view('backend.reports.billable_nonbillable', compact('employees', 
+        'projects', 'tickets', 'reports', 'totals','dailyBreakdown'));
     }
 
     

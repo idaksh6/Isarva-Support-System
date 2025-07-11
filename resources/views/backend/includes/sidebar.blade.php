@@ -19,7 +19,7 @@
   
       
         <ul class="menu-list flex-grow-1 mt-3">
-
+ 
             <li><a class="m-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}"   href="{{ route('admin.project') }}">  
                 <i class="icofont-home fs-5"></i>   <span>Dashboard </span></a></li>
 
@@ -101,7 +101,7 @@
 
             <!-- Report adding section -->
             @if(auth()->user()->role == 1)  <!-- Only show for admin users -->
-                <li class="collapsed">
+         
                     <a class="m-link {{ Request::segment(2)=='report' ? 'active' : '' }} " data-bs-toggle="collapse" data-bs-target="#report-Components" href="">
                         <i class="icofont-chart-growth"></i> <span>Reports</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span></a>
                     <!-- Menu: Sub menu ul -->
@@ -112,6 +112,11 @@
                         <li><a class="ms-link {{ Request::segment(3) == 'dailytask_reports' ? 'active' : '' }}" href="{{ route('admin.dailytask_reports') }}"> <span> Daily Task Report</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'employee_analytics_report' ? 'active' : '' }}" href="{{ route('admin.employee_analytics') }}"> <span> Employee Analytics</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'companywise_billing_report' ? 'active' : '' }}" href="{{ route('admin.companywise_billingreport') }}"> <span>Company Wise Billing Report</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'companywise_analytic_report' ? 'active' : '' }}" href="{{ route('admin.companywise_analytic_report') }}"> <span>Company Wise Analytic Report</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'project_timesheet_report' ? 'active' : '' }}" href="{{ route('admin.project_timesheet_report') }}"> <span>Project Timesheet Report</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'metric_report' ? 'active' : '' }}" href="{{ route('admin.metric_report') }}"> <span>Metric Report</span></a></li>
+                        <li><a class="ms-link {{ Request::segment(3) == 'metric_analytic_report' ? 'active' : '' }}" href="{{ route('admin.metric_analytic_report') }}"> <span>Metric Analytic Report</span></a></li>
+
                         {{-- <li><a class="ms-link {{ Request::segment(3) == 'members-profile' ? 'active' : '' }}" href="{{ route('admin.our-employee.members-profile') }}"> <span>Members Profile</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'holidays' ? 'active' : '' }}" href="{{ route('admin.our-employee.holidays') }}"> <span>Holidays</span></a></li>
                         <li><a class="ms-link {{ Request::segment(3) == 'attendance-employee' ? 'active' : '' }}" href="{{ route('admin.our-employee.attendance-employee') }}"> <span>Attendance Employees </span></a></li>
@@ -206,7 +211,9 @@
                 </ul>
             </li> --}}
             {{-- <li><a class="m-link {{ Request::segment(3) == 'alerts' ? 'active' : '' }}" href="{{ route('admin.ui-components.alerts') }}"><i class="icofont-paint"></i> <span>UI Components</span></a></li> --}}
+           
         </ul> 
+   
 
         <!-- Theme: Switch Theme -->
         {{-- <ul class="list-unstyled mb-0">
@@ -246,6 +253,8 @@
         </a>
         <!-- Menu: main ul -->
         <ul class="menu-list flex-grow-1 mt-3">
+ 
+             
             <li><a class="m-link " href="{{route('admin.dashboard')}}"><i class="icofont-ui-home"></i><span>Home</span></a></li>
             <li class="collapsed">
                 <a class="m-link" data-bs-toggle="collapse" data-bs-target="#menu-Authentication" href=""><i

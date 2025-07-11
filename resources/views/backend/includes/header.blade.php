@@ -5,7 +5,8 @@
     background-color: #484c7f;
     color: white;
     border-radius: 5px;
-    padding: 5px 10px 5px 10px;">
+    padding: 5px 10px 5px 10px;
+    max-width:100%">
  
 <style>
 
@@ -185,7 +186,8 @@
                              alt="profile">
                     </a>
                     <div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
-                        <div class="card border-0 w280">
+                     
+                     <div class="card border-0 w280">
                             <div class="card-body pb-0">
                                 <div class="d-flex py-1">
                                     {{-- <img class="avatar rounded-circle" src="{{ url('/').'/images/profile_av.png' }}" alt="profile"> --}}
@@ -211,6 +213,7 @@
 
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

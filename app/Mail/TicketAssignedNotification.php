@@ -33,7 +33,7 @@ class TicketAssignedNotification extends Mailable
     public function build()
     {
         return $this->subject("New Ticket Flagged #{$this->ticketId} - {$this->ticketTitle}")
-                    ->view('emails.ticket_assigned')
+                    ->view('emails.tickets.ticket_assigned')
                     ->to($this->assignedToEmail);
     }
 }

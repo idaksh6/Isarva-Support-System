@@ -33,25 +33,17 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            // \App\Http\Middleware\EncryptCookies::class,
-            // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            // \Illuminate\Session\Middleware\StartSession::class,
-            // // \Illuminate\Session\Middleware\AuthenticateSession::class,
-            // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            // \App\Http\Middleware\VerifyCsrfToken::class,
-            // \App\Http\Middleware\LocaleMiddleware::class,
-            // \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // \App\Domains\Auth\Http\Middleware\ToBeLoggedOut::class,
-            // \App\Http\Middleware\SessionTimeout::class,
-       
-        \App\Http\Middleware\EncryptCookies::class,
-        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-        \Illuminate\Session\Middleware\StartSession::class, // Must come early
-        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\VerifyCsrfToken::class,
-        \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        \Illuminate\Session\Middleware\AuthenticateSession::class, // Critical for timeout
-
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\LocaleMiddleware::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Domains\Auth\Http\Middleware\ToBeLoggedOut::class,
+          
+   
           
         ],
 
@@ -97,6 +89,12 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'type' => \App\Domains\Auth\Http\Middleware\UserTypeCheck::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        //   'custom.session' => \App\Http\Middleware\CustomSessionTimeout::class,
+        'client.auth' => \App\Http\Middleware\ClientAuthenticate::class,
+        'auth.token' => \App\Http\Middleware\CheckApiToken::class,
+
+
+          
         
     ];
 

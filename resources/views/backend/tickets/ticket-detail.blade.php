@@ -4,11 +4,6 @@
 
 @section('content')
 
-<style>
-    .page-item.active span.page-link {
-    color: blue !important;
-}
-</style>
 
 <div class="container-fluid">
     <div class="row g-4">
@@ -85,9 +80,14 @@
             @foreach($comments as $comment)
             <div class="d-flex gap-3 mb-4 pb-3 border-bottom">
                 <div class="flex-shrink-0">
-                    <div class="avatar bg-primary text-white rounded-2 p-2">
+                    {{-- <div class="avatar bg-primary text-white rounded-2 p-2">
+                        <i class="icofont-user-male fs-5"></i>
+                    </div> --}}
+                    <div class="avatar {{ isset($comment->user_name) ? 'bg-primary' : 'bg-warning' }} text-white rounded-2 p-2" 
+                        title="{{ isset($comment->user_name) ? 'User' : 'Client' }}">
                         <i class="icofont-user-male fs-5"></i>
                     </div>
+
                 </div>
                 <div class="flex-grow-1">
                     <div class="d-flex justify-content-between mb-2">
@@ -96,7 +96,12 @@
                                 @if(isset($comment->user_name))
                                     {{ $comment->user_name }}
                                 @else
-                                    User #{{ $comment->user_id }}
+                                  <div class="clientaccess">
+                                        <h6 class="mb-0 fw-semibold">
+                                                    Client <i class="icofont-star me-1 text-warning"></i>
+                                            </h6>
+                                    </div>  
+                                    {{-- Client #{{ $comment->user_id }} --}}
                                 @endif
                             </h6>
                         </div>
@@ -627,7 +632,10 @@
         border-color: #4a90e2;
     }
 
-
+    .page-item.active span.page-link {
+        
+        color: blue !important;
+    }
 
    
 </style>

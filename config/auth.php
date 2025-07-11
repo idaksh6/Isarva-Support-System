@@ -46,6 +46,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+
+        'client' => [
+            'driver' => 'session',
+            'provider' => 'clients',
+        ],
+
     ],
 
     /*
@@ -71,6 +78,16 @@ return [
             'model' => App\Domains\Auth\Models\User::class,
         ],
 
+
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Backend\Client::class,
+    ],
+    // 'clients' => [
+    //     'driver' => 'eloquent',
+    //     'model' => App\Models\Backend\Client::class, // Adjust namespace if needed
+    // ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -95,6 +112,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'clients' => [
+            'provider' => 'clients',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

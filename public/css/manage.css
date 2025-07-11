@@ -293,7 +293,8 @@ label {
 
 
 .page-item.active .page-link {
-    background-color: transparent !important;
+    background-color: blue;
+    color: white;
     border-color: var(--primary-color);
 }
 
@@ -316,15 +317,15 @@ label {
 
 }
 
-
 .tableView{
     box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    /* overflow-x: scroll; */
 }
 
-@media(max-width:1024px){
+/* @media(max-width:1024px){
 
     .tableView{
 
         overflow-x: scroll;
     }
-}
+} */

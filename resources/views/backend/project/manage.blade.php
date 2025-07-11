@@ -70,6 +70,7 @@ span.select2-selection.select2-selection--multiple.select2-selection--clearable 
     border-radius: 4px;
   
 }
+
 span.select2-selection.select2-selection--single.select2-selection--clearable {
 
     height: 38px;
@@ -184,6 +185,9 @@ button.select2-selection__choice__remove {
     </div>
 @endif
 
+
+@auth
+    @if (in_array(Auth::id(), [1, 3, 4]))
 <!-- Create Project-->
 <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -375,16 +379,19 @@ button.select2-selection__choice__remove {
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Billing Company</label>
+                        <label class="form-label">Billing Company<span class="required">*</span></label>
                         <select class="form-select inputprojectbox" name="biiling_company" placeholder="select the company">
-                           {{-- <option value="0">None</option>
-                           <option value="1" {{ old('biiling_company') == '1' ? 'selected' : '' }}>Isarva</option>
-                           <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option> --}}
-                            @foreach($billingCompanies as $key => $value)
+                           <option value="0">None</option>
+                           <option value="1" {{ old('biiling_company') == '1' ? 'selected' : '' }}>Isarva Internal</option>
+                           <option value="2" {{ old('biiling_company') == '2' ? 'selected' : '' }}>Blue flemingo</option>
+                            <option value="3" {{ old('biiling_company') == '3' ? 'selected' : '' }}>Glue</option>
+                            <option value="4" {{ old('biiling_company') == '4' ? 'selected' : '' }}>Eye Web </option>
+                            <option value="5" {{ old('biiling_company') == '5' ? 'selected' : '' }}>Indian Project</option>
+                            {{-- @foreach($billingCompanies as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
-                        <div class="text-danger" id="proj-add-error-billing_company"></div>
+                        <div class="text-danger" id="proj-add-error-biiling_company"></div>
                     </div>
 
                     <div class="mb-3">
@@ -401,6 +408,43 @@ button.select2-selection__choice__remove {
         </div>
     </div>
 </div>
+@else
+        <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Access Restricted</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>You are restricted from accessing this feature.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@else
+    <!-- Optionally handle unauthenticated users -->
+    <div class="modal fade" id="createproject" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Login Required</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please log in to access this feature.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endauth
 
 <!-- Edit Project -->
 <div class="modal fade" id="editproject" tabindex="-1" aria-hidden="true">
@@ -619,18 +663,18 @@ button.select2-selection__choice__remove {
 
                     <!-- Billing Company and Description -->
                     <div class="mb-3">
-                        <label class="form-label">Billing Company</label>
+                        <label class="form-label">Billing Company<span class="required">*</span></label>
                         <select class="form-select" name="biiling_company" id="proj_biiling_company">
-                            {{-- <option value="0">None</option>
+                            <option value="0">None</option>
                             <option value="1">Isarva</option>
-                            <option value="2">Blue Flemingo</option> --}}
-                            @foreach($billingCompanies as $key => $value)
+                            <option value="2">Blue Flemingo</option>
+                            {{-- @foreach($billingCompanies as $key => $value)
                                 <option value="{{ $key }}" {{ old('biiling_company') == $key ? 'selected' : '' }}>
                                     {{ $value }}
                                 </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
-                        <div class="text-danger" id="proj-edit-error-billing_company"></div>
+                        <div class="text-danger" id="proj-edit-error-biiling_company"></div>
                     </div>
 
                     <div class="mb-3">
@@ -706,10 +750,27 @@ button.select2-selection__choice__remove {
     </div>
 </div>
     
-    <div class="editaddbtn  w-100 mt-1 mb-2 pe-3">
+    {{-- <div class="editaddbtn  w-100 mt-1 mb-2 pe-3">
        
         <a href="#" class="btn manageaddbtn" data-bs-toggle="modal" data-bs-target="#createproject"><i class="icofont-plus-circle me-2"></i>Add Project</a>
+    </div> --}}
+
+    @auth
+    @if (in_array(Auth::id(), [1, 3, 4]))
+    <div class="editaddbtn  w-100 mt-1 mb-2 pe-3">
+        <a href="#" class="btn manageaddbtn" data-bs-toggle="modal" data-bs-target="#createproject">
+            <i class="icofont-plus-circle me-2"></i>Add Project
+        </a>
     </div>
+    @else
+        <button class="btn manageaddbtn" disabled title="You are restricted from accessing this feature">
+            <i class="icofont-plus-circle me-2"></i>Add Project
+        </button>
+    @endif
+@else
+    <!-- Optionally handle unauthenticated users -->
+    <p>Please log in to access this feature.</p>
+@endauth
     <!-- Manage page main Container -->
     <div class="container-fluid">
             
@@ -830,7 +891,25 @@ button.select2-selection__choice__remove {
                                 @endfor
                             </select>
                         </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label for="biiling_company" class="form-label">Billing Company</label>
+                            <select class="form-select select2" name="biiling_company" id="biiling_company" style="width: 100%;">
+                                <option value="">All</option>
+                                @foreach(\App\Helpers\ProjectHelper::getBillingCompanies() as $key => $company)
+                                    <option value="{{ $key }}" {{ request('biiling_company') == $key ? 'selected' : '' }}>
+                                        {{ $company }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
+
                     </div>
+
+
+                 
 
                     <div class="row mt-3">
                         <div class="col-md-12">
@@ -935,6 +1014,7 @@ button.select2-selection__choice__remove {
         </div>
 
         <!-- Project under Table View -->
+        <div class="table-responsive">
         <div id="tableView" class="{{ $viewType === 'table' ? '' : 'd-none' }}">
         
             <div class="tableView">
@@ -959,6 +1039,7 @@ button.select2-selection__choice__remove {
                                 <th>Priority</th>
                                 <th>Department</th>
                                 <th>Project Manager</th>
+                                <th>Billing Company</th>
                                 <th>Timeline</th>
                             </tr>
                         </thead>
@@ -1009,6 +1090,10 @@ button.select2-selection__choice__remove {
 
                                 <td>{{ $project->manager_name ?? 'N/A' }}</td>
 
+                                <!-- Billing Company Column -->
+                                <td>{{ $project->billing_company_name }}</td>
+
+
                                 <td>
                                     <div class="project-timeline">
                                         <!-- Progress Bar Container -->
@@ -1044,7 +1129,7 @@ button.select2-selection__choice__remove {
                 @endif
             </div>
         </div>
-        
+    </div>
         <!-- Project Display in Card View-->
         <div id="cardsView" class="{{ $viewType === 'cards' ? '' : 'd-none' }}">
             <div class="row align-items-center">
@@ -1178,64 +1263,7 @@ button.select2-selection__choice__remove {
 
 
 <script>
-            // Init Select2
-            // $(document).ready(function() {
-            //     $('.select2').select2({
-            //         // placeholder: "Select an option",
-            //         allowClear: true,
-            //         width: '100%'
-            //     });
-            // });
-
-         
-            // $('#createproject').on('shown.bs.modal', function () {
-            //         $(this).find('.select2').select2({
-            //             dropdownParent: $('#createproject')
-            //                 });
-            //         });
-             
-
-            //         // $('#team_members').select2({
-            //         //     placeholder: "Select Team Members",
-            //         //     allowClear: true,
-            //         //     width: '100%'
-            //         // });
-
-            //         // Initialize Select2 for edit project team members when modal opens
-            //         $('#editproject').on('shown.bs.modal', function() {
-            //             $('#edit_team_members').select2({
-            //                 dropdownParent: $('#editproject'),
-            //                 placeholder: "Select Team Members",
-            //                 allowClear: true,
-            //                 width: '100%'
-            //             });
-            //         });
-
-            // // $('#editproject').on('shown.bs.modal', function () {
-            // //         $(this).find('.select2').select2({
-            // //             dropdownParent: $('#editproject')
-            // //         });
-            // //     });
-            // // Replace with this initialization code:
-            // $(document).ready(function() {
-            //     // Initialize Select2 for elements outside modals
-            //     $('.select2:not(.modal .select2)').select2({
-            //         // placeholder: "Select an option",
-            //         allowClear: true,
-            //           width: '100%'
-            //     });
-                
-            //     // Initialize Select2 for modal elements when modal is shown
-            //     $(document).on('shown.bs.modal', '.modal', function() {
-            //         $(this).find('.select2').select2({
-            //             dropdownParent: $(this),
-            //             // placeholder: "Select an option",
-            //             allowClear: true,
-            //               width: '100%'
-            //         });
-            //     });
-            // });
-
+           
             $(document).ready(function() {
         // Outside modal
         $('.select2').select2({
@@ -1492,34 +1520,69 @@ button.select2-selection__choice__remove {
                  
                     
                     // Function to populate the Estimation Change Log table
-                    function populateEstimationChangeLogTable(logs) {
-                    var tbody = $('#estimationChangeLogTable tbody');
-                    tbody.empty(); // Clear the existing rows
+                    // function populateEstimationChangeLogTable(logs) {
+                    // var tbody = $('#estimationChangeLogTable tbody');
+                    // tbody.empty(); // Clear the existing rows
 
-                            if (logs && logs.length > 0) {
-                                logs.forEach(function (log) {
-                                    var changedByName = log.changed_by ? log.changed_by.name : 'N/A'; // Access the changedBy user's name
-                                    var row = `
-                                        <tr>
-                                            <td>${changedByName}</td>
-                                            <td>${log.changed_from}</td>
-                                            <td>${log.changed_to}</td>
-                                            <td>${log.diff}</td>
-                                            <td>${log.reason || 'N/A'}</td>
-                                            <td>${log.created_at}</td>
-                                        </tr>
-                                    `;
-                                    tbody.append(row);
-                                });
-                            } else {
-                                // If no logs are found, display a message
-                                tbody.append(`
+                    //         if (logs && logs.length > 0) {
+                    //             logs.forEach(function (log) {
+                    //                 var changedByName = log.changed_by ? log.changed_by.name : 'N/A'; // Access the changedBy user's name
+                    //                 var row = `
+                    //                     <tr>
+                    //                         <td>${changedByName}</td>
+                    //                         <td>${log.changed_from}</td>
+                    //                         <td>${log.changed_to}</td>
+                    //                         <td>${log.diff}</td>
+                    //                         <td>${log.reason || 'N/A'}</td>
+                    //                         <td>${log.created_at}</td>
+                    //                     </tr>
+                    //                 `;
+                    //                 tbody.append(row);
+                    //             });
+                    //         } else {
+                    //             // If no logs are found, display a message
+                    //             tbody.append(`
+                    //                 <tr>
+                    //                     <td colspan="6" class="text-center">No estimation change logs found.</td>
+                    //                 </tr>
+                    //             `);
+                    //         }
+                    // }
+
+                    function populateEstimationChangeLogTable(logs) {
+                        var tbody = $('#estimationChangeLogTable tbody');
+                        tbody.empty();
+
+                        if (logs && logs.length > 0) {
+                            logs.forEach(function (log) {
+                                var changedByName = log.changed_by ? log.changed_by.name : 'N/A';
+
+                                // Format date here
+                                var createdAt = new Date(log.created_at);
+                                var options = { year: 'numeric', month: 'short', day: '2-digit' };
+                                var formattedDate = createdAt.toLocaleDateString('en-US', options);
+
+                                var row = `
                                     <tr>
-                                        <td colspan="6" class="text-center">No estimation change logs found.</td>
+                                        <td>${changedByName}</td>
+                                        <td>${log.changed_from}</td>
+                                        <td>${log.changed_to}</td>
+                                        <td>${log.diff}</td>
+                                        <td>${log.reason || 'N/A'}</td>
+                                        <td>${formattedDate}</td>
                                     </tr>
-                                `);
-                            }
+                                `;
+                                tbody.append(row);
+                            });
+                        } else {
+                            tbody.append(`
+                                <tr>
+                                    <td colspan="6" class="text-center">No estimation change logs found.</td>
+                                </tr>
+                            `);
+                        }
                     }
+
 
                     // When the delete button is clicked
                     $('.delete-project-btn').on('click', function () {
@@ -1571,6 +1634,16 @@ button.select2-selection__choice__remove {
                     $('#createProjectForm').on('submit', function (e) {
                         e.preventDefault(); // Prevent the default form submission
 
+                           // Show loading SweetAlert
+                            Swal.fire({
+                                title: 'Submitting...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+
                         var form = $(this);
                         var url = form.attr('action');
                         var formData = new FormData(form[0]); // By passing form[0] (the raw DOM element) to the FormData constructor, FormData  extract all the data from the form, including input type="text",<select>:
@@ -1585,6 +1658,8 @@ button.select2-selection__choice__remove {
                             processData: false, //tell jQuery not to process the data, so that FormData can handle the formatting itself. This allows files to be sent correctly without any interference.
                             contentType: false, // for the proper handling of file uploads, 
                             success: function (response) {
+
+                                  Swal.close(); // Stop loading popup
                             
                                 // If the form is successfully submitted, close the modal and redirect
                                
@@ -1595,10 +1670,11 @@ button.select2-selection__choice__remove {
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     }).then(() => {
-                                        window.location.href.reload();
+                                       location.reload(); // Reload to see new data
                                     });
                             },
                             error: function (xhr) {
+                                  Swal.close(); // Stop loading if there's an error
                                 // If there are validation errors, display them below each field
                                 // var errors = xhr.responseJSON.errors;
                                 // $.each(errors, function (key, value) {

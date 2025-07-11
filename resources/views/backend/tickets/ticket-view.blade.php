@@ -27,6 +27,7 @@
         right: 1px;
         width: 20px;
     }
+    
     .modal-backdrop.fade.show {
         display: none;
     }
@@ -174,7 +175,7 @@
                                                     @endif
                                                 </a>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 @php
                                                     $profileImg=\App\Helpers\ClientHelper::ProfileImg($ticket->flag_to);
 
@@ -182,13 +183,88 @@
                                                 <img class="avatar rounded-circle" 
                                                 src="{{ $profileImg ? url('/').'/'.$profileImg : url('/images/xs/avatar1.jpg') }}" 
                                                 alt="Profile Image">
-                                                @foreach ($employees as $id=>$name)
+                                                @foreach ($employees as $id=>$name) --}}
                                                     {{-- <span class="fw-bold ms-1">{{ $id == $ticket->flag_to ? $name : '' }}</span> --}}
-                                                    {{ $id == $ticket->flag_to ? $name : '' }}
+                                                    {{-- {{ $id == $ticket->flag_to ? $name : '' }}
                                                    
                                                 @endforeach
                                                 
+                                            </td> --}}
+                                            <!-- Works when used logic under controller and passed error in displaying ticket based on status -->
+                                            {{-- <td> 
+                                                @if (!empty($ticket->display_employees) && is_iterable($ticket->display_employees))
+                                                @foreach ($ticket->display_employees ?? [] as $id)
+                                                        @php
+                                                            $profileImg = \App\Helpers\ClientHelper::ProfileImg($id);
+                                                        @endphp
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <img class="avatar rounded-circle" 
+                                                                src="{{ $profileImg ? url('/').'/'.$profileImg : url('/images/xs/avatar1.jpg') }}" 
+                                                                alt="Profile Image" width="30" height="30">
+                                                            <span class="fw-bold ms-1">{{ $employees[$id] }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </td> --}}
+{{-- 
+                                           <td>
+                                                        @php
+                                                            $displayIds = [];
+
+                                                            if ($ticket->flag_to && isset($employees[$ticket->flag_to])) {
+                                                                // Only show flag_to user if present
+                                                                $displayIds[] = $ticket->flag_to;
+                                                            } elseif ($ticket->team_members) {
+                                                                // Else fallback to team members
+                                                                $teamMembers = array_map('trim', explode(',', $ticket->team_members));
+                                                                foreach ($teamMembers as $memberId) {
+                                                                    if ($memberId && isset($employees[$memberId])) {
+                                                                        $displayIds[] = $memberId;
+                                                                    }
+                                                                }
+                                                            }
+                                                        @endphp
+
+                                                        @foreach ($displayIds as $id)
+                                                            @php
+                                                                $profileImg = \App\Helpers\ClientHelper::ProfileImg($id);
+                                                            @endphp
+                                                            <div class="d-flex align-items-center mb-1">
+                                                                <img class="avatar rounded-circle" 
+                                                                    src="{{ $profileImg ? url('/').'/'.$profileImg : url('/images/xs/avatar1.jpg') }}" 
+                                                                    alt="Profile Image" width="30" height="30">
+                                                                <span class="fw-bold ms-1">{{ $employees[$id] }}</span>
+                                                            </div>
+                                                        @endforeach
+                                            </td> --}}
+                                            
+                                            <td style="width: 18%">
+                                                @php
+                                                    $isClientTicket = $ticket->is_client == 1;
+                                                    $userId = null;
+
+                                                    if ($isClientTicket) {
+                                                        $userId = $ticket->flag_to ?: null; // show only if flag_to is set
+                                                    } else {
+                                                        $userId = $ticket->flag_to ?: $ticket->created_by; // fallback to created_by
+                                                    }
+
+                                                    $profileImg = $userId ? \App\Helpers\ClientHelper::ProfileImg($userId) : null;
+                                                @endphp
+
+                                                <img class="avatar rounded-circle" 
+                                                    src="{{ $profileImg ? url('/').'/'.$profileImg : url('/images/xs/avatar1.jpg') }}" 
+                                                    alt="Profile Image">
+
+                                                @if ($userId)
+                                                    @foreach ($employees as $id => $name)
+                                                        @if ($id == $userId)
+                                                            {{ $name }}
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </td>
+
                                             <td>
                                                 {{ $ticket->created_at->format('d/m/Y') }}
                                             </td>

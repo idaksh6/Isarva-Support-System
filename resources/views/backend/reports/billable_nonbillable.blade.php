@@ -173,6 +173,40 @@
             </tbody>
         </table>
     </div>
+        @if(!empty($dailyBreakdown))
+    <div class="container mt-4">
+        <h4 class="text-primary fw-bold mb-3">Per-Day Work Summary (Filtered)</h4>
+
+        @foreach($dailyBreakdown as $date => $data)
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <strong>Date: {{ \Carbon\Carbon::parse($date)->format('d-m-Y') }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h6 class="text-success">Billable Hours</h6>
+                            <p class="fw-bold fs-5">{{ number_format($data['billable'], 2) }} hrs</p>
+                            <small>({{ $data['billable_percent'] }}%)</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-danger">Non-Billable Hours</h6>
+                            <p class="fw-bold fs-5">{{ number_format($data['non_billable'], 2) }} hrs</p>
+                            <small>({{ $data['non_billable_percent'] }}%)</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-primary">Internal Billable Hours</h6>
+                            <p class="fw-bold fs-5">{{ number_format($data['internal_billable'], 2) }} hrs</p>
+                            <small>({{ $data['internal_billable_percent'] }}%)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+
     <tr>
         <td class="total-label">
             <b><span style="color: green; font-size: 24px;">Total Billable Hours: {{ number_format($totals['billable'], 2) }}</span>

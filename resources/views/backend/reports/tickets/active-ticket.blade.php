@@ -103,7 +103,7 @@
                                 {{$employees[$t->created_by] ?? 'Unknown'}}
                             </td>
                             <td>
-                                {{$employees[$t->flag_to] ?? 'Unknown'}}
+                                {{$employees[$t->flag_to] ?? $employees[$t->created_by] }}
                             </td>
                             <td>
                                 {{ \Carbon\Carbon::parse($t->end_date)->format('d-m-Y') }}

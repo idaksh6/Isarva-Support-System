@@ -202,7 +202,7 @@
                         <div class="col-md-4">
                             <form method="GET" action="{{ route('admin.our-client.search-client') }}">
                                 <div class="input-group">
-                                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control client_search" placeholder="Search  " aria-label="Search">
+                                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control client_search project_search" placeholder="Search  " aria-label="Search">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search"></i>
                                     </button>

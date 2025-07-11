@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Backend\Ticket; 
 use App\Models\Backend\TicketComment;
 use App\Mail\TicketAssignedNotification;
+use App\Mail\TicketCommentFromEmployeeToClient;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Backend\User;
 use App\Models\Backend\DailyReportField;
@@ -251,7 +252,10 @@ class TicketController
                         $query->where('status', $request->status);
                 }
         }
+         
+        
 
+        
          // Add custom status ordering with creation date
         $statusOrder = [1, 2, 5, 6, 3, 4, 7];
         $query->orderByRaw(
@@ -269,6 +273,31 @@ class TicketController
         $status = ClientHelper::TicketStatus();
         $department = ClientHelper::Departments();
         $priority = ClientHelper::Priority();
+
+        // Works when used logic under controller and passed under flagged to column , error in displaying ticket based on status -->
+
+        // $tickets = Ticket::all();
+        // foreach ($tickets as $ticket) {
+        //     $displayIds = [];
+
+        //     // Add flag_to if exists
+        //     if ($ticket->flag_to && isset($employees[$ticket->flag_to])) {
+        //         $displayIds[] = $ticket->flag_to;
+        //     }
+
+        //     // Add team_members
+        //     if ($ticket->team_members) {
+        //         $teamMembers = array_map('trim', explode(',', $ticket->team_members));
+        //         foreach ($teamMembers as $memberId) {
+        //             if ($memberId && isset($employees[$memberId]) && !in_array($memberId, $displayIds)) {
+        //                 $displayIds[] = $memberId;
+        //             }
+        //         }
+        //     }
+
+        //     $ticket->display_employees = $displayIds;
+        // }
+
     
         return view('backend.tickets.ticket-view', [
             'tickets' => $tickets,
@@ -280,7 +309,7 @@ class TicketController
             'priority' => $priority,
         ]);
     }
-
+  
 
     public function ticketDetail($id)
     {
@@ -346,7 +375,7 @@ class TicketController
             'employees'=>$employees,
             'status'=>$status,
             'billableStats' => $billableStats,
-             'ticketComment' => $latestComment, 
+            'ticketComment' => $latestComment, 
           
         ]);
     }
@@ -538,26 +567,26 @@ class TicketController
 
 
         
-        // Email section 
-        $loggedInUser = Auth::user();
+        // Email section   this one uncomment
+        // $loggedInUser = Auth::user();
 
-        // teamMembers is an array of user IDs already validated
-        $teamMemberIds = $request->teamMembers;
+        // // teamMembers is an array of user IDs already validated
+        // $teamMemberIds = $request->teamMembers;
 
-        // Fetch all users by those IDs
-        $teamMembers = User::whereIn('id', $teamMemberIds)->get();
+        // // Fetch all users by those IDs
+        // $teamMembers = User::whereIn('id', $teamMemberIds)->get();
 
-        // Send email to each team member
-        foreach ($teamMembers as $member) {
-            Mail::to($member->email)->send(
-                new TicketAssignedNotification(
-                    $ticket->id,
-                    $ticket->title,
-                    $loggedInUser->name,
-                    $member->email
-                )
-            );
-        }
+        // // Send email to each team member
+        // foreach ($teamMembers as $member) {
+        //     Mail::to($member->email)->send(
+        //         new TicketAssignedNotification(
+        //             $ticket->id,
+        //             $ticket->title,
+        //             $loggedInUser->name,
+        //             $member->email
+        //         )
+        //     );
+        // }
 
            // Return a response
            if ($request->ajax()) {
@@ -905,6 +934,7 @@ class TicketController
 
        public function storeTicketDiscussion(Request $request)
         {
+            // dd($request->all());
             $validated = $request->validate([
                 'comments' => 'required|string',
                 'ticket_id' => 'required|exists:isar_tickets,id',
@@ -913,6 +943,7 @@ class TicketController
                 'teamMembers.*' => 'exists:users,id',
             ]);
 
+            // dd($request->all());
             try {
                 // Handle file upload
                 $fileName = null;
@@ -977,6 +1008,7 @@ class TicketController
                         )
                     );
                 }
+                
 
                 // Send emails to newly added team members
                 if (!empty($newMembersToNotify)) {
@@ -994,6 +1026,19 @@ class TicketController
                     }
                 }
 
+                // Send email to client if it's a client ticket 
+                if ($ticket->is_client == 1 && !empty($ticket->email_id)) {
+                    Mail::to($ticket->email_id)->send(
+                        new TicketCommentFromEmployeeToClient(
+                            $ticket,
+                            $loggedInUser,
+                            $validated['comments'],
+                            $fileName
+                        )
+                    );
+                }
+            //   dd($ticket->email_id);
+ 
                 // Create comment - don't store team members here anymore
                 TicketComment::create([
                     'user_id' => $loggedInUser->id,

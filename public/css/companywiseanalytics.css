@@ -1,0 +1,58 @@
+.premnthbody{
+
+        background: #dff0d8;
+}
+
+.curmonthbody{
+
+        background: #fcf8e3;
+}
+
+.usrhrs{
+
+        color: purple;
+        font-size: 20px;
+        font-weight: bold;
+}
+
+.maincompanyanayticclass{
+
+    max-width: 100%;
+}
+
+
+/* Company-specific card header styles */
+.company-header-isarva-internal {
+    background-color: #E6F0FA; 
+    color: #1A202C; /* Dark text for contrast */
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0; /* Subtle border for definition */
+}
+
+.company-header-blue-flemingo {
+    background-color: #e6e0e1; 
+    color: #1A202C;
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.company-header-glue {
+    background-color: #FFF3E0; 
+    color: #1A202C;
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.company-header-eye-web {
+    background-color: #fff1c4; 
+    color: #1A202C;
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.company-header-indian-project {
+    background-color: #ffd5c8; 
+    color: #1A202C;
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+}

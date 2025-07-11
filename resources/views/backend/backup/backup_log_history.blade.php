@@ -59,6 +59,7 @@
                     <th> PHP Version</th>
                     <th> Wordpress Version</th>
                     <th>Drive Link</th>
+                    <th> Created On</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,8 +74,10 @@
                     
                     <td>{{ \Carbon\Carbon::parse($log->last_backup_date)->format('d-m-Y') }}</td>
                     <td>{{ $log->last_backup_file_name ?? 'N/A' }}</td>
+              
                     <td>{{ $log->php_version ?? 'N/A'}}</td>
                     <td>{{ $log->wordpress_version ?? 'N/A'}}</td>
+                  
                     {{-- <td>
                         @if($log->drive_link)
                             <a href="{{ $log->drive_link }}" target="_blank">View Link</a>
@@ -91,6 +94,8 @@
                             <span class="text-muted">N/A</span>
                         @endif
                     </td>
+
+                    <td>{{ $log->created_at ? $log->created_at->format('d M Y') : 'N/A' }}</td>
                     
                 </tr>
                 @endforeach

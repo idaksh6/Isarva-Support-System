@@ -111,7 +111,7 @@ class BackupController extends Controller
             ->through(function ($backup) {
                 $backup->created_at = $backup->created_at ? Carbon::parse($backup->created_at) : null;
                 $backup->updated_at = $backup->updated_at ? Carbon::parse($backup->updated_at) : null;
-                 $backup->last_backup_date = $backup->last_backup_date ? Carbon::parse($backup->last_backup_date) : null;
+                $backup->last_backup_date = $backup->last_backup_date ? Carbon::parse($backup->last_backup_date) : null;
                 $backup->backup_type_name = $this->getBackupTypeName($backup->backup_type);
                 return $backup;
             });
@@ -182,6 +182,7 @@ class BackupController extends Controller
                 // Convert string dates to Carbon instances
                 $backup->created_at = $backup->created_at ? Carbon::parse($backup->created_at) : null;
                 $backup->updated_at = $backup->updated_at ? Carbon::parse($backup->updated_at) : null;
+                $backup->last_backup_date = $backup->last_backup_date ? Carbon::parse($backup->last_backup_date) : null;
                 $backup->backup_type_name = $this->getBackupTypeName($backup->backup_type);
                 return $backup;
             });

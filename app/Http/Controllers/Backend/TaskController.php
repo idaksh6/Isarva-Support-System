@@ -11,6 +11,8 @@ use App\Models\Backend\Task;
 use App\Models\Backend\ProjectInternalDocument;
 use App\Models\Backend\ProjectAsset;
 use Illuminate\Support\Facades\DB;
+use App\Models\Backend\ProjectAdditionalHours;
+
 class TaskController
 {
 
@@ -149,16 +151,28 @@ class TaskController
              //  Calculate Total Worked Hours
             $totalWorkedHours = $workedHours->sum('spent_hrs'); // Summing the spent hours
 
+            // Fetching additional hrs from model 
+            $additionalHours = ProjectAdditionalHours::where('project_id', $id)->sum('hrs');
+
+            // Calculate Sub Total 
+            $subTotalHours = $totalWorkedHours + $additionalHours;
+
             // Fetch Estimated Hours from `si_projects`
             $estimatedHours = $project->estimation;
 
         
 
-            // Calculate Remaining or Overflow Hours
-            $remainingHours = $estimatedHours - $totalWorkedHours;
+            // // Calculate Remaining or Overflow Hours
+            // $remainingHours = $estimatedHours - $totalWorkedHours;
+            // $statusColor = ($remainingHours < 0) ? 'red' : 'blue';
+            // $statusText = ($remainingHours < 0) ? 'overflow' : 'remaining';
+            // $remainingHours = abs($remainingHours); // Convert negative to positive for display
+
+            // Calculate Remaining or Overflow Hours based on Subtotal
+            $remainingHours = $estimatedHours - $subTotalHours;
             $statusColor = ($remainingHours < 0) ? 'red' : 'blue';
             $statusText = ($remainingHours < 0) ? 'overflow' : 'remaining';
-            $remainingHours = abs($remainingHours); // Convert negative to positive for display
+            $remainingHours = abs($remainingHours);    // Convert negative to positive for display
 
              //  Calculate Spent Days (Count of unique dates in `si_daily_report_fields`)
             $spentDays = DB::table('si_daily_report_fields')
@@ -169,7 +183,7 @@ class TaskController
         
             return view('backend.project.tasks', compact('project', 'tasksByStatus', 'tasks', 'uploadedFiles', 'internalDocs',
             'assets','workedHours',  'estimatedHours', 'remainingHours', 'statusText', 'statusColor', 'spentDays',
-            'currentUserId', 'credentials' ));
+            'currentUserId', 'credentials','additionalHours', 'subTotalHours' ));
         }
         
         
@@ -354,8 +368,8 @@ class TaskController
             'title.*' => 'required|string|max:255',
             'link' => 'nullable|array',
             'link.*' => 'nullable|string|max:255',
-            'comments' => 'nullable|array',
-            'comments.*' => 'nullable|string|max:255',
+            'comments' => 'required|array',
+            'comments.*' => 'required|string|max:255',
         ]);
     
         DB::beginTransaction();
@@ -452,10 +466,12 @@ class TaskController
     // Store function for task asset section
     public function storeasset(Request $request)
     {
+        // dd($request->all());
         // Validate the request
         $request->validate([
             'assets' => 'required|array',
-            'assets.*' => 'file|mimes:jpeg,jpg,png,pdf|max:2048', // Adjust max file size as needed
+            // 'assets.*' => 'file|mimes:jpeg,jpg,png,pdf,doc,docx|max:2048', // Adjust max file size as needed
+            'assets.*' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
             'project_id' => 'required|exists:si_projects,id', // Ensure the project exists
         ]);
 
@@ -472,6 +488,7 @@ class TaskController
 
             // Store the file in the public/images/taskasset_files directory
             $filePath = $file->store('public/images/taskasset_files');
+         
             $publicFilePath = str_replace('public/', '', $filePath);
 
             // Save the file details in the database
@@ -561,14 +578,29 @@ class TaskController
     
      }
 
-     public function editcredential($id)
-     {
+    //  public function editcredential($id)
+    //  {
 
      
-           $credential = Credential::findOrFail($id); // Fetch the Employee by ID
-           return response()->json($credential); // Return Employee data as JSON
+    //        $credential = Credential::findOrFail($id); // Fetch the Employee by ID
+    //        return response()->json($credential); // Return Employee data as JSON
        
-     }
+    //  }
+    public function editcredential($id)
+    {
+        $credential = Credential::findOrFail($id);
+
+        // Return decrypted password explicitly
+        return response()->json([
+            'id' => $credential->id,
+            'title' => $credential->title,
+            'type' => $credential->type,
+            'username' => $credential->username,
+            'password' => $credential->password, // decrypted via accessor
+            'description' => $credential->description,
+        ]);
+    }
+
 
     //  public function updatecredential(Request $request)
     //  {

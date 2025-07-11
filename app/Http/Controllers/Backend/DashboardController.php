@@ -8,7 +8,10 @@ use App\Models\Backend\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Backend\DailyReportField;
+use App\Models\Backend\Client;
 
+
+use App\Helpers\ClientHelper;
 /**
  * Class DashboardController.
  */
@@ -78,6 +81,11 @@ class DashboardController
         $user = Auth::user();
         $userId = $user->id;
         $isAdmin = ($user->role == 1);
+
+        // Clienrt Aceess code
+    //      if (!session()->has('client_id')) {
+    //     return redirect('/clientlogin')->withErrors(['access' => 'Please login first.']);
+    //    }
 
         // Project counts
         $projectQuery = Project::query();
@@ -372,4 +380,157 @@ class DashboardController
                 ]
             ]);
         }
+
+
+
+        // public function clientProjectDashboard()
+        // {
+        //     // Optional: You can fetch client_id from session
+        //     $clientId = session('client_id');
+
+        //     // Static or real counts (depends on your data structure)
+        //     $activeProjects = 5;
+        //     $onHoldProjects = 2;
+        //     $activeTickets = 3;
+        //     $closedTickets = 7;
+
+        //     // return view('client.project_dashboard', compact(
+        //     //     'activeProjects',
+        //     //     'onHoldProjects',
+        //     //     'activeTickets',
+        //     //     'closedTickets'
+        //     // ));
+
+        //   return view('client.client.project_dashboard', compact(
+        //         'activeProjects',
+        //         'onHoldProjects',
+        //         'activeTickets',
+        //         'closedTickets'
+        //     ));
+        // }
+        public function clientProjectDashboard()
+        {
+            // Get client_id from session
+            $clientId = session('client_id');
+            
+            // Get client name from session
+            $clientName = session('client_name');
+            $clientEmail = session('client_email');
+
+            // If client name isn't in session, fetch it from database
+            if (!$clientName && $clientId) {
+                $client = Client::find($clientId);
+                $clientName = $client ? $client->client_name : 'Guest';
+                
+                // Store in session for future use
+                session(['client_name' => $clientName]);
+            }
+
+            // Static or real counts (depends on your data structure)
+            $activeProjects = 5;
+            $onHoldProjects = 2;
+            $activeTickets = 3;
+            $closedTickets = 7;
+
+            return view('client.project_dashboard', compact(
+                'activeProjects',
+                'onHoldProjects',
+                'activeTickets',
+                'closedTickets',
+                // 'clientName', // Make sure this is included in compact()
+                //  'clientEmail'
+            ));
+        }
+
+      
+    
+        // Working fine with session
+        // public function clientTickets(Request $request)
+        // {
+        //     $clientEmail = session('client_email'); // stored  in session
+
+        //     if (!$clientEmail) {
+        //         return redirect()->route('clientlogin')->with('error', 'Please login to view tickets');
+        //     }
+
+        //     // Query using email_id field from tickets table
+        //     $query = DB::table('isar_tickets as t')
+        //         ->where('t.email_id', $clientEmail)
+        //         ->where('t.is_client', 1)
+        //         ->select('t.*')
+        //         ->orderBy('t.created_at', 'desc');
+
+        //     // Optional search filter
+        //     if ($request->filled('q')) {
+        //         $query->where(function ($q) use ($request) {
+        //             $q->where('t.title', 'like', '%' . $request->q . '%')
+        //             ->orWhere('t.id', 'like', '%' . $request->q . '%');
+        //         });
+        //     }
+
+        //     // Optional status filter
+        //     if ($request->filled('status')) {
+        //         $query->where('t.status', $request->status);
+        //     }
+
+        //     $tickets = $query->get();
+
+        //     // Fetch helper data
+        //     $employees = ClientHelper::getEmployees();
+        //     $status = ClientHelper::TicketStatus();
+        //     $department = ClientHelper::Departments();
+        //     $priority = ClientHelper::Priority();
+
+        //     return view('client.ticket_view', [
+        //         'tickets' => $tickets,
+        //         'employees' => $employees,
+        //         'status' => $status,
+        //         'department' => $department,
+        //         'priority' => $priority,
+        //     ]);
+        // }
+
+    public function clientTickets(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        if (!$client) {
+            return redirect()->route('clientlogin')->with('error', 'Please login to view tickets');
+        }
+
+        $query = DB::table('isar_tickets as t')
+            ->where('t.email_id', $client->email_id)
+            ->where('t.is_client', 1)
+            ->select('t.*')
+            ->orderBy('t.created_at', 'desc');
+
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('t.title', 'like', '%' . $request->q . '%')
+                ->orWhere('t.id', 'like', '%' . $request->q . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('t.status', $request->status);
+        }
+
+        $tickets = $query->get();
+
+        $employees = ClientHelper::getEmployees();
+        $status = ClientHelper::TicketStatus();
+        $department = ClientHelper::Departments();
+        $priority = ClientHelper::Priority();
+
+        return view('client.ticket_view', [
+            'tickets' => $tickets,
+            'employees' => $employees,
+            'status' => $status,
+            'department' => $department,
+            'priority' => $priority,
+        ]);
+    }
+
+
+        
 }

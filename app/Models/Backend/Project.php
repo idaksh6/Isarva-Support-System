@@ -65,24 +65,39 @@ class Project extends Model
     ];
 
     public function getStatusClass()
-{
-    $statusClasses = [
-        1 => 'primary',  // Onboard
-        2 => 'info',     // Open
-        3 => 'warning',  // Progress
-        4 => 'secondary', // Monitor
-        5 => 'success',   // Billing
-        6 => 'danger',  // Closed
-        7 => 'dark',     // On Hold
-        8 => 'dark',    // Warranty
-    ];
+    {
+        $statusClasses = [
+            1 => 'primary',  // Onboard
+            2 => 'info',     // Open
+            3 => 'warning',  // Progress
+            4 => 'secondary', // Monitor
+            5 => 'success',   // Billing
+            6 => 'danger',  // Closed
+            7 => 'dark',     // On Hold
+            8 => 'dark',    // Warranty
+        ];
 
-    return $statusClasses[$this->status] ?? 'secondary';
-}
+        return $statusClasses[$this->status] ?? 'secondary';
+    }
 
-public function getStatusText()
-{
-    $statusText = [
+    public function getStatusText()
+    {
+        $statusText = [
+            1 => 'Onboard',
+            2 => 'Open',
+            3 => 'Progress',
+            4 => 'Monitor',
+            5 => 'Billing',
+            6 => 'Closed',
+            7 => 'On Hold',
+            8 => 'Warranty',
+        ];
+
+        return $statusText[$this->status] ?? 'Unknown';
+    }
+
+
+    public static $statusNames = [
         1 => 'Onboard',
         2 => 'Open',
         3 => 'Progress',
@@ -91,50 +106,60 @@ public function getStatusText()
         6 => 'Closed',
         7 => 'On Hold',
         8 => 'Warranty',
+        9 => 'Waiting For Client Response'
     ];
 
-    return $statusText[$this->status] ?? 'Unknown';
-}
+    public static $priorityNames = [
+        1 => 'Low',
+        2 => 'Medium',
+        3 => 'High',
+    ];
+
+    public static $departmentNames = [
+        1 => 'Web Application',
+        2 => 'Website',
+        3 => 'Graphics',
+    ];
 
 
-public static $statusNames = [
-    1 => 'Onboard',
-    2 => 'Open',
-    3 => 'Progress',
-    4 => 'Monitor',
-    5 => 'Billing',
-    6 => 'Closed',
-    7 => 'On Hold',
-    8 => 'Warranty',
-    9 => 'Waiting For Client Response'
-];
 
-public static $priorityNames = [
-    1 => 'Low',
-    2 => 'Medium',
-    3 => 'High',
-];
+    // For displaying the companie name in table view
+    public static $billingCompanyNames = [
+        0 => 'None',
+        1 => 'Isarva Internal',
+        2 => 'Blue flemingo',
+        3 => 'Glue',
+        4 => 'Eye Web',
+        5 => 'Indian Project',
+    ];
 
-public static $departmentNames = [
-    1 => 'Web Application',
-    2 => 'Website',
-    3 => 'Graphics',
-];
+    public function getBillingCompanyNameAttribute()
+    {
+        return self::$billingCompanyNames[$this->biiling_company] ?? 'Unknown';
+    }
 
-public function getStatusNameAttribute()
-{
-    return self::$statusNames[$this->status] ?? 'N/A';
-}
 
-public function getPriorityNameAttribute()
-{
-    return self::$priorityNames[$this->priority] ?? 'N/A';
-}
+    public function getStatusNameAttribute()
+    {
+        return self::$statusNames[$this->status] ?? 'N/A';
+    }
 
-public function getDepartmentNameAttribute()
-{
-    return self::$departmentNames[$this->department] ?? 'N/A';
-}
+    public function getPriorityNameAttribute()
+    {
+        return self::$priorityNames[$this->priority] ?? 'N/A';
+    }
+
+    // Defining relation to fetch manager name 
+    public function managerUser()
+    {
+        return $this->belongsTo(User::class, 'manager');
+    }
+
+
+    public function getDepartmentNameAttribute()
+    {
+        return self::$departmentNames[$this->department] ?? 'N/A';
+    }
 
     public function getClientNameAttribute()
     {

@@ -139,15 +139,26 @@
                             <div class="text-danger" id="cred-add-error-username"></div>
                         </div>
 
-                        <div style="position: relative;" class="mb-3">
+                        {{-- <div style="position: relative;" class="mb-3">
                             <label for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password">
+                            <input type="password" id="credentialpassword" name="password" class="form-control" placeholder="Enter password">
                             
                             <!-- Eye icon -->
                             <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
                                 👁️
                             </span>
+                        </div> --}}
+                        <!-- Add Credential Password Input -->
+                        <div style="position: relative;" class="mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" id="credentialpassword" name="password" class="form-control" placeholder="Enter password">
+                            <span onclick="toggleCredentialPassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                👁️
+                            </span>
                         </div>
+
+                     
+
 
                         <div class="mb-3">
                             <label for="credentialDescription" class="form-label">Description <span class="required">*</span></label>
@@ -209,12 +220,20 @@
                             <div class="text-danger" id="cred-edit-error-username"></div>
                         </div>
 
-                          <div style="position: relative;" class="mb-3">
+                        {{-- <div style="position: relative;" class="mb-3">
                             <label for="password">Password</label>
                             <input type="password" id="editcredential_password" name="password" class="form-control" placeholder="Enter new password to update old password">
                             
                             <!-- Eye icon -->
                             <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
+                                👁️
+                            </span>
+                        </div> --}}
+                           <!-- Edit Credential Password Input -->
+                        <div style="position: relative;" class="mb-3">
+                            <label for="password">Edit Password</label>
+                            <input type="password" id="editcredential_password" name="password" class="form-control" placeholder="Enter password">
+                            <span onclick="toggleEditCredentialPassword()" style="position: absolute; right: 10px; top: 36px; cursor: pointer;">
                                 👁️
                             </span>
                         </div>
@@ -1189,6 +1208,14 @@
                                         <td colspan="2"><strong style="color:red;">Total Hrs</strong></td>
                                         <td><strong>{{ $totalHours }}</strong></td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="2"><strong style="color:green;">Additional Work Hrs</strong></td>
+                                        <td><strong>{{ $additionalHours }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><strong style="color:blue;">Sub Total</strong></td>
+                                        <td><strong>{{ $subTotalHours }}</strong></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         @else
@@ -1283,13 +1310,61 @@
                                 </div>
 
                                 <!-- Right part -->
-                                <div class="col-md-8">
+                                {{-- <div class="col-md-8">
                                     <p class="text-muted small mb-1">Posted On: {{ $credential->created_at->format('d M Y') }}</p>
                                     <h5 class="fw-bold mt-4">{{ $credential->title }}</h5>
                                     <hr>
                                     <p>{{ $credential->description }}</p>
+
+                                      @if($credential->password)
+                                            <div class="alert alert-secondary mt-3" style="word-break: break-word;">
+                                                <strong>Password:</strong> {{ $credential->password }}
+                                            </div>
+                                    @endif
+                                </div> --}}
+                                  <!-- Right part -->
+                                
+                                    <div class="col-md-8">
+                                            <p class="text-muted small mb-1">Posted On: {{ $credential->created_at->format('d M Y') }}</p>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Title:</div>
+                                                <div class="col-sm-8">{{ $credential->title ?? 'N/A' }}</div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Type:</div>
+                                                <div class="col-sm-8">
+                                                   
+                                                  <span class="badge bg-{{ $credential->type_badge_class }}">{{ $credential->type_text }}</span>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Username:</div>
+                                                <div class="col-sm-8">{{ $credential->username ?? 'N/A' }}</div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Password:</div>
+                                                <div class="col-sm-8">
+                                                    @if($credential->password)
+                                                        <div class="alert alert-secondary p-2 mb-0" style="word-break: break-word;">
+                                                            {{ $credential->password }}
+                                                        </div>
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4 fw-bold">Description:</div>
+                                                <div class="col-sm-8">{{ $credential->description ?? 'N/A' }}</div>
+                                            </div>
+                                    </div>
                                 </div>
-                            </div>
                         @endforeach
                         
                     </div>
@@ -1524,15 +1599,29 @@
 
 <script>
 
-     // For credential password section
-      function togglePassword() {
-        const passwordInput = document.getElementById("password");
+    //  // For credential password section
+    //   function togglePassword() {
+    //     const passwordInput = document.getElementById("credentialpassword");
+    //     const type = passwordInput.getAttribute("type");
+    //     passwordInput.setAttribute("type", type === "password" ? "text" : "password");
+    // }
+
+    // // For edit credential section
+    // function togglePassword() {
+    //     const passwordInput = document.getElementById("editcredential_password");
+    //     const type = passwordInput.getAttribute("type");
+    //     passwordInput.setAttribute("type", type === "password" ? "text" : "password");
+    // }
+
+    // For add credential form
+    function toggleCredentialPassword() {
+        const passwordInput = document.getElementById("credentialpassword");
         const type = passwordInput.getAttribute("type");
         passwordInput.setAttribute("type", type === "password" ? "text" : "password");
     }
 
-    // For edit credential section
-    function togglePassword() {
+    // For edit credential form
+    function toggleEditCredentialPassword() {
         const passwordInput = document.getElementById("editcredential_password");
         const type = passwordInput.getAttribute("type");
         passwordInput.setAttribute("type", type === "password" ? "text" : "password");
@@ -1825,7 +1914,7 @@
                         }
                     });
                 });
-            });
+           });
 
                    //----- AJAX for Credential Add Modal validation form---
               
@@ -1857,7 +1946,9 @@
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     }).then(() => {
-                                        window.location.href.reload();
+                                        // window.location.href.reload();
+                                        window.location.reload();
+
                                     });
                             },
                             error: function (xhr) {
@@ -1907,7 +1998,7 @@
                        $('#credentialDescription').val(response.description);
                        $('#credentialType').val(response.type);
                        $('#credntialUsername').val(response.username);
-
+                       $('#editcredential_password').val(response.password);
                        $('#editCredentialId').val(credentialId);
 
                     

@@ -19,10 +19,13 @@ use App\Http\Controllers\Backend\Reports\ReportsController;
 use App\Http\Controllers\Backend\Reports\BillableNonBillableController;
 use App\Http\Controllers\Backend\DailyTaskController;
 use App\Http\Controllers\Backend\BackupController;
+use App\Http\Controllers\Backend\RenewalController;
 
 
 // All route names are prefixed with 'admin.'.
-Route::redirect('/', '/admin/hr-dashboard', 301);
+Route::redirect('/', 'login', 301);
+
+// Route::redirect('/', '/admin/hr-dashboard', 404);
 
    
    
@@ -49,11 +52,26 @@ Route::get('hr-dashboard', [DashboardController::class, 'index'])
 Route::get('get-daily-stats/{year}/{month}', [DashboardController::class, 'dailyReportStatisticsChart']);
 Route::get('last-one-year/{year}/{month}', [DashboardController::class, 'lastOneYearData']);
 
+
+
+// Added Middleware
+// Route::middleware(['client.auth'])->group(function () {
+// Route::get('project-dashboard', [DashboardController::class, 'project'])
+//     ->name('project')
+//     ->breadcrumbs(function (Trail $trail) {
+//         $trail->push(__('Home'), route('admin.project'));
+//     });
+// });
+
+
 Route::get('project-dashboard', [DashboardController::class, 'project'])
     ->name('project')
     ->breadcrumbs(function (Trail $trail) {
         $trail->push(__('Home'), route('admin.project'));
     });
+
+
+
 
 Route::get('payroll/employee-salary', [EmployeeController::class, 'payroll'])
 ->name('employee-salary')
@@ -120,6 +138,151 @@ Route::group([
              $trail->push(__('Home'), route('admin.employee_analytics'));
          });
           
+         // Comapny Wise Billing Reports
+         Route::get('companywise_billing_report', [ReportsController::class, 'getcompanywisebilingreport'])
+         ->name('companywise_billingreport')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.companywise_billingreport'));
+         });
+
+         // EXPORT PDF Route for Company wise billing report
+         Route::get('/admin/company-report/export-pdf', [ReportsController::class, 'compnaywisebillableexportPdf'])->name('company-report.exportPdf');
+
+
+        // Company wise analytic report part 
+         Route::get('companywise_analytic_report', [ReportsController::class, 'getcompanywiseanalyticreport'])
+         ->name('companywise_analytic_report')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.companywise_analytic_report'));
+         });
+
+    
+        // Route::post('companywise_analytic_report/export', [ReportsController::class, 'exportCompanywiseAnalyticReport'])
+        // ->name('companywise_analytic_report.export');
+        Route::get('/admin/companywiseanalyticreport/pdf', [ReportsController::class, 'exportCompanyWisePDF'])->name('company.report.pdf');
+
+        // Project Timesheet Report 
+         Route::get('project_timesheet_report', [ReportsController::class, 'getprojecttimesheetreport'])
+         ->name('project_timesheet_report')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.project_timesheet_report'));
+         });
+
+        // Project Timesheet Report  PDF 
+         Route::get('project-timesheet/export-pdf', [ReportsController::class, 'exportTimesheetPDF'])->name('project_timesheet_export_pdf');
+
+
+        // Metric Report
+         Route::get('metric_report', [ReportsController::class, 'getmetricreport'])
+         ->name('metric_report')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.metric_report'));
+         });
+
+          // Metric Analytic Report
+         Route::get('metric_analytic_report', [ReportsController::class, 'getmetricanalyticreport'])
+         ->name('metric_analytic_report')
+         ->breadcrumbs(function (Trail $trail) {
+             $trail->push(__('Home'), route('admin.metric_analytic_report'));
+         });
+
+
+
+         
+
+        //  // Session
+        //  Route::get('/session-debug', function() {
+        //     $session = DB::table('sessions')
+        //         ->where('id', session()->getId())
+        //         ->first();
+
+        //     return [
+        //         'session_id' => session()->getId(),
+        //         'last_activity' => $session ? date('Y-m-d H:i:s', $session->last_activity) : null,
+        //         'current_time' => now(),
+        //         'user_id' => auth()->id(),
+        //         'session_data' => $session ? unserialize(base64_decode($session->payload)) : null
+        //     ];
+        // });
+
+        // Route::get('/session-keepalive', function() {
+        //     if (Auth::check()) {
+        //         Auth::user()->updateLastActivity();
+        //         session(['last_activity' => now()]);
+        //     }
+        //     return response()->noContent();
+        // })->middleware('auth');
+                // Works fine --
+        //  // In routes/web.php (or api.php)
+        // Route::get('/update-billing-companies', function() {
+        //     // Update project-based entries
+        //     $updatedProjects = DB::table('si_daily_report_fields as drf')
+        //         ->join('si_projects as p', 'drf.project_id', '=', 'p.id')
+        //         ->whereNull('drf.se_bill_company')
+        //         ->where('drf.type', 1)
+        //         ->update([
+        //             'drf.se_bill_company' => DB::raw('p.biiling_company')
+        //         ]);
+                
+        //     // Update ticket-based entries to 0
+        //     $updatedTickets = DB::table('si_daily_report_fields')
+        //         ->whereNull('se_bill_company')
+        //         ->where('type', 2)
+        //         ->update(['se_bill_company' => 0]);
+                
+        //     return "Updated $updatedProjects project records and $updatedTickets ticket records";
+        // });
+
+        // In routes/web.php (or api.php)
+        // Route::get('/update-billing-companies', function() {
+        //     // First update records where we can find a project with billing_company
+        //     $updatedProjects = DB::table('si_daily_report_fields as drf')
+        //         ->join('si_projects as p', 'drf.project_id', '=', 'p.id')
+        //         ->whereNull('drf.se_bill_company')
+        //         ->where('drf.type', 1)
+        //         ->whereNotNull('p.biiling_company') // Only projects with biiling_company set
+        //         ->update([
+        //             'drf.se_bill_company' => DB::raw('p.biiling_company')
+        //         ]);
+            
+        //     // Then update project records where biiling_company is null in projects table
+        //     $updatedNullProjects = DB::table('si_daily_report_fields as drf')
+        //         ->join('si_projects as p', 'drf.project_id', '=', 'p.id')
+        //         ->whereNull('drf.se_bill_company')
+        //         ->where('drf.type', 1)
+        //         ->whereNull('p.biiling_company') // Projects with null billing_company
+        //         ->update([
+        //             'drf.se_bill_company' => 0
+        //         ]);
+            
+        //     // Update project records where project doesn't exist anymore
+        //     $updatedOrphanedProjects = DB::table('si_daily_report_fields as drf')
+        //         ->leftJoin('si_projects as p', 'drf.project_id', '=', 'p.id')
+        //         ->whereNull('drf.se_bill_company')
+        //         ->where('drf.type', 1)
+        //         ->whereNull('p.id') // No matching project found
+        //         ->update([
+        //             'drf.se_bill_company' => 0
+        //         ]);
+            
+        //     // Update ticket-based entries to 0
+        //     $updatedTickets = DB::table('si_daily_report_fields')
+        //         ->whereNull('se_bill_company')
+        //         ->where('type', 2)
+        //         ->update(['se_bill_company' => 0]);
+            
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Billing companies updated successfully',
+        //         'stats' => [
+        //             'projects_with_billing_company' => $updatedProjects,
+        //             'projects_with_null_billing_company' => $updatedNullProjects,
+        //             'orphaned_projects' => $updatedOrphanedProjects,
+        //             'tickets_updated' => $updatedTickets,
+        //             'total_updated' => $updatedProjects + $updatedNullProjects + $updatedOrphanedProjects + $updatedTickets
+        //         ]
+        //     ]);
+        // });
 });
 
 
@@ -239,7 +402,7 @@ Route::get('credential_edit/{id}', [TaskController::class, 'editcredential'])->n
 Route::put('/credential_update/{id}', [TaskController::class, 'updatecredential'])->name('update_credential');
 
 
-
+Route::delete('/credential/{id}', [TaskController::class, 'destroycredential'])->name('destroy-credential');
 
 
 
@@ -338,6 +501,45 @@ Route::group([
 
 });
 
+Route::group([
+    'prefix' => 'renewals'
+], function () {
+    // Main View (List all renewals)
+    Route::get('manage', [RenewalController::class, 'index'])
+        ->name('renewals.manage')
+        ->breadcrumbs(function (Trail $trail) {
+            $trail->push(__('Home'), route('admin.dashboard'));
+            $trail->push(__('Renewals'), route('renewals.manage'));
+        });
+
+    // Create Form
+    Route::get('create', [RenewalController::class, 'create'])
+        ->name('renewals.create');
+
+    // Store New Renewal
+    Route::post('store', [RenewalController::class, 'store'])
+        ->name('renewals.store');
+
+    // Edit Form
+    Route::get('edit/{id}', [RenewalController::class, 'edit'])
+        ->name('renewals.edit');
+
+    // Update Renewal
+    Route::put('update/{id}', [RenewalController::class, 'update'])
+        ->name('renewals.update');
+
+    // Delete Renewal
+    Route::delete('delete/{id}', [RenewalController::class, 'destroy'])
+        ->name('renewals.delete');
+
+    // Search Renewal
+    Route::get('renewals/search', [RenewalController::class, 'search'])
+        ->name('renewals.search');
+
+    // Export (Optional)
+    Route::get('export', [RenewalController::class, 'export'])
+        ->name('renewals.export');
+});
 
 // Backup Route
 Route::group([

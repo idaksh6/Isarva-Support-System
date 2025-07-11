@@ -106,14 +106,14 @@ nav.navbar.py-4 {
         }
     }
 
-}
+
 </style>
 <div class="container py-4 mainempanalyticsbody">
     <h2 class="mb-4 p-3 text-center bg-light border rounded shadow-sm text-primary fw-bold" style="font-size: 1.75rem;">
         <i class="icofont-chart-bar-graph"></i></i>Employee Analytics Report
     </h2>
     
-    <!-- Back Button -->
+ 
   <!-- Back Button -->
 <div class="text-end mb-3">
     <a href="{{ route('admin.project') }}" class="btn btn-secondary">Back</a>
@@ -232,6 +232,42 @@ nav.navbar.py-4 {
             });
         @endforeach
     @endif
+
+
+    // Add to your view script
+document.getElementById('copmaywiseanalyticexportPdf').addEventListener('click', function() {
+    // Create hidden form
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{{ route('admin.companywise_analytic_report.export') }}";
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = '_token';
+    csrfToken.value = "{{ csrf_token() }}";
+    form.appendChild(csrfToken);
+    
+    // Add month value
+    const monthInput = document.createElement('input');
+    monthInput.type = 'hidden';
+    monthInput.name = 'month';
+    monthInput.value = document.getElementById('month').value;
+    form.appendChild(monthInput);
+    
+    // Add chart types
+    document.querySelectorAll('.chart-type').forEach(select => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `chart_type[${select.dataset.company}][${select.dataset.month}]`;
+        input.value = select.value;
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
+});
 </script>
 {{-- 
 <script>
